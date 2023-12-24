@@ -1,0 +1,10 @@
+src
+DEVELOP.md
+build
+.next
+out
+node_modules
+tsconfig.json
+.prettierrc
+tsconfig.*
+tslint.*

@@ -1,0 +1,24 @@
+{
+  "name": "nsgm-cli-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nsgm dev",
+    "build": "nsgm build",
+    "start": "nsgm start",
+    "export": "nsgm export",
+    "init": "nsgm init",
+    "upgrade": "nsgm upgrade",
+    "create": "nsgm create",
+    "delete": "nsgm delete",
+    "deletedb": "nsgm deletedb",
+    "postversion": "git push && git push --tags",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": "18.18.1"
+  },
+  "author": "",
+  "license": "ISC"
+}

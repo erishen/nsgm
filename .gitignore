@@ -1,0 +1,8 @@
+node_modules
+.next
+build
+out
+yarn.lock
+lib/tsconfig.build.*
+lib/ignite.log
+.DS_Store
