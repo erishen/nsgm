@@ -1,6 +1,6 @@
 {
   "name": "nsgm-cli",
-  "version": "2.0.12",
+  "version": "2.0.13",
   "description": "A CLI tool to run Next/Style-components and Graphql/Mysql fullstack project",
   "main": "index.js",
   "scripts": {
@@ -42,7 +42,7 @@
   ],
   "author": {
     "name": "Erishen Sun",
-    "email": "787058731@qq.com"
+    "email": "leisun8309@gmail.com"
   },
   "license": "ISC",
   "bugs": {
