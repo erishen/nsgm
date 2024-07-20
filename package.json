@@ -70,9 +70,11 @@
     "axios": "^1.6.0",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
+    "exceljs": "^4.4.0",
     "express": "^4.17.1",
     "express-fileupload": "^1.2.1",
     "express-graphql": "^0.12.0",
+    "file-saver": "^2.0.5",
     "graphql": "^15.5.0",
     "lodash": "^4.17.20",
     "markdown-it": "^12.0.4",
@@ -93,8 +95,7 @@
     "uglify-js": "^3.16.0",
     "uuid": "^8.3.2",
     "webpack": "^5.89.0",
-    "webpack-simple-progress-plugin": "0.0.4",
-    "xlsx": "^0.16.9"
+    "webpack-simple-progress-plugin": "0.0.4"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",

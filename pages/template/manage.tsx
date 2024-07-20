@@ -9,8 +9,9 @@ import _ from 'lodash'
 import moment from 'moment'
 import locale from 'antd/lib/locale/zh_CN'
 import { handleXSS, checkModalObj } from '../../client/utils/common'
-import XLSX from 'xlsx'
 import { UploadOutlined } from '@ant-design/icons'
+import ExcelJS from 'exceljs'
+import { saveAs } from 'file-saver'
 
 const pageSize = 100
 const dateFormat = 'YYYY-MM-DD'
@@ -21,7 +22,7 @@ const keyTitles = {
   name: '名称'
 }
 
-const Page = ({ template }) => { 
+const Page = ({ template }) => {
   const dispatch = useDispatch()
   const [isModalVisiable, setIsModalVisible] = useState(false)
   const [modalId, setModalId] = useState(0)
@@ -34,23 +35,23 @@ const Page = ({ template }) => {
   }, [dispatch])
 
   const state = useSelector((state: RootState) => state)
-  const { templateManage }:any = state
+  const { templateManage }: any = state
   console.log('templateManage', templateManage)
 
-  if (!templateManage.firstLoadFlag) { 
+  if (!templateManage.firstLoadFlag) {
     template = templateManage.template
   }
-  
-  const { totalCounts, items:templateItems } = template
+
+  const { totalCounts, items: templateItems } = template
   console.log('template', template)
 
-  _.each(templateItems, (item, index) => { 
+  _.each(templateItems, (item, index) => {
     const { id } = item
     item.key = id
   })
 
   const dataSource = templateItems
-  const columns:any = [
+  const columns: any = [
     {
       title: 'ID',
       dataIndex: 'id',
@@ -70,14 +71,14 @@ const Page = ({ template }) => {
     {
       title: '操作',
       dataIndex: '',
-      render: (_:any, record:any) => {
+      render: (_: any, record: any) => {
         return (
           <Space>
-            <Button onClick={() => { 
+            <Button onClick={() => {
               console.log('record', record)
               updateTemplate(record)
             }}>修改</Button>
-            <Button onClick={() => { 
+            <Button onClick={() => {
               console.log('record', record)
               const { id } = record
               deleteTemplate(id)
@@ -101,7 +102,7 @@ const Page = ({ template }) => {
     showModal()
   }
 
-  const updateTemplate = (record:any) => { 
+  const updateTemplate = (record: any) => {
     let { id, name } = record
 
     setModalId(id)
@@ -109,31 +110,31 @@ const Page = ({ template }) => {
     showModal()
   }
 
-  const deleteTemplate = (id:number) => { 
+  const deleteTemplate = (id: number) => {
     Modal.confirm({
       title: '提示',
       content: '确认删除吗',
       okText: '确认',
       cancelText: '取消',
-      onOk : (e) => {
+      onOk: (e) => {
         dispatch(delTemplate(id))
         Modal.destroyAll()
       }
     })
   }
 
-  const showModal = () => { 
+  const showModal = () => {
     setIsModalVisible(true)
   }
 
-  const getMessageTitle = (key: string) => { 
+  const getMessageTitle = (key: string) => {
     let result = keyTitles[key]
     if (result == undefined)
       result = key
     return result
   }
 
-  const handleOk = () => { 
+  const handleOk = () => {
     const modalObj = {
       name: handleXSS(modalName)
     }
@@ -147,34 +148,54 @@ const Page = ({ template }) => {
       } else {
         dispatch(modTemplate(modalId, modalObj))
       }
-      
+
       setIsModalVisible(false)
-    } else { 
+    } else {
       message.info(getMessageTitle(checkResult.key) + checkResult.reason)
     }
   }
 
-  const handleCancel = () => { 
+  const handleCancel = () => {
     setIsModalVisible(false)
   }
 
-  const doSearch = () => { 
+  const doSearch = () => {
     dispatch(searchTemplate(0, pageSize, { name: handleXSS(searchName) }))
   }
 
-  const exportTemplate = () => { 
+  const exportTemplate = () => {
     if (templateItems.length > 0) {
-      const wb = XLSX.utils.book_new()
+      const wb = new ExcelJS.Workbook();
+      const ws = wb.addWorksheet("Template")
       const jsonData = _.map(templateItems, (item) => _.omit(item, ['key']))
-      //console.log('jsonData', jsonData)
-      const ws = XLSX.utils.json_to_sheet(jsonData)
-  
-      /* add worksheet to workbook */
-      XLSX.utils.book_append_sheet(wb, ws, "Template")
-  
-      /* write workbook */
-      XLSX.writeFile(wb, "Template.xlsx")
-    } else { 
+
+      // 提取表头
+      const headers = Object.keys(jsonData[0]);
+
+      // 将 JSON 数据转换为二维数组
+      const data = [headers, ...jsonData.map(item => headers.map(header => item[header]))];
+
+      // 将数据写入工作表 
+      ws.addRows(data)
+
+      // 设置表头样式加粗
+      ws.getRow(1).eachCell((cell) => {
+        cell.font = { bold: true };
+      });
+
+      // 设置列宽
+      ws.columns = [
+        { header: 'ID', key: 'header1', width: 20 },
+        { header: 'NAME', key: 'header2', width: 30 },
+      ];
+
+      wb.xlsx.writeBuffer().then((data) => {
+        const blob = new Blob([data], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+        saveAs(blob, "Template.xlsx")
+      }).catch((error) => {
+        console.error('导出失败', error?.message)
+      })
+    } else {
       message.info("没有数据无需导出")
     }
   }
@@ -182,7 +203,7 @@ const Page = ({ template }) => {
   const uploadProps = {
     name: 'file',
     action: '/rest/template/import',
-    onChange(info:any) {
+    onChange(info: any) {
       if (info.file.status !== 'uploading') {
         console.log(info.file, info.fileList)
       }
@@ -196,24 +217,24 @@ const Page = ({ template }) => {
     }
   }
 
-  const batchDeleteTemplate = () => { 
-    if (batchDelIds.length > 0) { 
+  const batchDeleteTemplate = () => {
+    if (batchDelIds.length > 0) {
       Modal.confirm({
         title: '提示',
         content: '确认批量删除吗',
         okText: '确认',
         cancelText: '取消',
-        onOk : (e) => {
+        onOk: (e) => {
           dispatch(batchDelTemplate(batchDelIds))
           Modal.destroyAll()
         }
       })
-    } else { 
+    } else {
       message.info("没有数据不能批量删除")
     }
   }
 
-  return (  
+  return (
     <Container>
       <ConfigProvider locale={locale}>
         <SearchRow>
@@ -237,15 +258,15 @@ const Page = ({ template }) => {
           </Space>
         </SearchRow>
         <Table rowSelection={{
-            type: 'checkbox',
-            ...rowSelection,
-          }}  dataSource={dataSource} columns={columns} pagination={{
-              total: totalCounts,
-              pageSize: pageSize,
-              onChange: (page, pageSize) => { 
-                console.log('onChange', page, pageSize)
-                dispatch(searchTemplate(page - 1, pageSize, { name: handleXSS(searchName) }))
-              }
+          type: 'checkbox',
+          ...rowSelection,
+        }} dataSource={dataSource} columns={columns} pagination={{
+          total: totalCounts,
+          pageSize: pageSize,
+          onChange: (page, pageSize) => {
+            console.log('onChange', page, pageSize)
+            dispatch(searchTemplate(page - 1, pageSize, { name: handleXSS(searchName) }))
+          }
         }} />
         <Modal title={(modalId == 0 ? "新增" : "修改") + " template"} open={isModalVisiable} onOk={handleOk} onCancel={handleCancel} okText="确认" cancelText="取消">
           <ModalContainer>
@@ -263,7 +284,7 @@ const Page = ({ template }) => {
 Page.getInitialProps = async () => {
   let template = null
 
-  await getTemplateService(0, pageSize).then((res: any) => { 
+  await getTemplateService(0, pageSize).then((res: any) => {
     console.log('res', res)
     const { data } = res
     template = data.template
