@@ -517,21 +517,20 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
       shell.sed('-i', eval('/NSGM-CLI/'), dictionary, destPublicHealthCheckPath)
 
       shell.exec('cd ' + dictionary + ' && npm install --save nsgm-cli --legacy-peer-deps')
-      shell.exec('cd ' + dictionary + ' && npm install --save-dev @types/node@^20 --legacy-peer-deps')
-      shell.exec('cd ' + dictionary + ' && npm install --save-dev @types/react@^18 --legacy-peer-deps')
-      shell.exec('cd ' + dictionary + ' && npm install --save-dev @types/lodash@^4 --legacy-peer-deps')
       shell.exec(
-        'cd ' + dictionary + ' && npm install --save-dev babel-plugin-styled-components@2.1.4 --legacy-peer-deps'
+        'cd ' +
+          dictionary +
+          ' && npm install --save-dev @types/node@^20 @types/react@^18 @types/lodash@^4 typescript@^5 --legacy-peer-deps'
       )
     } else {
       shell.sed('-i', eval('/nsgm-cli-project/'), path.basename(destFolder) + '-project', destPackagePath)
       shell.sed('-i', eval('/NSGM-CLI/'), path.basename(destFolder), destPublicHealthCheckPath)
 
       shell.exec('npm install --save nsgm-cli --legacy-peer-deps')
-      shell.exec('npm install --save-dev @types/node@^20 --legacy-peer-deps')
-      shell.exec('npm install --save-dev @types/react@^18 --legacy-peer-deps')
-      shell.exec('npm install --save-dev @types/lodash@^4 --legacy-peer-deps')
-      shell.exec('npm install --save-dev babel-plugin-styled-components@2.1.4 --legacy-peer-deps')
+      shell.exec(
+        'npm install --save-dev @types/node@^20 @types/react@^18 @types/lodash@^4 typescript@^5 --legacy-peer-deps'
+      )
+      // shell.exec('npm install --save-dev babel-plugin-styled-components@2.1.4 --legacy-peer-deps')
     }
   }
 
