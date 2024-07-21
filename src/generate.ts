@@ -3,6 +3,7 @@ import path from 'path'
 import shell from 'shelljs'
 import serverDB from './server/db'
 import replace from 'replace'
+import { replaceInFile } from 'replace-in-file'
 
 const { resolve } = path
 const { getMysqlConfig } = serverDB
@@ -92,8 +93,6 @@ const handleReplace = ({ regex, replacement, paths }: any) => {
 }
 
 const replaceInFileAll = async (array: any, index = 0, callback: any) => {
-  const { replaceInFile } = await import('replace-in-file')
-
   if (replaceInFileFlag) {
     console.log('replaceInFileAll', index)
     const arrayLen = array.length
@@ -770,15 +769,15 @@ export const createFiles = (controller: string, action: string) => {
 
   shell.exec(
     'mysql -u' +
-      mysqlUser +
-      ' -p' +
-      mysqlPassword +
-      ' -h' +
-      mysqlHost +
-      ' -P' +
-      mysqlPort +
-      ' < ' +
-      destServerSqlControllerPath
+    mysqlUser +
+    ' -p' +
+    mysqlPassword +
+    ' -h' +
+    mysqlHost +
+    ' -P' +
+    mysqlPort +
+    ' < ' +
+    destServerSqlControllerPath
   )
 
   setTimeout(() => {
@@ -837,15 +836,15 @@ export const deleteFiles = (controller: string, action: string, deleteDBFlag: bo
 
       shell.exec(
         'mysql -u' +
-          mysqlUser +
-          ' -p' +
-          mysqlPassword +
-          ' -h' +
-          mysqlHost +
-          ' -P' +
-          mysqlPort +
-          ' < ' +
-          destServerSqlControllerPath
+        mysqlUser +
+        ' -p' +
+        mysqlPassword +
+        ' -h' +
+        mysqlHost +
+        ' -P' +
+        mysqlPort +
+        ' < ' +
+        destServerSqlControllerPath
       )
     }
 

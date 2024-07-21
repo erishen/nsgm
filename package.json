@@ -86,7 +86,7 @@
     "redux": "5.0.1",
     "redux-thunk": "3.1.0",
     "replace": "1.2.2",
-    "replace-in-file": "8.1.0",
+    "replace-in-file": "6.3.5",
     "shelljs": "0.8.5",
     "styled-components": "6.1.12",
     "terser-webpack-plugin": "5.3.10",
