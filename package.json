@@ -64,7 +64,7 @@
   ],
   "homepage": "https://github.com/erishen/nsgm#readme",
   "dependencies": {
-    "@reduxjs/toolkit": "2.2.6",
+    "@reduxjs/toolkit": "1.9.7",
     "antd": "5.19.3",
     "axios": "1.7.2",
     "body-parser": "1.20.2",
