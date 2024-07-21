@@ -5,9 +5,32 @@ import { GraphQLScalarType } from 'graphql'
 const customScalarDate = new GraphQLScalarType({
   name: 'Date',
   description: 'Date custom scalar type',
-  parseValue: (value) => moment(value).valueOf(),
-  serialize: (value) => moment(value).format('YYYY-MM-DD HH:mm:ss:SSS'),
-  parseLiteral: (ast) => (ast.kind === Kind.INT ? parseInt(ast.value, 10) : null)
-})
+  parseValue: (value: any): number => {
+    const date = moment(value);
+    if (!date.isValid()) {
+      throw new Error("Invalid date format");
+    }
+    return date.valueOf(); // Ensure this returns a number
+  },
+  serialize: (value: any): string => {
+    const date = moment(value);
+    if (!date.isValid()) {
+      throw new Error("Invalid date format");
+    }
+    return date.format('YYYY-MM-DD HH:mm:ss:SSS'); // Ensure this returns a string
+  },
+  parseLiteral: (ast: any): number | null => {
+    if (ast.kind === Kind.INT) {
+      return parseInt(ast.value, 10);
+    } else if (ast.kind === Kind.STRING) {
+      const date = moment(ast.value);
+      if (!date.isValid()) {
+        throw new Error("Invalid date format");
+      }
+      return date.valueOf();
+    }
+    return null;
+  }
+});
 
 export default { Date: customScalarDate }

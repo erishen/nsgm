@@ -3,7 +3,6 @@ import path from 'path'
 import shell from 'shelljs'
 import serverDB from './server/db'
 import replace from 'replace'
-import { replaceInFile } from 'replace-in-file'
 
 const { resolve } = path
 const { getMysqlConfig } = serverDB
@@ -92,20 +91,31 @@ const handleReplace = ({ regex, replacement, paths }: any) => {
   }
 }
 
-const replaceInFileAll = (array: any, index = 0, callback: any) => {
+const replaceInFileAll = async (array: any, index = 0, callback: any) => {
+  const { replaceInFile } = await import('replace-in-file');
+
   if (replaceInFileFlag) {
     console.log('replaceInFileAll', index)
     const arrayLen = array.length
     if (index < arrayLen) {
       const item = array[index]
 
-      replaceInFile(item, (error, changedFiles) => {
+      replaceInFile(item).then((changedFiles) => {
+        console.log('Modified files:', changedFiles)
+        replaceInFileAll(array, ++index, callback)
+      }).catch((error) => {
         if (error) {
           console.error('Error occurred:', error)
         }
-        console.log('Modified files:', changedFiles)
-        replaceInFileAll(array, ++index, callback)
       })
+
+      // replaceInFile(item, (error, changedFiles) => {
+      //   if (error) {
+      //     console.error('Error occurred:', error)
+      //   }
+      //   console.log('Modified files:', changedFiles)
+      //   replaceInFileAll(array, ++index, callback)
+      // })
     } else {
       return callback && callback()
     }
@@ -758,15 +768,15 @@ export const createFiles = (controller: string, action: string) => {
 
   shell.exec(
     'mysql -u' +
-      mysqlUser +
-      ' -p' +
-      mysqlPassword +
-      ' -h' +
-      mysqlHost +
-      ' -P' +
-      mysqlPort +
-      ' < ' +
-      destServerSqlControllerPath
+    mysqlUser +
+    ' -p' +
+    mysqlPassword +
+    ' -h' +
+    mysqlHost +
+    ' -P' +
+    mysqlPort +
+    ' < ' +
+    destServerSqlControllerPath
   )
 
   setTimeout(() => {
@@ -825,15 +835,15 @@ export const deleteFiles = (controller: string, action: string, deleteDBFlag: bo
 
       shell.exec(
         'mysql -u' +
-          mysqlUser +
-          ' -p' +
-          mysqlPassword +
-          ' -h' +
-          mysqlHost +
-          ' -P' +
-          mysqlPort +
-          ' < ' +
-          destServerSqlControllerPath
+        mysqlUser +
+        ' -p' +
+        mysqlPassword +
+        ' -h' +
+        mysqlHost +
+        ' -P' +
+        mysqlPort +
+        ' < ' +
+        destServerSqlControllerPath
       )
     }
 
