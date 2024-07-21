@@ -773,15 +773,15 @@ export const createFiles = (controller: string, action: string) => {
 
   shell.exec(
     'mysql -u' +
-    mysqlUser +
-    ' -p' +
-    mysqlPassword +
-    ' -h' +
-    mysqlHost +
-    ' -P' +
-    mysqlPort +
-    ' < ' +
-    destServerSqlControllerPath
+      mysqlUser +
+      ' -p' +
+      mysqlPassword +
+      ' -h' +
+      mysqlHost +
+      ' -P' +
+      mysqlPort +
+      ' < ' +
+      destServerSqlControllerPath
   )
 
   setTimeout(() => {
@@ -840,15 +840,15 @@ export const deleteFiles = (controller: string, action: string, deleteDBFlag: bo
 
       shell.exec(
         'mysql -u' +
-        mysqlUser +
-        ' -p' +
-        mysqlPassword +
-        ' -h' +
-        mysqlHost +
-        ' -P' +
-        mysqlPort +
-        ' < ' +
-        destServerSqlControllerPath
+          mysqlUser +
+          ' -p' +
+          mysqlPassword +
+          ' -h' +
+          mysqlHost +
+          ' -P' +
+          mysqlPort +
+          ' < ' +
+          destServerSqlControllerPath
       )
     }
 
