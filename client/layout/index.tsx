@@ -6,7 +6,6 @@ import _ from 'lodash'
 import menuConfig from '../utils/menu'
 import { logout } from '../utils/sso'
 import getConfig from 'next/config'
-import { ItemType, SubMenuType } from 'antd/lib/menu/hooks/useItems'
 
 const { Option } = Select
 const { SubMenu } = Menu
@@ -34,7 +33,7 @@ const getLocationKey = () => {
         const locationIndex = locationStr.indexOf('/')
         locationStr = locationStr.substring(locationIndex)
 
-        if (prefix && locationStr.indexOf(prefix) !== -1) { 
+        if (prefix && locationStr.indexOf(prefix) !== -1) {
           locationStr = locationStr.split(prefix)[1]
         }
 
@@ -75,7 +74,7 @@ const getLocationKey = () => {
 const routerPush = (router: any, url: string) => {
   // console.log('routerPush', url)
   if (router && url) {
-    if (prefix && url.indexOf(prefix) === -1) { 
+    if (prefix && url.indexOf(prefix) === -1) {
       url = prefix + url
     }
     router.push(url)
@@ -95,14 +94,14 @@ const LayoutComponent = ({ user, children }) => {
     setSliderMenuKey(slideMenu)
   }, [])
 
-  const menuItems:any = []
-  const menuItemsVertical:any = []
+  const menuItems: any = []
+  const menuItemsVertical: any = []
 
   _.each(menuConfig, (item, index) => {
     const { key, text, url, icon, subMenus } = item
 
     if (key) {
-      const menuObj:ItemType = {
+      const menuObj: ItemType = {
         label: text,
         key,
         onClick: () => {
@@ -121,15 +120,15 @@ const LayoutComponent = ({ user, children }) => {
     }
 
     if (subMenus) {
-      const subMenusChildren:any = []
+      const subMenusChildren: any = []
 
       _.each(subMenus, (subItem, subIndex) => {
         const { key: subKey, text: subText, url: subUrl } = subItem
 
-        const subMenusChildrenObj:ItemType = {
+        const subMenusChildrenObj = {
           key: 'slider_' + subKey,
           label: subText,
-          onClick: ()=>{
+          onClick: () => {
             routerPush(router, subUrl)
 
             const subKeyArr = subKey.split('_')
@@ -145,7 +144,7 @@ const LayoutComponent = ({ user, children }) => {
         subMenusChildren.push(subMenusChildrenObj)
       })
 
-      const subMenuObjVertical:SubMenuType = {
+      const subMenuObjVertical = {
         key: 'slider_' + key,
         icon,
         label: text,
@@ -159,7 +158,7 @@ const LayoutComponent = ({ user, children }) => {
       menuItemsVertical.push(subMenuObjVertical)
     } else {
       if (key) {
-        const menuObjVertical:ItemType = {
+        const menuObjVertical: ItemType = {
           label: text,
           icon,
           key: 'slider_' + key + '_0',
@@ -209,7 +208,7 @@ const LayoutComponent = ({ user, children }) => {
                 if (subMenus) {
                   // console.log('subMenus', subMenus)
 
-                  let subContent:any = []
+                  let subContent: any = []
                   _.each(subMenus, (subItem, subIndex) => {
                     const { key: subKey, text: subText } = subItem
                     // console.log('subKey', subKey, key, topMenuKey, sliderMenuKey)
