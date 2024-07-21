@@ -5,6 +5,8 @@
 - 项目配置见 project.config.js
 - Next 框架配置见 next.config.js
 - [ERISHEN](https://www.erishen.cn/)
+- [Demo](https://nsgm.erishen.cn:8443/)
+  
 ## 命令
 - nsgm init    初始化项目
 - nsgm upgrade 升级项目基础文件
