@@ -520,6 +520,9 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
       shell.exec('cd ' + dictionary + ' && npm install --save-dev @types/node@20.14.11 --legacy-peer-deps')
       shell.exec('cd ' + dictionary + ' && npm install --save-dev @types/react@18.3.3 --legacy-peer-deps')
       shell.exec('cd ' + dictionary + ' && npm install --save-dev @types/lodash@4.17.7 --legacy-peer-deps')
+      shell.exec(
+        'cd ' + dictionary + ' && npm install --save-dev babel-plugin-styled-components@2.1.4 --legacy-peer-deps'
+      )
     } else {
       shell.sed('-i', eval('/nsgm-cli-project/'), path.basename(destFolder) + '-project', destPackagePath)
       shell.sed('-i', eval('/NSGM-CLI/'), path.basename(destFolder), destPublicHealthCheckPath)
@@ -528,6 +531,7 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
       shell.exec('npm install --save-dev @types/node@20.14.11 --legacy-peer-deps')
       shell.exec('npm install --save-dev @types/react@18.3.3 --legacy-peer-deps')
       shell.exec('npm install --save-dev @types/lodash@4.17.7 --legacy-peer-deps')
+      shell.exec('npm install --save-dev babel-plugin-styled-components@2.1.4 --legacy-peer-deps')
     }
   }
 
