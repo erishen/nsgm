@@ -92,7 +92,7 @@ const handleReplace = ({ regex, replacement, paths }: any) => {
 }
 
 const replaceInFileAll = async (array: any, index = 0, callback: any) => {
-  const { replaceInFile } = await import('replace-in-file');
+  const { replaceInFile } = await import('replace-in-file')
 
   if (replaceInFileFlag) {
     console.log('replaceInFileAll', index)
@@ -100,14 +100,16 @@ const replaceInFileAll = async (array: any, index = 0, callback: any) => {
     if (index < arrayLen) {
       const item = array[index]
 
-      replaceInFile(item).then((changedFiles) => {
-        console.log('Modified files:', changedFiles)
-        replaceInFileAll(array, ++index, callback)
-      }).catch((error) => {
-        if (error) {
-          console.error('Error occurred:', error)
-        }
-      })
+      replaceInFile(item)
+        .then((changedFiles) => {
+          console.log('Modified files:', changedFiles)
+          replaceInFileAll(array, ++index, callback)
+        })
+        .catch((error) => {
+          if (error) {
+            console.error('Error occurred:', error)
+          }
+        })
 
       // replaceInFile(item, (error, changedFiles) => {
       //   if (error) {
@@ -768,15 +770,15 @@ export const createFiles = (controller: string, action: string) => {
 
   shell.exec(
     'mysql -u' +
-    mysqlUser +
-    ' -p' +
-    mysqlPassword +
-    ' -h' +
-    mysqlHost +
-    ' -P' +
-    mysqlPort +
-    ' < ' +
-    destServerSqlControllerPath
+      mysqlUser +
+      ' -p' +
+      mysqlPassword +
+      ' -h' +
+      mysqlHost +
+      ' -P' +
+      mysqlPort +
+      ' < ' +
+      destServerSqlControllerPath
   )
 
   setTimeout(() => {
@@ -835,15 +837,15 @@ export const deleteFiles = (controller: string, action: string, deleteDBFlag: bo
 
       shell.exec(
         'mysql -u' +
-        mysqlUser +
-        ' -p' +
-        mysqlPassword +
-        ' -h' +
-        mysqlHost +
-        ' -P' +
-        mysqlPort +
-        ' < ' +
-        destServerSqlControllerPath
+          mysqlUser +
+          ' -p' +
+          mysqlPassword +
+          ' -h' +
+          mysqlHost +
+          ' -P' +
+          mysqlPort +
+          ' < ' +
+          destServerSqlControllerPath
       )
     }
 
