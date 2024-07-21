@@ -517,18 +517,18 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
       shell.sed('-i', eval('/nsgm-cli-project/'), dictionary + '-project', destPackagePath)
       shell.sed('-i', eval('/NSGM-CLI/'), dictionary, destPublicHealthCheckPath)
 
-      shell.exec('cd ' + dictionary + ' && npm install --save nsgm-cli')
-      shell.exec('cd ' + dictionary + ' && npm install --save-dev @types/node')
-      shell.exec('cd ' + dictionary + ' && npm install --save-dev @types/react')
-      shell.exec('cd ' + dictionary + ' && npm install --save-dev @types/lodash')
+      shell.exec('cd ' + dictionary + ' && npm install --save nsgm-cli --legacy-peer-deps')
+      shell.exec('cd ' + dictionary + ' && npm install --save-dev @types/node@20.14.11 --legacy-peer-deps')
+      shell.exec('cd ' + dictionary + ' && npm install --save-dev @types/react@18.3.3 --legacy-peer-deps')
+      shell.exec('cd ' + dictionary + ' && npm install --save-dev @types/lodash@4.17.7 --legacy-peer-deps')
     } else {
       shell.sed('-i', eval('/nsgm-cli-project/'), path.basename(destFolder) + '-project', destPackagePath)
       shell.sed('-i', eval('/NSGM-CLI/'), path.basename(destFolder), destPublicHealthCheckPath)
 
-      shell.exec('npm install --save nsgm-cli')
-      shell.exec('npm install --save-dev @types/node')
-      shell.exec('npm install --save-dev @types/react')
-      shell.exec('npm install --save-dev @types/lodash')
+      shell.exec('npm install --save nsgm-cli --legacy-peer-deps')
+      shell.exec('npm install --save-dev @types/node@20.14.11 --legacy-peer-deps')
+      shell.exec('npm install --save-dev @types/react@18.3.3 --legacy-peer-deps')
+      shell.exec('npm install --save-dev @types/lodash@4.17.7 --legacy-peer-deps')
     }
   }
 

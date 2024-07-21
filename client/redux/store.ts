@@ -5,19 +5,19 @@ import thunkMiddleware from 'redux-thunk'
 import reducers from './reducers'
 import _ from 'lodash'
 
-let store:any
+let store: any
 
 const reducersKeysLen = _.keys(reducers).length
 
-let combineReducer:any = function(){}
+let combineReducer: any = function () { }
 
-if(reducersKeysLen > 0){
+if (reducersKeysLen > 0) {
   combineReducer = combineReducers({ ...reducers })
 }
 
 export type RootState = ReturnType<typeof combineReducer>
 
-function initStore(initialState:any) {
+function initStore(initialState: any) {
   return configureStore({
     reducer: combineReducer,
     preloadedState: initialState,
@@ -26,7 +26,7 @@ function initStore(initialState:any) {
   })
 }
 
-export const initializeStore = (preloadedState:any) => {
+export const initializeStore = (preloadedState: any) => {
   let _store = store ?? initStore(preloadedState)
 
   if (preloadedState && store) {
@@ -44,7 +44,7 @@ export const initializeStore = (preloadedState:any) => {
   return _store
 }
 
-export function useStore(initialState:any) {
+export function useStore(initialState: any) {
   const store = useMemo(() => initializeStore(initialState), [initialState])
   return store
 }

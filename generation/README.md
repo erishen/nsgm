@@ -14,7 +14,3 @@
 - dictionary: 在 export/init 的时候使用, 默认 webapp, 譬如: npm run init|export dictionary=webapp 或者 npm run init|export webapp
 - controller: 在 create/delete 的时候使用， 必须有。譬如： npm run create|delete math
 - action:     在 create/delete 的时候使用， 默认 manage, 跟在 controller 后面， 譬如 npm run create|delete math test
-
-
-## 发布
-- npm version patch

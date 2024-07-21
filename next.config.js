@@ -63,6 +63,9 @@ module.exports = (phase, defaultConfig, options) => {
       phase,
       isExport: (phase === PHASE_EXPORT)
     },
+    compiler: {
+      styledComponents: true
+    },
     generateBuildId: async () => {
       return 'nsgm-cli-' + version
     },
