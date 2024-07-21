@@ -145,7 +145,7 @@ switch (command) {
     startExpress({ dev: false }, null)
     break
   case 'build':
-    exec('next ' + command, {}, (err, stdout, stderr) => {
+    exec('next build', {}, (err, stdout, stderr) => {
       if (err) {
         console.log(err)
         return

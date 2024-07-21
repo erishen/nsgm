@@ -8,6 +8,7 @@ const { join } = require('path')
 const copyFile = promisify(fs.copyFile)
 const SimpleProgressPlugin = require('webpack-simple-progress-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
+const webpack = require('webpack')
 
 module.exports = (phase, defaultConfig, options) => {
   let projectConfig = null
@@ -80,6 +81,12 @@ module.exports = (phase, defaultConfig, options) => {
     useFileSystemPublicRoutes: true,
     webpack: (config, { dev, isServer }) => {
       //console.log('dev', dev, isServer)
+
+      config.plugins.push(
+        new webpack.DefinePlugin({
+          'process.env.DEBUG': JSON.stringify('*'),
+        })
+      );
 
       if (!dev) {
         if (!isServer) {
