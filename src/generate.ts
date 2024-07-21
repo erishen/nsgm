@@ -433,7 +433,7 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
     const rootPackagePath = packagePath
     const rootTsconfigPath = '/tsconfig.json'
 
-    const rootBabelrcPath = '/.babelrc'
+    // const rootBabelrcPath = '/.babelrc'
 
     const rootGitignorePathSource = '/gitignore'
     const rootGitignorePath = '/.gitignore'
@@ -453,7 +453,7 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
     const sourceProjectConfigPath = resolve(sourceGenerationPath + rootProjectConfigPath)
     const sourceTsConfigPath = resolve(sourceGenerationPath + rootTsconfigPath)
 
-    const sourceBabelrcPath = path.join(sourceGenerationPath, rootBabelrcPath)
+    // const sourceBabelrcPath = path.join(sourceGenerationPath, rootBabelrcPath)
     const sourceGitignorePath = resolve(sourceGenerationPath + rootGitignorePathSource)
 
     const sourceNextEnvPath = path.join(sourceFolder, rootNextEnvPathSource)
@@ -469,7 +469,7 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
     let destMysqlConfigPath = resolve(destFolder + rootMysqlConfigPath)
     let destProjectConfigPath = resolve(destFolder + rootProjectConfigPath)
     let destTsConfigPath = resolve(destFolder + rootTsconfigPath)
-    let destBabelrcPath = resolve(destFolder + rootBabelrcPath)
+    // let destBabelrcPath = resolve(destFolder + rootBabelrcPath)
     let destGitignorePath = resolve(destFolder + rootGitignorePath)
     let destNextEnvPath = resolve(destFolder + rootNextEnvPath)
     let destReadmePath = resolve(destFolder + rootReadmePath)
@@ -482,7 +482,7 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
       destProjectConfigPath = resolve(newDestFolder + rootProjectConfigPath)
 
       destTsConfigPath = resolve(newDestFolder + rootTsconfigPath)
-      destBabelrcPath = resolve(newDestFolder + rootBabelrcPath)
+      // destBabelrcPath = resolve(newDestFolder + rootBabelrcPath)
       destGitignorePath = resolve(newDestFolder + rootGitignorePath)
       destNextEnvPath = resolve(newDestFolder + rootNextEnvPath)
       destReadmePath = resolve(newDestFolder + rootReadmePath)
@@ -496,7 +496,7 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
     copyFileSync(sourceProjectConfigPath, destProjectConfigPath)
     copyFileSync(sourcePackagePath, destPackagePath)
     copyFileSync(sourceTsConfigPath, destTsConfigPath)
-    copyFileSync(sourceBabelrcPath, destBabelrcPath)
+    // copyFileSync(sourceBabelrcPath, destBabelrcPath)
     copyFileSync(sourceGitignorePath, destGitignorePath)
     copyFileSync(sourceNextEnvPath, destNextEnvPath)
     copyFileSync(sourceReadmePath, destReadmePath)
@@ -517,9 +517,9 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
       shell.sed('-i', eval('/NSGM-CLI/'), dictionary, destPublicHealthCheckPath)
 
       shell.exec('cd ' + dictionary + ' && npm install --save nsgm-cli --legacy-peer-deps')
-      shell.exec('cd ' + dictionary + ' && npm install --save-dev @types/node@20.14.11 --legacy-peer-deps')
-      shell.exec('cd ' + dictionary + ' && npm install --save-dev @types/react@18.3.3 --legacy-peer-deps')
-      shell.exec('cd ' + dictionary + ' && npm install --save-dev @types/lodash@4.17.7 --legacy-peer-deps')
+      shell.exec('cd ' + dictionary + ' && npm install --save-dev @types/node@^20 --legacy-peer-deps')
+      shell.exec('cd ' + dictionary + ' && npm install --save-dev @types/react@^18 --legacy-peer-deps')
+      shell.exec('cd ' + dictionary + ' && npm install --save-dev @types/lodash@^4 --legacy-peer-deps')
       shell.exec(
         'cd ' + dictionary + ' && npm install --save-dev babel-plugin-styled-components@2.1.4 --legacy-peer-deps'
       )
@@ -528,9 +528,9 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
       shell.sed('-i', eval('/NSGM-CLI/'), path.basename(destFolder), destPublicHealthCheckPath)
 
       shell.exec('npm install --save nsgm-cli --legacy-peer-deps')
-      shell.exec('npm install --save-dev @types/node@20.14.11 --legacy-peer-deps')
-      shell.exec('npm install --save-dev @types/react@18.3.3 --legacy-peer-deps')
-      shell.exec('npm install --save-dev @types/lodash@4.17.7 --legacy-peer-deps')
+      shell.exec('npm install --save-dev @types/node@^20 --legacy-peer-deps')
+      shell.exec('npm install --save-dev @types/react@^18 --legacy-peer-deps')
+      shell.exec('npm install --save-dev @types/lodash@^4 --legacy-peer-deps')
       shell.exec('npm install --save-dev babel-plugin-styled-components@2.1.4 --legacy-peer-deps')
     }
   }
@@ -773,15 +773,15 @@ export const createFiles = (controller: string, action: string) => {
 
   shell.exec(
     'mysql -u' +
-      mysqlUser +
-      ' -p' +
-      mysqlPassword +
-      ' -h' +
-      mysqlHost +
-      ' -P' +
-      mysqlPort +
-      ' < ' +
-      destServerSqlControllerPath
+    mysqlUser +
+    ' -p' +
+    mysqlPassword +
+    ' -h' +
+    mysqlHost +
+    ' -P' +
+    mysqlPort +
+    ' < ' +
+    destServerSqlControllerPath
   )
 
   setTimeout(() => {
@@ -840,15 +840,15 @@ export const deleteFiles = (controller: string, action: string, deleteDBFlag: bo
 
       shell.exec(
         'mysql -u' +
-          mysqlUser +
-          ' -p' +
-          mysqlPassword +
-          ' -h' +
-          mysqlHost +
-          ' -P' +
-          mysqlPort +
-          ' < ' +
-          destServerSqlControllerPath
+        mysqlUser +
+        ' -p' +
+        mysqlPassword +
+        ' -h' +
+        mysqlHost +
+        ' -P' +
+        mysqlPort +
+        ' < ' +
+        destServerSqlControllerPath
       )
     }
 

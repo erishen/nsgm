@@ -14,7 +14,7 @@ const nextConfig = getConfig()
 const { publicRuntimeConfig } = nextConfig
 const { env } = publicRuntimeConfig
 
-const renderArr:any = []
+const renderArr: any = []
 
 renderArr.push('# NSGM CLI ' + env)
 renderArr.push('- 技术栈: [Next](https://github.com/vercel/next.js), [Styled-components](https://github.com/styled-components/styled-components), [Graphql](https://graphql.org/), [Mysql](https://www.mysql.com/)')
@@ -40,7 +40,7 @@ renderArr.push('- controller: 在 create/delete 的时候使用， 必须有。�
 renderArr.push('- action:     在 create/delete 的时候使用， 默认 manage, 跟在 controller 后面， 譬如 nsgm create/delete math test')
 
 
-const Page = ({ html }) => { 
+const Page = ({ html }) => {
 
   const createMarkup = () => {
     return {
@@ -57,7 +57,7 @@ const Page = ({ html }) => {
 
 Page.getInitialProps = () => {
   let html = ''
-  _.each(renderArr, (item, index) => { 
+  _.each(renderArr, (item, index) => {
     html += md.render(item)
   })
 

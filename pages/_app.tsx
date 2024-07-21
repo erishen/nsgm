@@ -14,20 +14,20 @@ const theme = {
   }
 }
 
-export default function App({ Component, pageProps }) {
+const App = ({ Component, pageProps }) => {
   const store = useStore(pageProps.initialReduxState)
   const [ssoUser, setSsoUser] = useState(null)
   const [pageLoad, setPageLoad] = useState(false)
 
   useEffect(() => {
-    login((user: any) => { 
-      if (user) { 
+    login((user: any) => {
+      if (user) {
         // console.log('checkLogin_user', user)
         setSsoUser(user)
       }
     })
 
-    setTimeout(() => { 
+    setTimeout(() => {
       setPageLoad(true)
     }, 100)
   }, [])
@@ -40,8 +40,8 @@ export default function App({ Component, pageProps }) {
           {
             pageLoad ?
               ssoUser ? <LayoutComponent user={ssoUser}>
-                  <Component {...pageProps} />
-                </LayoutComponent> : 
+                <Component {...pageProps} />
+              </LayoutComponent> :
                 <Component {...pageProps} /> :
               <Loading>
                 <Spin size="large" />
@@ -52,3 +52,13 @@ export default function App({ Component, pageProps }) {
     </>
   )
 }
+
+App.getInitialProps = async ({ Component, ctx }) => {
+  // console.log('app_ctx', ctx)
+
+  return {
+    pageProps: (await Component?.getInitialProps(ctx)) || {}
+  }
+}
+
+export default App

@@ -12,9 +12,9 @@ const MyDocument = () => {
   return (
     <Html>
       <title>NSGM CLI</title>
-      <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,minimal-ui"/>
+      <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,minimal-ui" />
       <meta name="apple-mobile-web-app-capable" content="yes" />
-      <meta charSet="utf-8"/>
+      <meta charSet="utf-8" />
       <Head />
       <body>
         <Main />
@@ -27,6 +27,8 @@ const MyDocument = () => {
 // MyDocument.renderDocument = Document.renderDocument
 
 MyDocument.getInitialProps = async (ctx: DocumentContext) => {
+  // console.log('document getInitialProps')
+
   const sheet = new ServerStyleSheet()
   const originalRenderPage = ctx.renderPage
 
@@ -36,7 +38,7 @@ MyDocument.getInitialProps = async (ctx: DocumentContext) => {
         enhanceApp: (App) => (props) => sheet.collectStyles(<App {...props} />)
       })
 
-    const initialProps = await Document.getInitialProps(ctx)
+    const initialProps = (await Document?.getInitialProps(ctx)) || {}
 
     return {
       ...initialProps,
