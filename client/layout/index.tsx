@@ -101,7 +101,7 @@ const LayoutComponent = ({ user, children }) => {
     const { key, text, url, icon, subMenus } = item
 
     if (key) {
-      const menuObj: ItemType = {
+      const menuObj = {
         label: text,
         key,
         onClick: () => {
@@ -158,7 +158,7 @@ const LayoutComponent = ({ user, children }) => {
       menuItemsVertical.push(subMenuObjVertical)
     } else {
       if (key) {
-        const menuObjVertical: ItemType = {
+        const menuObjVertical = {
           label: text,
           icon,
           key: 'slider_' + key + '_0',

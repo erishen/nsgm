@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { combineReducers } from 'redux'
-import { configureStore } from '@reduxjs/toolkit'
+import { configureStore, Tuple } from '@reduxjs/toolkit'
 import thunkMiddleware from 'redux-thunk'
 import reducers from './reducers'
 import _ from 'lodash'
@@ -22,7 +22,7 @@ function initStore(initialState: any) {
     reducer: combineReducer,
     preloadedState: initialState,
     devTools: true,
-    middleware: [thunkMiddleware]
+    middleware: [thunkMiddleware] as any
   })
 }
 
