@@ -57,7 +57,7 @@ App.getInitialProps = async ({ Component, ctx }) => {
   // console.log('app_ctx', ctx)
 
   return {
-    pageProps: (await Component?.getInitialProps(ctx)) || {}
+    pageProps: await Component?.getInitialProps(ctx)
   }
 }
 

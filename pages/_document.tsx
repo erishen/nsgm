@@ -38,7 +38,7 @@ MyDocument.getInitialProps = async (ctx: DocumentContext) => {
         enhanceApp: (App) => (props) => sheet.collectStyles(<App {...props} />)
       })
 
-    const initialProps = (await Document?.getInitialProps(ctx)) || {}
+    const initialProps = await Document?.getInitialProps(ctx)
 
     return {
       ...initialProps,
