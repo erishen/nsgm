@@ -1,4 +1,4 @@
-import mysql from 'mysql'
+import mysql from 'mysql2'
 import fs from 'fs'
 import getConfig from 'next/config'
 // import { PHASE_DEVELOPMENT_SERVER } from 'next/constants'

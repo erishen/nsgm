@@ -42,7 +42,7 @@ const Page = ({ template }) => {
     template = templateManage.template
   }
 
-  const { totalCounts, items: templateItems } = template
+  const { totalCounts, items: templateItems } = _.cloneDeep(template)
   console.log('template', template)
 
   _.each(templateItems, (item, index) => {
