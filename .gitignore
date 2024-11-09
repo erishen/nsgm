@@ -7,3 +7,4 @@ lib/tsconfig.build.*
 lib/ignite.log
 .DS_Store
 .vscode
+coverage

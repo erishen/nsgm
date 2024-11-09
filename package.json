@@ -24,7 +24,8 @@
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags",
     "release": "npm run clean && npm run lint && npm run format && npm run tsbuild && npm run build",
-    "test": "jest"
+    "test": "jest",
+    "test:coverage": "jest --coverage"
   },
   "repository": {
     "type": "git",
