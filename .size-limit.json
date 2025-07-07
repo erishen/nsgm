@@ -1,0 +1,7 @@
+{
+  "name": "NSGM CLI Bundle Size",
+  "path": "build/static/**/*.js",
+  "limit": "500 KB",
+  "webpack": false,
+  "gzip": true
+}

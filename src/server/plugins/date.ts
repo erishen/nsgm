@@ -1,4 +1,4 @@
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { Kind } from 'graphql/language'
 import { GraphQLScalarType } from 'graphql'
 
@@ -6,14 +6,14 @@ const customScalarDate = new GraphQLScalarType({
   name: 'Date',
   description: 'Date custom scalar type',
   parseValue: (value: any): number => {
-    const date = moment(value)
+    const date = dayjs(value)
     if (!date.isValid()) {
       throw new Error('Invalid date format')
     }
     return date.valueOf() // Ensure this returns a number
   },
   serialize: (value: any): string => {
-    const date = moment(value)
+    const date = dayjs(value)
     if (!date.isValid()) {
       throw new Error('Invalid date format')
     }
@@ -23,7 +23,7 @@ const customScalarDate = new GraphQLScalarType({
     if (ast.kind === Kind.INT) {
       return parseInt(ast.value, 10)
     } else if (ast.kind === Kind.STRING) {
-      const date = moment(ast.value)
+      const date = dayjs(ast.value)
       if (!date.isValid()) {
         throw new Error('Invalid date format')
       }

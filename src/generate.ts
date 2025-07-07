@@ -49,7 +49,7 @@ const rmdirSync = (dirPath: string) => {
       const list = fs.readdirSync(dirPath)
 
       list.forEach((item) => {
-        const resolverPath = resolve(dirPath + '/' + item)
+        const resolverPath = resolve(`${dirPath}/${item}`)
         const stat = fs.statSync(resolverPath)
         const isDir = stat.isDirectory()
         const isFile = stat.isFile()
@@ -118,16 +118,16 @@ const replaceInFileAll = async (array: any, index = 0, callback: any) => {
       //   replaceInFileAll(array, ++index, callback)
       // })
     } else {
-      return callback && callback()
+      return callback?.()
     }
   } else {
-    return callback && callback()
+    return callback?.()
   }
 }
 
 const sourceFolder = __dirname
 const destFolder = process.cwd()
-const isLocal = sourceFolder === resolve(destFolder + '/lib')
+const isLocal = sourceFolder === resolve(`${destFolder}/lib`)
 
 const generationPath = '../generation'
 const clientPathSource = '../client'
@@ -201,7 +201,7 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
   let newDestFolder = ''
 
   if (dictionary !== '') {
-    newDestFolder = resolve(destFolder + '/' + dictionary)
+    newDestFolder = resolve(`${destFolder}/${dictionary}`)
     mkdirSync(newDestFolder)
   }
 
@@ -438,6 +438,9 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
     const rootGitignorePathSource = '/gitignore'
     const rootGitignorePath = '/.gitignore'
 
+    const rootEslintrcPathSource = '/eslintrc.js'
+    const rootEslintrcPath = '/.eslintrc.js'
+
     const rootNextEnvPathSource = '../next-env.d.ts'
     const rootNextEnvPath = '/next-env.d.ts'
 
@@ -456,6 +459,8 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
     // const sourceBabelrcPath = path.join(sourceGenerationPath, rootBabelrcPath)
     const sourceGitignorePath = resolve(sourceGenerationPath + rootGitignorePathSource)
 
+    const sourceEslintrcPath = resolve(sourceGenerationPath + rootEslintrcPathSource)
+
     const sourceNextEnvPath = path.join(sourceFolder, rootNextEnvPathSource)
 
     const sourceReadmePath = resolve(sourceGenerationPath + rootReadmePath)
@@ -471,6 +476,7 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
     let destTsConfigPath = resolve(destFolder + rootTsconfigPath)
     // let destBabelrcPath = resolve(destFolder + rootBabelrcPath)
     let destGitignorePath = resolve(destFolder + rootGitignorePath)
+    let destEslintrcPath = resolve(destFolder + rootEslintrcPath)
     let destNextEnvPath = resolve(destFolder + rootNextEnvPath)
     let destReadmePath = resolve(destFolder + rootReadmePath)
     let destAppConfigPath = resolve(destFolder + rootAppConfigPath)
@@ -484,6 +490,7 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
       destTsConfigPath = resolve(newDestFolder + rootTsconfigPath)
       // destBabelrcPath = resolve(newDestFolder + rootBabelrcPath)
       destGitignorePath = resolve(newDestFolder + rootGitignorePath)
+      destEslintrcPath = resolve(newDestFolder + rootEslintrcPath)
       destNextEnvPath = resolve(newDestFolder + rootNextEnvPath)
       destReadmePath = resolve(newDestFolder + rootReadmePath)
       destAppConfigPath = resolve(newDestFolder + rootAppConfigPath)
@@ -498,6 +505,7 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
     copyFileSync(sourceTsConfigPath, destTsConfigPath)
     // copyFileSync(sourceBabelrcPath, destBabelrcPath)
     copyFileSync(sourceGitignorePath, destGitignorePath)
+    copyFileSync(sourceEslintrcPath, destEslintrcPath)
     copyFileSync(sourceNextEnvPath, destNextEnvPath)
     copyFileSync(sourceReadmePath, destReadmePath)
     copyFileSync(sourceAppConfigPath, destAppConfigPath)
@@ -513,17 +521,17 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
 
   if (!isLocal && !upgradeFlag) {
     if (dictionary !== '') {
-      shell.sed('-i', eval('/nsgm-cli-project/'), dictionary + '-project', destPackagePath)
+      shell.sed('-i', eval('/nsgm-cli-project/'), `${dictionary}-project`, destPackagePath)
       shell.sed('-i', eval('/NSGM-CLI/'), dictionary, destPublicHealthCheckPath)
 
-      shell.exec('cd ' + dictionary + ' && npm install --save nsgm-cli --legacy-peer-deps')
+      shell.exec(`cd ${dictionary} && npm install --save nsgm-cli --legacy-peer-deps`)
       shell.exec(
-        'cd ' +
-          dictionary +
-          ' && npm install --save-dev @types/node@^20 @types/react@^18 @types/lodash@^4 typescript@^5 --legacy-peer-deps'
+        `cd ${
+          dictionary
+        } && npm install --save-dev @types/node@^20 @types/react@^18 @types/lodash@^4 typescript@^5 --legacy-peer-deps`
       )
     } else {
-      shell.sed('-i', eval('/nsgm-cli-project/'), path.basename(destFolder) + '-project', destPackagePath)
+      shell.sed('-i', eval('/nsgm-cli-project/'), `${path.basename(destFolder)}-project`, destPackagePath)
       shell.sed('-i', eval('/NSGM-CLI/'), path.basename(destFolder), destPublicHealthCheckPath)
 
       shell.exec('npm install --save nsgm-cli --legacy-peer-deps')
@@ -545,9 +553,9 @@ export const createFiles = (controller: string, action: string) => {
   mkdirSync(destPagesPath)
 
   // pages
-  const sourcePagesActionPath = resolve(sourcePagesPath + '/template/manage.tsx')
-  const destPagesControllerPath = resolve(destPagesPath + '/' + controller)
-  const destPagesActionPath = resolve(destPagesControllerPath + '/' + action + '.tsx')
+  const sourcePagesActionPath = resolve(`${sourcePagesPath}/template/manage.tsx`)
+  const destPagesControllerPath = resolve(`${destPagesPath}/${controller}`)
+  const destPagesActionPath = resolve(`${destPagesControllerPath}/${action}.tsx`)
 
   mkdirSync(destPagesControllerPath)
 
@@ -556,19 +564,19 @@ export const createFiles = (controller: string, action: string) => {
   console.log('pages finished')
 
   // client redux
-  const destClientReduxControllerPath = resolve(destClientReduxPath + '/' + controller)
-  const destClientReduxControllerActionPath = resolve(destClientReduxControllerPath + '/' + action)
+  const destClientReduxControllerPath = resolve(`${destClientReduxPath}/${controller}`)
+  const destClientReduxControllerActionPath = resolve(`${destClientReduxControllerPath}/${action}`)
 
   mkdirSync(destClientReduxPath)
   mkdirSync(destClientReduxControllerPath)
   mkdirSync(destClientReduxControllerActionPath)
 
-  const sourceClientReduxActionsPath = resolve(sourceClientPath + '/redux/template/manage/actions.ts')
-  const sourceClientReduxReducersPath = resolve(sourceClientPath + '/redux/template/manage/reducers.ts')
-  const sourceClientReduxTypesPath = resolve(sourceClientPath + '/redux/template/manage/types.ts')
-  const destClientReduxActionsPath = resolve(destClientReduxControllerActionPath + '/actions.ts')
-  const destClientReduxReducersPath = resolve(destClientReduxControllerActionPath + '/reducers.ts')
-  const destClientReduxTypesPath = resolve(destClientReduxControllerActionPath + '/types.ts')
+  const sourceClientReduxActionsPath = resolve(`${sourceClientPath}/redux/template/manage/actions.ts`)
+  const sourceClientReduxReducersPath = resolve(`${sourceClientPath}/redux/template/manage/reducers.ts`)
+  const sourceClientReduxTypesPath = resolve(`${sourceClientPath}/redux/template/manage/types.ts`)
+  const destClientReduxActionsPath = resolve(`${destClientReduxControllerActionPath}/actions.ts`)
+  const destClientReduxReducersPath = resolve(`${destClientReduxControllerActionPath}/reducers.ts`)
+  const destClientReduxTypesPath = resolve(`${destClientReduxControllerActionPath}/types.ts`)
 
   copyFileSync(sourceClientReduxActionsPath, destClientReduxActionsPath)
 
@@ -579,9 +587,9 @@ export const createFiles = (controller: string, action: string) => {
   console.log('client redux finished')
 
   // client service
-  const sourceClientActionPath = resolve(sourceClientPath + '/service/template/manage.ts')
-  const destClientServiceControllerPath = resolve(destClientServicePath + '/' + controller)
-  const destClientActionPath = resolve(destClientServiceControllerPath + '/' + action + '.ts')
+  const sourceClientActionPath = resolve(`${sourceClientPath}/service/template/manage.ts`)
+  const destClientServiceControllerPath = resolve(`${destClientServicePath}/${controller}`)
+  const destClientActionPath = resolve(`${destClientServiceControllerPath}/${action}.ts`)
 
   mkdirSync(destClientServicePath)
   mkdirSync(destClientServiceControllerPath)
@@ -591,28 +599,28 @@ export const createFiles = (controller: string, action: string) => {
   console.log('client service finished')
 
   // client styled
-  const sourceClientStyledActionPath = resolve(sourceClientPath + '/styled/template/manage.ts')
-  const destClientStyledControllerPath = resolve(destClientStyledPath + '/' + controller)
+  const sourceClientStyledActionPath = resolve(`${sourceClientPath}/styled/template/manage.ts`)
+  const destClientStyledControllerPath = resolve(`${destClientStyledPath}/${controller}`)
 
   mkdirSync(destClientStyledPath)
   mkdirSync(destClientStyledControllerPath)
 
-  const destClientStyledActionPath = resolve(destClientStyledControllerPath + '/' + action + '.ts')
+  const destClientStyledActionPath = resolve(`${destClientStyledControllerPath}/${action}.ts`)
 
   copyFileSync(sourceClientStyledActionPath, destClientStyledActionPath)
 
   console.log('client styled finished')
 
   // server modules
-  const sourceServerModulesResolverPath = resolve(sourceServerPath + '/modules/template/resolver.js')
-  const sourceServerModulesSchemaPath = resolve(sourceServerPath + '/modules/template/schema.js')
-  const destServerModulesControllerPath = resolve(destServerModulesPath + '/' + controller)
+  const sourceServerModulesResolverPath = resolve(`${sourceServerPath}/modules/template/resolver.js`)
+  const sourceServerModulesSchemaPath = resolve(`${sourceServerPath}/modules/template/schema.js`)
+  const destServerModulesControllerPath = resolve(`${destServerModulesPath}/${controller}`)
 
   mkdirSync(destServerModulesPath)
   mkdirSync(destServerModulesControllerPath)
 
-  const destServerModulesResolverPath = resolve(destServerModulesControllerPath + '/resolver.js')
-  const destServerModulesSchemaPath = resolve(destServerModulesControllerPath + '/schema.js')
+  const destServerModulesResolverPath = resolve(`${destServerModulesControllerPath}/resolver.js`)
+  const destServerModulesSchemaPath = resolve(`${destServerModulesControllerPath}/schema.js`)
 
   copyFileSync(sourceServerModulesResolverPath, destServerModulesResolverPath)
   copyFileSync(sourceServerModulesSchemaPath, destServerModulesSchemaPath)
@@ -620,22 +628,22 @@ export const createFiles = (controller: string, action: string) => {
   console.log('server modules finished')
 
   // server apis
-  const sourceServerApisControllerPath = resolve(sourceServerPath + '/apis/template.js')
+  const sourceServerApisControllerPath = resolve(`${sourceServerPath}/apis/template.js`)
 
   mkdirSync(destServerApisPath)
 
-  const destServerApisControllerPath = resolve(destServerApisPath + '/' + controller + '.js')
+  const destServerApisControllerPath = resolve(`${destServerApisPath}/${controller}.js`)
 
   copyFileSync(sourceServerApisControllerPath, destServerApisControllerPath)
 
   console.log('server apis finished')
 
   // server sql
-  const sourceServerSqlControllerPath = resolve(sourceServerPath + '/sql/template.sql')
+  const sourceServerSqlControllerPath = resolve(`${sourceServerPath}/sql/template.sql`)
 
   mkdirSync(destServerSqlPath)
 
-  const destServerSqlControllerPath = resolve(destServerSqlPath + '/' + controller + '.sql')
+  const destServerSqlControllerPath = resolve(`${destServerSqlPath}/${controller}.sql`)
 
   copyFileSync(sourceServerSqlControllerPath, destServerSqlControllerPath)
 
@@ -692,64 +700,33 @@ export const createFiles = (controller: string, action: string) => {
   const optionsArr = [
     {
       from: /\n\s*\n/,
-      to:
-        '\nimport { ' +
-        controller +
-        firstUpperCase(action) +
-        "Reducer } from './" +
-        controller +
-        '/' +
-        action +
-        "/reducers'\n\n",
+      to: `\nimport { ${controller}${firstUpperCase(action)}Reducer } from './${controller}/${action}/reducers'\n\n`,
       files: [destClientReduxReducersAllPath]
     },
     {
       from: /Reducer,\s*\n/,
-      to:
-        'Reducer,\n  ' +
-        controller +
-        firstUpperCase(action) +
-        ': ' +
-        controller +
-        firstUpperCase(action) +
-        'Reducer,\n',
+      to: `Reducer,\n  ${controller}${firstUpperCase(action)}: ${controller}${firstUpperCase(action)}Reducer,\n`,
       files: [destClientReduxReducersAllPath]
     },
     {
       from: /'(.\/apis\/template.*?)'\)\s*\n/,
-      to: "'./apis/template')\nconst " + controller + " = require('./apis/" + controller + "')\n",
+      to: `'./apis/template')\nconst ${controller} = require('./apis/${controller}')\n`,
       files: [destServerRestPath]
     },
     {
       from: /template\)\s*\n/,
-      to: "template)\nrouter.use('/" + controller + "', " + controller + ')\n',
+      to: `template)\nrouter.use('/${controller}', ${controller})\n`,
       files: [destServerRestPath]
     },
     {
       from: /null\s*\n/,
       to:
-        'null\n  },\n  {\n    // ' +
-        controller +
-        '_' +
-        action +
-        "_start\n    key: (++key).toString(),\n    text: '" +
-        controller +
-        "',\n    url: '/" +
-        controller +
-        '/' +
-        action +
-        "',\n    icon: <SolutionOutlined rev={undefined} />,\n    " +
-        "subMenus: [\n      {\n        key: key + '_1',\n        text: '" +
-        action +
-        "',\n        url: '/" +
-        controller +
-        '/' +
-        action +
-        "'\n      }\n    ]\n    // " +
-        controller +
-        '_' +
-        action +
-        '_end\n',
+        `null\n  },\n  {\n    // ${controller}_${action}_start\n    key: (++key).toString(),\n    text: '${
+          controller
+        }',\n    url: '/${controller}/${action}',\n    icon: <SolutionOutlined rev={undefined} />,\n    ` +
+        `subMenus: [\n      {\n        key: key + '_1',\n        text: '${action}',\n        url: '/${controller}/${
+          action
+        }'\n      }\n    ]\n    // ${controller}_${action}_end\n`,
       files: [destClientUtilsMenuPath]
     }
   ]
@@ -762,26 +739,15 @@ export const createFiles = (controller: string, action: string) => {
     })
   }
 
-  shell.sed('-i', eval('/.*' + controller + firstUpperCase(action) + 'Reducer.*/'), '', destClientReduxReducersAllPath)
+  shell.sed('-i', eval(`/.*${controller}${firstUpperCase(action)}Reducer.*/`), '', destClientReduxReducersAllPath)
 
-  shell.sed('-i', eval('/.*' + controller + '.*/'), '', destServerRestPath)
+  shell.sed('-i', eval(`/.*${controller}.*/`), '', destServerRestPath)
 
   shell.sed('-i', eval('/template/'), controller, destServerSqlControllerPath)
 
   shell.sed('-i', eval('/crm_demo/'), mysqlDatabase, destServerSqlControllerPath)
 
-  shell.exec(
-    'mysql -u' +
-      mysqlUser +
-      ' -p' +
-      mysqlPassword +
-      ' -h' +
-      mysqlHost +
-      ' -P' +
-      mysqlPort +
-      ' < ' +
-      destServerSqlControllerPath
-  )
+  shell.exec(`mysql -u${mysqlUser} -p${mysqlPassword} -h${mysqlHost} -P${mysqlPort} < ${destServerSqlControllerPath}`)
 
   setTimeout(() => {
     replaceInFileAll(optionsArr, 0, () => {
@@ -790,29 +756,29 @@ export const createFiles = (controller: string, action: string) => {
   }, 1000)
 }
 
-export const deleteFiles = (controller: string, action: string, deleteDBFlag: boolean = false) => {
+export const deleteFiles = (controller: string, action: string, deleteDBFlag = false) => {
   console.log('deleteFiles', sourceFolder, destFolder, isLocal, controller, action, deleteDBFlag)
 
   // pages
-  const destPagesControllerPath = resolve(destPagesPath + '/' + controller)
+  const destPagesControllerPath = resolve(`${destPagesPath}/${controller}`)
 
   // client redux
-  const destClientReduxControllerPath = resolve(destClientReduxPath + '/' + controller)
+  const destClientReduxControllerPath = resolve(`${destClientReduxPath}/${controller}`)
 
   // client service
-  const destClientServiceControllerPath = resolve(destClientServicePath + '/' + controller)
+  const destClientServiceControllerPath = resolve(`${destClientServicePath}/${controller}`)
 
   // client styled
-  const destClientStyledControllerPath = resolve(destClientStyledPath + '/' + controller)
+  const destClientStyledControllerPath = resolve(`${destClientStyledPath}/${controller}`)
 
   // server modules
-  const destServerModulesControllerPath = resolve(destServerModulesPath + '/' + controller)
+  const destServerModulesControllerPath = resolve(`${destServerModulesPath}/${controller}`)
 
   // server apis
-  const destServerApisControllerPath = resolve(destServerApisPath + '/' + controller + '.js')
+  const destServerApisControllerPath = resolve(`${destServerApisPath}/${controller}.js`)
 
   // server sql
-  const destServerSqlControllerPath = resolve(destServerSqlPath + '/' + controller + '.sql')
+  const destServerSqlControllerPath = resolve(`${destServerSqlPath}/${controller}.sql`)
 
   if (action === 'all') {
     rmdirSync(destPagesControllerPath)
@@ -822,32 +788,23 @@ export const deleteFiles = (controller: string, action: string, deleteDBFlag: bo
     rmdirSync(destServerModulesControllerPath)
     rmFileSync(destServerApisControllerPath)
 
-    shell.sed('-i', eval('/.*' + controller + '.*' + 'Reducer.*/'), '', destClientReduxReducersAllPath)
-    shell.sed('-i', eval('/.*' + controller + '.*/'), '', destServerRestPath)
+    shell.sed('-i', eval(`/.*${controller}.*` + `Reducer.*/`), '', destClientReduxReducersAllPath)
+    shell.sed('-i', eval(`/.*${controller}.*/`), '', destServerRestPath)
 
-    shell.sed('-i', eval('/.*' + controller + '_.*_start.*/'), '    /*', destClientUtilsMenuPath)
-    shell.sed('-i', eval('/.*' + controller + '_.*_end.*/'), '    */', destClientUtilsMenuPath)
+    shell.sed('-i', eval(`/.*${controller}_.*_start.*/`), '    /*', destClientUtilsMenuPath)
+    shell.sed('-i', eval(`/.*${controller}_.*_end.*/`), '    */', destClientUtilsMenuPath)
 
     if (deleteDBFlag) {
       shell.sed(
         '-i',
-        eval('/' + mysqlDatabase + ';/'),
-        mysqlDatabase + ';\nDROP TABLE `' + controller + '`;\n/*',
+        eval(`/${mysqlDatabase};/`),
+        `${mysqlDatabase};\nDROP TABLE \`${controller}\`;\n/*`,
         destServerSqlControllerPath
       )
       shell.sed('-i', eval('/utf8mb4;/'), 'utf8mb4;\n*/', destServerSqlControllerPath)
 
       shell.exec(
-        'mysql -u' +
-          mysqlUser +
-          ' -p' +
-          mysqlPassword +
-          ' -h' +
-          mysqlHost +
-          ' -P' +
-          mysqlPort +
-          ' < ' +
-          destServerSqlControllerPath
+        `mysql -u${mysqlUser} -p${mysqlPassword} -h${mysqlHost} -P${mysqlPort} < ${destServerSqlControllerPath}`
       )
     }
 
@@ -883,28 +840,23 @@ export const deleteFiles = (controller: string, action: string, deleteDBFlag: bo
     }, 1000)
   } else {
     // pages
-    const destPagesActionPath = resolve(destPagesControllerPath + '/' + action + '.tsx')
+    const destPagesActionPath = resolve(`${destPagesControllerPath}/${action}.tsx`)
 
     // client redux
-    const destClientReduxControllerActionPath = resolve(destClientReduxControllerPath + '/' + action)
+    const destClientReduxControllerActionPath = resolve(`${destClientReduxControllerPath}/${action}`)
 
     // client service
-    const destClientActionPath = resolve(destClientServiceControllerPath + '/' + action + '.ts')
+    const destClientActionPath = resolve(`${destClientServiceControllerPath}/${action}.ts`)
 
     // client styled
-    const destClientStyledActionPath = resolve(destClientStyledControllerPath + '/' + action + '.ts')
+    const destClientStyledActionPath = resolve(`${destClientStyledControllerPath}/${action}.ts`)
 
     rmFileSync(destPagesActionPath)
     rmdirSync(destClientReduxControllerActionPath)
     rmFileSync(destClientActionPath)
     rmFileSync(destClientStyledActionPath)
 
-    shell.sed(
-      '-i',
-      eval('/.*' + controller + firstUpperCase(action) + 'Reducer.*/'),
-      '',
-      destClientReduxReducersAllPath
-    )
+    shell.sed('-i', eval(`/.*${controller}${firstUpperCase(action)}Reducer.*/`), '', destClientReduxReducersAllPath)
 
     const optionsArr = [
       {

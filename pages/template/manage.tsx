@@ -6,7 +6,7 @@ import { getTemplate, addTemplate, modTemplate, delTemplate, updateSSRTemplate, 
 import { getTemplateService } from '../../client/service/template/manage'
 import { RootState } from '../../client/redux/store'
 import _ from 'lodash'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import locale from 'antd/lib/locale/zh_CN'
 import { handleXSS, checkModalObj } from '../../client/utils/common'
 import { UploadOutlined } from '@ant-design/icons'
@@ -15,7 +15,7 @@ import { saveAs } from 'file-saver'
 
 const pageSize = 100
 const dateFormat = 'YYYY-MM-DD'
-const currentDate = moment().format(dateFormat)
+const currentDate = dayjs().format(dateFormat)
 console.log('currentDate', currentDate)
 
 const keyTitles = {

@@ -1,5 +1,5 @@
 const express = require('express')
-const moment = require('moment')
+const dayjs = require('dayjs')
 const template = require('./apis/template')
 
 const sso = require('./apis/sso')
@@ -8,7 +8,7 @@ const router = express.Router()
 
 router.use((req, res, next) => {
     const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl
-    console.log(moment().format('YYYY-MM-DD HH:mm:ss') + ' ' + fullUrl)
+    console.log(dayjs().format('YYYY-MM-DD HH:mm:ss') + ' ' + fullUrl)
     next()
 })
 

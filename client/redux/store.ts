@@ -1,15 +1,13 @@
 import { useMemo } from 'react'
 import { combineReducers } from 'redux'
-import { configureStore, Tuple } from '@reduxjs/toolkit'
-import { thunk } from 'redux-thunk'
+import { configureStore, type EnhancedStore } from '@reduxjs/toolkit'
 import reducers from './reducers'
-import _ from 'lodash'
 
-let store: any
+let store: EnhancedStore | undefined
 
-const reducersKeysLen = _.keys(reducers).length
+const reducersKeysLen = Object.keys(reducers).length
 
-let combineReducer: any = function () { }
+let combineReducer: any = () => ({})
 
 if (reducersKeysLen > 0) {
   combineReducer = combineReducers({ ...reducers })
@@ -17,17 +15,21 @@ if (reducersKeysLen > 0) {
 
 export type RootState = ReturnType<typeof combineReducer>
 
-function initStore(initialState: any) {
+function initStore(initialState?: any): EnhancedStore {
   return configureStore({
     reducer: combineReducer,
     preloadedState: initialState,
-    devTools: true,
+    devTools: process.env.NODE_ENV !== 'production',
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(thunk),
+      getDefaultMiddleware({
+        serializableCheck: {
+          ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
+        },
+      }),
   })
 }
 
-export const initializeStore = (preloadedState: any) => {
+export const initializeStore = (preloadedState?: any): EnhancedStore => {
   let _store = store ?? initStore(preloadedState)
 
   if (preloadedState && store) {
@@ -45,7 +47,7 @@ export const initializeStore = (preloadedState: any) => {
   return _store
 }
 
-export function useStore(initialState: any) {
+export function useStore(initialState?: any): EnhancedStore {
   const store = useMemo(() => initializeStore(initialState), [initialState])
   return store
 }

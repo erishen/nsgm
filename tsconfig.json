@@ -1,31 +1,43 @@
 {
   "compilerOptions": {
-    "jsx": "preserve", // npm run build/test 的时候应为 react
-    "target": "es5",
+    "jsx": "preserve",
+    "target": "ES2022",
     "module": "commonjs",
     "declaration": true,
     "outDir": "./lib",
     "strict": true,
     "lib": [
       "dom",
-      "es6"
+      "ES2022"
     ],
     "esModuleInterop": true,
     "allowJs": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": false, // 不生成输出文件 npm run build 的时候应为 false
+    "noEmit": false,
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noImplicitAny": false,
-    "incremental": true
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["client/*"]
+    },
+    // 新增性能优化配置
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
   },
   "include": [
     "src"
   ],
   "exclude": [
     "node_modules",
-    "**/__tests__/*"
+    "**/__tests__/*",
+    ".next",
+    "lib"
   ]
 }

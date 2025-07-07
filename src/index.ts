@@ -1,5 +1,8 @@
 #! /usr/bin/env node
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+// 仅在开发环境中禁用TLS证书验证
+if (process.env.NODE_ENV === 'development') {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+}
 
 import next from 'next'
 import express from 'express'
@@ -24,14 +27,14 @@ const processArgvs = getProcessArgvs(2)
 const { command, dictionary, controller, action } = processArgvs
 // console.log('processArgvs', processArgvs)
 
-const handleServer = (server: any, prefix: any) => {
+const handleServer = (server: express.Express, prefix: string) => {
   // 本项目路径是 NSGM-CLI/server 目录，生成项目路径是 generation/server 目录
-  const serverPath = resolve(curFolder + '/server/')
+  const serverPath = resolve(`${curFolder}/server/`)
   if (fs.existsSync(serverPath)) {
     const list = fs.readdirSync(serverPath)
 
     list.forEach((item) => {
-      const resolverPath = resolve(serverPath + '/' + item)
+      const resolverPath = resolve(`${serverPath}/${item}`)
       const stat = fs.statSync(resolverPath)
       const isFile = stat.isFile()
 
@@ -45,37 +48,29 @@ const handleServer = (server: any, prefix: any) => {
         // console.log('resolverPath', resolverPath, filename)
 
         if (server && filename !== undefined && filename !== '') {
-          server.use('/' + filename, require(resolverPath))
-          server.use(prefix + '/' + filename, require(resolverPath))
+          try {
+            const routeModule = require(resolverPath)
+            // 检查导入的模块是否是有效的Express中间件
+            if (
+              typeof routeModule === 'function' ||
+              (routeModule && typeof routeModule === 'object' && routeModule.router)
+            ) {
+              server.use(`/${filename}`, routeModule)
+              server.use(`${prefix}/${filename}`, routeModule)
+            } else {
+              console.warn(`跳过文件 ${item}: 不是有效的Express路由模块`)
+            }
+          } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error)
+            console.error(`加载路由文件 ${item} 失败:`, errorMessage)
+          }
         }
       }
     })
   }
 }
 
-const handlePrefix = (prefix: string, url: string) => {
-  let newUrl = ''
-
-  if (prefix && url && url.indexOf(prefix) !== -1) {
-    const urlArr = url.split(prefix)
-
-    if (urlArr.length > 0) {
-      newUrl += urlArr[0]
-    }
-
-    if (urlArr.length > 1) {
-      newUrl += urlArr[1]
-    }
-
-    if (newUrl === '') newUrl = '/'
-  } else {
-    newUrl = url
-  }
-
-  return newUrl
-}
-
-export const startExpress = (options: any, callback: any) => {
+export const startExpress = (options: any, callback?: () => void) => {
   // console.info('startExpress', curFolder)
 
   const app = next(options)
@@ -83,10 +78,21 @@ export const startExpress = (options: any, callback: any) => {
 
   app
     .prepare()
-    .then(() => {
+    .then(async () => {
       if (callback) {
         callback()
         return
+      }
+
+      // 初始化数据库连接池
+      try {
+        const dbPoolManager = require(resolve(`${curFolder}/server/utils/db-pool-manager`))
+        await dbPoolManager.initialize()
+        console.log('数据库连接池初始化完成')
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error)
+        console.error('数据库连接池初始化失败:', errorMessage)
+        // 不要因为数据库连接失败就退出，允许应用继续运行
       }
 
       const server = express()
@@ -112,8 +118,8 @@ export const startExpress = (options: any, callback: any) => {
       const { host, port, prefix } = publicRuntimeConfig
 
       if (prefix !== '') {
-        server.use(prefix + '/static', express.static(path.join(__dirname, 'public')))
-        server.use(prefix + '/graphql', localGraphql(command))
+        server.use(`${prefix}/static`, express.static(path.join(__dirname, 'public')))
+        server.use(`${prefix}/graphql`, localGraphql(command))
       }
 
       handleServer(server, prefix)
@@ -127,7 +133,7 @@ export const startExpress = (options: any, callback: any) => {
       })
 
       server.listen(port, () => {
-        console.log('> Ready on http://' + host + ':' + port)
+        console.log(`> Ready on http://${host}:${port}`)
       })
     })
     .catch((ex) => {
@@ -139,13 +145,13 @@ export const startExpress = (options: any, callback: any) => {
 console.log()
 switch (command) {
   case 'dev':
-    startExpress({ dev: true }, null)
+    startExpress({ dev: true }, undefined)
     break
   case 'start':
-    startExpress({ dev: false }, null)
+    startExpress({ dev: false }, undefined)
     break
   case 'build':
-    exec('next build', {}, (err, stdout, stderr) => {
+    exec('next build', {}, (err, stdout) => {
       if (err) {
         console.log(err)
         return
@@ -155,16 +161,16 @@ switch (command) {
     })
     break
   case 'export':
-    let shellCommand = 'next ' + command
+    let shellCommand = `next ${command}`
     // console.log('dictionary', dictionary)
 
     if (dictionary === '') {
       shellCommand += ' -o webapp'
     } else {
-      shellCommand += ' -o ' + dictionary
+      shellCommand += ` -o ${dictionary}`
     }
 
-    exec(shellCommand, {}, (err, stdout, stderr) => {
+    exec(shellCommand, {}, (err, stdout) => {
       if (err) {
         console.log(err)
         return
@@ -204,11 +210,12 @@ switch (command) {
         initFlag = false
       }
 
-      _.each(fileNameArr, (item, index) => {
+      _.each(fileNameArr, (item) => {
         if (item === 'pm2') {
           initFlag = false
           return false
         }
+        return
       })
     }
 
@@ -217,14 +224,12 @@ switch (command) {
       initFiles(dictionary)
     }
     process.exit(0)
-    break
 
   case '-u':
   case 'upgrade':
   case '--upgrade':
     initFiles(dictionary, true)
     process.exit(0)
-    break
 
   case '-c':
   case 'create':
@@ -267,7 +272,7 @@ switch (command) {
   case 'version':
   case '--version':
     const { version } = require('../package.json')
-    console.log('version: ' + version)
+    console.log(`version: ${version}`)
 
     /*
     startExpress({ dev: true, quiet: true, dir: '.' }, () => {
@@ -279,7 +284,6 @@ switch (command) {
     })
     */
     process.exit(0)
-    break
 
   case '-h':
   case 'help':

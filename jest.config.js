@@ -1,20 +1,29 @@
 module.exports = {
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-  moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/client/$1', // 根据项目的 alias 配置调整路径
-    '\\.(css|less|scss|sass)$': 'identity-obj-proxy' // Mock CSS 模块
-  },
   transform: {
-    '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest'
+    '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }]
   },
-  collectCoverage: true, // 启用覆盖率收集
+  testMatch: [
+    '**/__tests__/**/*.(ts|tsx|js)',
+    '**/*.(test|spec).(ts|tsx|js)'
+  ],
+  collectCoverage: true,
   collectCoverageFrom: [
-    'client/**/*.{js,jsx,ts,tsx}', // 指定要包含的文件范围
+    'client/**/*.{js,jsx,ts,tsx}',
     'pages/**/*.{js,jsx,ts,tsx}',
     'server/**/*.{js,jsx,ts,tsx}',
-    'src/**/*.{js,jsx,ts,tsx}'
+    'src/**/*.{js,jsx,ts,tsx}',
+    '!**/*.d.ts',
+    '!**/node_modules/**',
+    '!**/.next/**'
   ],
-  coverageDirectory: 'coverage', // 覆盖率报告生成的目录
-  coverageReporters: ['json', 'lcov', 'text', 'clover'], // 报告格式
-};
+  coverageDirectory: 'coverage',
+  coverageReporters: ['json', 'lcov', 'text', 'clover'],
+  extensionsToTreatAsEsm: ['.ts', '.tsx'],
+  globals: {
+    'ts-jest': {
+      useESM: true
+    }
+  }
+}

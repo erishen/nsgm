@@ -1,7 +1,9 @@
 const { serverDB } = require('../../index')
 
-const { getConnection } = serverDB
+const { getConnection, executeQuery, executePaginatedQuery } = serverDB
 
 module.exports = {
-  getConnection
+  getConnection,        // 兼容旧版本
+  executeQuery,         // 新的查询方法
+  executePaginatedQuery // 新的分页查询方法
 }
