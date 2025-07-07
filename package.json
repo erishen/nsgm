@@ -104,7 +104,8 @@
     "uglify-js": "3.19.0",
     "uuid": "10.0.0",
     "webpack": "5.99.9",
-    "webpack-simple-progress-plugin": "0.0.5"
+    "webpack-simple-progress-plugin": "0.0.5",
+    "critters": "0.0.23"
   },
   "devDependencies": {
     "@babel/core": "7.24.9",
@@ -135,7 +136,6 @@
     "@typescript-eslint/parser": "8.35.1",
     "babel-plugin-react-html-attrs": "3.0.5",
     "babel-plugin-styled-components": "2.1.4",
-    "critters": "0.0.23",
     "cross-env": "7.0.3",
     "eslint": "9.30.0",
     "eslint-config-prettier": "10.1.5",
