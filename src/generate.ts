@@ -127,6 +127,10 @@ const replaceInFileAll = async (array: any, index = 0, callback: any) => {
 
 const sourceFolder = __dirname
 const destFolder = process.cwd()
+
+console.log('sourceFolder', sourceFolder)
+console.log('destFolder', destFolder)
+
 const isLocal = sourceFolder === resolve(`${destFolder}/lib`)
 
 const generationPath = '../generation'
@@ -198,10 +202,14 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
     upgradeFlag = false
   }
 
-  let newDestFolder = ''
+  // 禁止绝对路径，强制所有生成目录都在 cwd 下
+  if (!dictionary || dictionary === '/') {
+    dictionary = '.'
+  }
 
+  let newDestFolder = destFolder
   if (dictionary !== '') {
-    newDestFolder = resolve(`${destFolder}/${dictionary}`)
+    newDestFolder = path.join(destFolder, dictionary)
     mkdirSync(newDestFolder)
   }
 
@@ -727,11 +735,9 @@ export const createFiles = (controller: string, action: string) => {
     {
       from: /null\s*\n/,
       to:
-        `null\n  },\n  {\n    // ${controller}_${action}_start\n    key: (++key).toString(),\n    text: '${
-          controller
+        `null\n  },\n  {\n    // ${controller}_${action}_start\n    key: (++key).toString(),\n    text: '${controller
         }',\n    url: '/${controller}/${action}',\n    icon: <SolutionOutlined rev={undefined} />,\n    ` +
-        `subMenus: [\n      {\n        key: key + '_1',\n        text: '${action}',\n        url: '/${controller}/${
-          action
+        `subMenus: [\n      {\n        key: key + '_1',\n        text: '${action}',\n        url: '/${controller}/${action
         }'\n      }\n    ]\n    // ${controller}_${action}_end\n`,
       files: [destClientUtilsMenuPath]
     }

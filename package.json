@@ -75,11 +75,13 @@
   ],
   "homepage": "https://github.com/erishen/nsgm#readme",
   "dependencies": {
+    "@modelcontextprotocol/sdk": "1.15.1",
     "@reduxjs/toolkit": "2.8.2",
     "antd": "5.26.3",
     "axios": "1.10.0",
     "body-parser": "1.20.2",
     "cors": "2.8.5",
+    "critters": "0.0.23",
     "dayjs": "1.11.13",
     "exceljs": "4.4.0",
     "express": "4.19.2",
@@ -104,8 +106,7 @@
     "uglify-js": "3.19.0",
     "uuid": "10.0.0",
     "webpack": "5.99.9",
-    "webpack-simple-progress-plugin": "0.0.5",
-    "critters": "0.0.23"
+    "webpack-simple-progress-plugin": "0.0.5"
   },
   "devDependencies": {
     "@babel/core": "7.24.9",
