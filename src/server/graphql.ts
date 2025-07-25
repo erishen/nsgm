@@ -1,4 +1,4 @@
-import { graphqlHTTP } from 'express-graphql'
+import { createHandler } from 'graphql-http/lib/use/express'
 import { buildSchema } from 'graphql'
 import fs from 'fs'
 import _ from 'lodash'
@@ -169,36 +169,38 @@ const {
   schemaStr: generatedSchemaStr
 } = generateResult
 
-// 使用生成的 schema 或构建新的 schema
-const schemaStr =
-  generatedSchemaStr ||
-  `
-    ${scalarStrV}
+// 导出 handler 函数，兼容 express 用法
+const handler = (command: string) => {
+  const schemaStr =
+    generatedSchemaStr ||
+    `
+      ${scalarStrV}
 
-    type Query { 
-        ${querySchemesV?.join('\n') || '_: Boolean'} 
-    }
+      type Query { 
+          ${querySchemesV?.join('\n') || '_: Boolean'} 
+      }
 
-    type Mutation { 
-        ${mutationSchemesV?.join('\n') || '_: Boolean'} 
-    }
+      type Mutation { 
+          ${mutationSchemesV?.join('\n') || '_: Boolean'} 
+      }
 
-    type Subscription { 
-        ${subscriptionSchemesV?.join('\n') || '_: Boolean'} 
-    }
+      type Subscription { 
+          ${subscriptionSchemesV?.join('\n') || '_: Boolean'} 
+      }
 
-    ${typeSchemesV?.join('\n') || ''}
-`
+      ${typeSchemesV?.join('\n') || ''}
+    `
 
-export default (command: string) => {
   if (command === 'dev') {
     console.log('schemaStr', schemaStr)
     console.log('resolvers', resolversV)
   }
 
-  return graphqlHTTP({
+  // graphql-http 不再内置 graphiql，需手动集成 playground 或 altair，以下为基础 handler
+  return createHandler({
     schema: buildSchema(schemaStr),
-    rootValue: resolversV,
-    graphiql: true
+    rootValue: resolversV
   })
 }
+
+export default handler

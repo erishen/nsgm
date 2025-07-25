@@ -128,9 +128,6 @@ const replaceInFileAll = async (array: any, index = 0, callback: any) => {
 const sourceFolder = __dirname
 const destFolder = process.cwd()
 
-console.log('sourceFolder', sourceFolder)
-console.log('destFolder', destFolder)
-
 const isLocal = sourceFolder === resolve(`${destFolder}/lib`)
 
 const generationPath = '../generation'

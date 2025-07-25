@@ -4,7 +4,6 @@
     "target": "ES2022",
     "module": "commonjs",
     "declaration": true,
-    "outDir": "./lib",
     "strict": true,
     "lib": [
       "dom",
@@ -33,7 +32,8 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": [
-    "src"
+    "client/**/*",
+    "pages/**/*"
   ],
   "exclude": [
     "node_modules",
