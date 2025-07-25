@@ -16,7 +16,7 @@ router.use('/template', template)
 
 router.use('/sso', sso)
 
-router.get('/*', (req, res) => {
+router.get('*', (req, res) => {
     res.statusCode = 200
     res.json({ name: 'REST' })
 })
