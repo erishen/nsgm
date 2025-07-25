@@ -4,6 +4,8 @@ import { LoginContainer } from '../client/styled/common'
 // import getConfig from 'next/config'
 import React, { useState } from 'react'
 import { handleXSS } from '../client/utils/common'
+import { Input, Button, Form, Typography, message } from 'antd'
+import { UserOutlined, LockOutlined } from '@ant-design/icons'
 
 const md = new MarkdownIt({
   html: true,
@@ -31,11 +33,18 @@ const Page = ({ html }) => {
 
   const doLogin = () => {
     if (typeof window !== "undefined") {
-      let locationHref = window.location.origin + "?ticket=XXX"
-      if (userName !== '') {
-        locationHref += "&name=" + btoa(handleXSS(userName + "," + userPassword))
-        window.location.href = locationHref
+      if (userName === '') {
+        message.error('请输入用户名');
+        return;
       }
+      if (userPassword === '') {
+        message.error('请输入密码');
+        return;
+      }
+
+      let locationHref = window.location.origin + "?ticket=XXX"
+      locationHref += "&name=" + btoa(handleXSS(userName + "," + userPassword))
+      window.location.href = locationHref
     }
   }
 
@@ -50,17 +59,34 @@ const Page = ({ html }) => {
   return (
     <LoginContainer>
       <div dangerouslySetInnerHTML={createMarkup()} />
-      <input type="text" style={{ opacity: 0, position: "absolute", width: 0, height: 0 }}></input>
-      <input type="password" style={{ opacity: 0, position: "absolute", width: 0, height: 0 }}></input>
-      <div className='row'>
-        <input type="text" name="user-name" className='user-input' autoComplete='off' onChange={doChangeName} value={userName}></input>
-      </div>
-      <div className='row'>
-        <input type="password" name="user-password" className='user-input' autoComplete='off' onChange={doChangePassword} value={userPassword}></input>
-      </div>
-      <div className='row right'>
-        <button onClick={doLogin}>login</button>
-      </div>
+      <Typography.Title level={3} style={{ textAlign: 'center', marginBottom: 24 }}>系统登录</Typography.Title>
+      <Form layout="vertical" style={{ width: '100%' }}>
+        <Form.Item>
+          <Input
+            prefix={<UserOutlined style={{ color: 'rgba(0,0,0,.25)' }} />}
+            placeholder="用户名"
+            size="large"
+            value={userName}
+            onChange={doChangeName}
+            autoComplete="off"
+          />
+        </Form.Item>
+        <Form.Item>
+          <Input.Password
+            prefix={<LockOutlined style={{ color: 'rgba(0,0,0,.25)' }} />}
+            placeholder="密码"
+            size="large"
+            value={userPassword}
+            onChange={doChangePassword}
+            autoComplete="off"
+          />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" onClick={doLogin} size="large" block>
+            登录
+          </Button>
+        </Form.Item>
+      </Form>
     </LoginContainer>
   )
 }

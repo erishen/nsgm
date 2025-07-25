@@ -58,7 +58,9 @@ const Page = ({ template }) => {
       key: 'id',
       sorter: (a: any, b: any) => a.id - b.id,
       sortDirections: ['descend', 'ascend'],
-      showSorterTooltip: false
+      showSorterTooltip: false,
+      width: '15%',
+      align: 'center'
     },
     {
       title: keyTitles.name,
@@ -66,23 +68,27 @@ const Page = ({ template }) => {
       key: 'name',
       sorter: (a: any, b: any) => a.name.length - b.name.length,
       sortDirections: ['descend', 'ascend'],
-      showSorterTooltip: false
+      showSorterTooltip: false,
+      width: '60%',
+      ellipsis: true
     },
     {
       title: '操作',
       dataIndex: '',
+      width: '25%',
+      align: 'center',
       render: (_: any, record: any) => {
         return (
-          <Space>
-            <Button onClick={() => {
+          <Space size="small">
+            <Button type="primary" size="small" onClick={() => {
               console.log('record', record)
               updateTemplate(record)
-            }}>修改</Button>
-            <Button onClick={() => {
+            }} style={{ borderRadius: '4px' }}>修改</Button>
+            <Button danger size="small" onClick={() => {
               console.log('record', record)
               const { id } = record
               deleteTemplate(id)
-            }}>删除</Button>
+            }} style={{ borderRadius: '4px' }}>删除</Button>
           </Space>
         )
       }
@@ -236,43 +242,147 @@ const Page = ({ template }) => {
 
   return (
     <Container>
+      <div className="page-title">模板管理</div>
       <ConfigProvider locale={locale}>
         <SearchRow>
-          <Space>
-            <Button type="primary" onClick={createTemplate}>
-              新增
-            </Button>
-            <Input value={searchName} placeholder="" onChange={(e) => setSearchName(e.target.value)} />
-            <Button type="primary" onClick={doSearch}>
-              搜索
-            </Button>
-            <Button type="primary" onClick={exportTemplate}>
-              导出
-            </Button>
-            <Upload {...uploadProps}>
-              <Button icon={<UploadOutlined rev={undefined} />}>导入</Button>
-            </Upload>
-            <Button type="primary" onClick={batchDeleteTemplate}>
-              批量删除
-            </Button>
+          <Space size="middle" wrap>
+            <Space size="small">
+              <Button 
+                type="primary" 
+                onClick={createTemplate} 
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center',
+                  borderRadius: '6px',
+                  boxShadow: '0 2px 0 rgba(0, 0, 0, 0.045)'
+                }}
+              >
+                <i className="fa fa-plus" style={{ marginRight: '5px' }}></i>
+                新增
+              </Button>
+              <Input
+                value={searchName}
+                placeholder="请输入名称搜索"
+                allowClear
+                style={{ 
+                  width: 200, 
+                  borderRadius: '6px',
+                  boxShadow: '0 2px 0 rgba(0, 0, 0, 0.015)'
+                }}
+                onChange={(e) => setSearchName(e.target.value)}
+                onPressEnter={doSearch}
+              />
+              <Button 
+                type="primary" 
+                onClick={doSearch} 
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center',
+                  borderRadius: '6px',
+                  boxShadow: '0 2px 0 rgba(0, 0, 0, 0.045)'
+                }}
+              >
+                <i className="fa fa-search" style={{ marginRight: '5px' }}></i>
+                搜索
+              </Button>
+            </Space>
+            <Space size="small">
+              <Button 
+                onClick={exportTemplate} 
+                icon={<UploadOutlined rev={undefined} rotate={180} />} 
+                style={{ 
+                  backgroundColor: '#f6ffed', 
+                  color: '#52c41a', 
+                  borderColor: '#b7eb8f',
+                  borderRadius: '6px',
+                  boxShadow: '0 2px 0 rgba(0, 0, 0, 0.015)',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                导出
+              </Button>
+              <Upload {...uploadProps}>
+                <Button 
+                  icon={<UploadOutlined rev={undefined} />} 
+                  style={{ 
+                    backgroundColor: '#e6f7ff', 
+                    color: '#1890ff', 
+                    borderColor: '#91d5ff',
+                    borderRadius: '6px',
+                    boxShadow: '0 2px 0 rgba(0, 0, 0, 0.015)',
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  导入
+                </Button>
+              </Upload>
+              <Button 
+                danger 
+                onClick={batchDeleteTemplate} 
+                style={{ 
+                  backgroundColor: '#fff1f0', 
+                  borderColor: '#ffa39e',
+                  borderRadius: '6px',
+                  boxShadow: '0 2px 0 rgba(0, 0, 0, 0.015)',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                批量删除
+              </Button>
+            </Space>
           </Space>
         </SearchRow>
-        <Table rowSelection={{
-          type: 'checkbox',
-          ...rowSelection,
-        }} dataSource={dataSource} columns={columns} pagination={{
-          total: totalCounts,
-          pageSize: pageSize,
-          onChange: (page, pageSize) => {
-            console.log('onChange', page, pageSize)
-            dispatch(searchTemplate(page - 1, pageSize, { name: handleXSS(searchName) }))
-          }
-        }} />
-        <Modal title={(modalId == 0 ? "新增" : "修改") + " template"} open={isModalVisiable} onOk={handleOk} onCancel={handleCancel} okText="确认" cancelText="取消">
+        <Table
+          rowSelection={{
+            type: 'checkbox',
+            ...rowSelection,
+          }}
+          dataSource={dataSource}
+          columns={columns}
+          bordered
+          rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' : 'table-row-dark'}
+          pagination={{
+            total: totalCounts,
+            pageSize: pageSize,
+            showSizeChanger: false,
+            showQuickJumper: true,
+            showTotal: (total) => `共 ${total} 条记录`,
+            onChange: (page, pageSize) => {
+              console.log('onChange', page, pageSize)
+              dispatch(searchTemplate(page - 1, pageSize, { name: handleXSS(searchName) }))
+            },
+            style: { marginTop: '16px', marginBottom: '16px' }
+          }}
+          style={{ 
+            marginTop: '16px',
+            borderRadius: '8px',
+            overflow: 'hidden'
+          }}
+        />
+        <Modal
+          title={<div style={{ color: '#1890ff', fontWeight: 500 }}>{(modalId == 0 ? "新增" : "修改") + " 模板"}</div>}
+          open={isModalVisiable}
+          onOk={handleOk}
+          onCancel={handleCancel}
+          okText="确认"
+          cancelText="取消"
+          centered
+          maskClosable={false}
+          destroyOnClose
+          okButtonProps={{ style: { borderRadius: '4px' } }}
+          cancelButtonProps={{ style: { borderRadius: '4px' } }}
+        >
           <ModalContainer>
             <div className="line">
-              <label>{keyTitles.name}</label>
-              <Input value={modalName} placeholder="" onChange={(e) => setModalName(e.target.value)} />
+              <label>{keyTitles.name}：</label>
+              <Input
+                value={modalName}
+                placeholder="请输入名称"
+                allowClear
+                autoFocus
+                style={{ borderRadius: '4px' }}
+                onChange={(e) => setModalName(e.target.value)}
+              />
             </div>
           </ModalContainer>
         </Modal>

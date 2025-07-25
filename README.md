@@ -4,8 +4,6 @@
 - 数据库采用 Mysql, 配置见 mysql.config.js
 - 项目配置见 project.config.js
 - Next 框架配置见 next.config.js
-- [ERISHEN](https://www.erishen.cn/)
-- [Demo](https://nsgm.erishen.cn:8443/)
   
 ## 命令
 - nsgm init    初始化项目

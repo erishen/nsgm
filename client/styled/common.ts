@@ -19,33 +19,29 @@ export const Container = styled.div`
 
 export const LoginContainer = styled.div`
    margin: auto;
-   margin-top: 200px;
-   width: 250px;
+   margin-top: 100px;
+   width: 350px;
    display: flex;
    flex-direction: column;
    justify-content: center;
-   align-items: flex-start;
-   border: 1px solid gray;
-   border-radius: 5px;
-   padding: 20px;
+   align-items: center;
+   border: 1px solid #e8e8e8;
+   border-radius: 8px;
+   padding: 30px;
+   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+   background-color: #fff;
 
-  .row {
-    width: 100%;
-    display: flex;
-    flex: 1;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-
-    .user-input {
-      width: 210px;
-      margin-bottom: 5px;
-    }
+  .ant-form-item {
+    margin-bottom: 20px;
   }
 
-  .right {
-    margin-top: 10px;
-    justify-content: flex-end;
+  .ant-input-affix-wrapper {
+    border-radius: 4px;
+  }
+
+  .ant-btn {
+    height: 40px;
+    border-radius: 4px;
   }
 `
 

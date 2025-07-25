@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { Layout, Menu, Breadcrumb, Image, Select } from 'antd'
+import { Layout, Menu, Breadcrumb, Image, Select, Avatar, Dropdown, Space, Tooltip } from 'antd'
 import { Container } from '../styled/layout'
 import { useRouter } from 'next/router'
 import _ from 'lodash'
 import menuConfig from '../utils/menu'
 import { logout } from '../utils/sso'
 import getConfig from 'next/config'
+import { UserOutlined, LogoutOutlined, SettingOutlined, BellOutlined } from '@ant-design/icons'
 
 const { Option } = Select
 const { SubMenu } = Menu
@@ -85,6 +86,7 @@ const LayoutComponent = ({ user, children }) => {
   const router = useRouter()
   const [topMenuKey, setTopMenuKey] = useState('1')
   const [sliderMenuKey, setSliderMenuKey] = useState('1')
+  const [collapsed, setCollapsed] = useState(false)
 
   // console.log('topMenuKey: ' + topMenuKey, ', sliderMenuKey: ' + sliderMenuKey, user)
 
@@ -175,33 +177,94 @@ const LayoutComponent = ({ user, children }) => {
   })
 
   return (
-    <Layout>
+    <Layout className="main-layout">
       <Container>
         <Header className="header">
           <div className="logo">
             <Image width={100} src={prefix + "/images/zhizuotu_1.png"} preview={false} />
           </div>
-          <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']} selectedKeys={[topMenuKey]} items={menuItems} />
-          <div className="user">
-            <Select value={user?.displayName} onChange={() => { logout() }}>
-              <Option value=''>{'退出'}</Option>
-            </Select>
+          <Menu
+            theme="dark"
+            mode="horizontal"
+            defaultSelectedKeys={['1']}
+            selectedKeys={[topMenuKey]}
+            items={menuItems}
+            className="main-menu"
+          />
+          <div className="user-actions">
+            <Space size={16} align="center">
+              <Tooltip title="通知">
+                <BellOutlined className="action-icon" />
+              </Tooltip>
+              <Tooltip title="设置">
+                <SettingOutlined className="action-icon" />
+              </Tooltip>
+              <Dropdown
+                menu={{
+                  items: [
+                    {
+                      key: '1',
+                      icon: <UserOutlined />,
+                      label: '个人中心',
+                    },
+                    {
+                      key: '2',
+                      icon: <SettingOutlined />,
+                      label: '账户设置',
+                    },
+                    {
+                      type: 'divider',
+                    },
+                    {
+                      key: '3',
+                      icon: <LogoutOutlined />,
+                      label: '退出登录',
+                      onClick: () => logout(),
+                    },
+                  ],
+                }}
+              >
+                <Space className="user-dropdown">
+                  <span className="username">{user?.displayName || '用户'}</span>
+                </Space>
+              </Dropdown>
+            </Space>
           </div>
         </Header>
-        <Layout>
-          <Sider width={200} className="site-layout-background">
-            <Menu
-              mode="inline"
-              defaultSelectedKeys={['slider_1_0']}
-              defaultOpenKeys={['slider_1']}
-              selectedKeys={['slider_' + topMenuKey + '_' + sliderMenuKey]}
-              openKeys={['slider_' + topMenuKey]}
-              style={{ height: '100%', borderRight: 0 }}
-              items={menuItemsVertical}
-            />
+        <Layout style={{ display: 'flex', flex: 1 }}>
+          <Sider
+            width={200}
+            className="site-layout-background sidebar"
+            collapsible
+            collapsed={collapsed}
+            onCollapse={(value) => setCollapsed(value)}
+            style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
+          >
+            <div>
+              <Menu
+                mode="inline"
+                defaultSelectedKeys={['slider_1_0']}
+                defaultOpenKeys={['slider_1']}
+                selectedKeys={['slider_' + topMenuKey + '_' + sliderMenuKey]}
+                openKeys={['slider_' + topMenuKey]}
+                style={{ height: '100%', borderRight: 0 }}
+                items={menuItemsVertical}
+                className="side-menu"
+              />
+            </div>
+            <div style={{
+              padding: collapsed ? '8px 0' : '8px 16px',
+              textAlign: 'center',
+              color: 'rgba(0,0,0,0.45)',
+              fontSize: '12px',
+              borderTop: '1px solid #ebeef5',
+              background: '#f5f7fa'
+            }}>
+              {collapsed ? '©' : '© 2025 NSGM'}
+            </div>
           </Sider>
-          <Layout style={{ padding: '0 24px 24px' }}>
-            <Breadcrumb style={{ margin: '16px 0' }}>
+          <Layout className="content-layout" style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+            <Breadcrumb className="breadcrumb-container">
               {_.map(menuConfig, (item, index) => {
                 const { key, text, subMenus } = item
 
@@ -228,12 +291,7 @@ const LayoutComponent = ({ user, children }) => {
               })}
             </Breadcrumb>
             <Content
-              className="site-layout-background"
-              style={{
-                padding: 24,
-                margin: 0,
-                minHeight: 280
-              }}
+              className="site-layout-background content-container"
             >
               {children}
             </Content>
