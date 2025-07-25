@@ -1,29 +1,44 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "jsx": "preserve",
+    "target": "ES2022",
+    "module": "commonjs",
+    "declaration": true,
+    "outDir": "./lib",
+    "strict": true,
     "lib": [
       "dom",
-      "dom.iterable",
-      "esnext"
+      "ES2022"
     ],
+    "esModuleInterop": true,
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": false,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
+    "noEmit": false,
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true
+    "noImplicitAny": false,
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "client/*"
+      ]
+    },
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx"
+    "src"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "**/__tests__/*",
+    ".next",
+    "lib"
   ]
 }
