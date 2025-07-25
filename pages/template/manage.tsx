@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { ConfigProvider, Table, Modal, Button, Input, Space, Upload, message } from 'antd'
 import { Container, SearchRow, ModalContainer } from '../../client/styled/template/manage'
+import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
 import { getTemplate, addTemplate, modTemplate, delTemplate, updateSSRTemplate, searchTemplate, batchDelTemplate } from '../../client/redux/template/manage/actions'
 import { getTemplateService } from '../../client/service/template/manage'
@@ -16,11 +17,55 @@ import { saveAs } from 'file-saver'
 const pageSize = 100
 const dateFormat = 'YYYY-MM-DD'
 const currentDate = dayjs().format(dateFormat)
-console.log('currentDate', currentDate)
 
 const keyTitles = {
   name: '名称'
 }
+
+// styled-components
+const StyledButton = styled(Button) <{ $primary?: boolean; $export?: boolean; $import?: boolean; $danger?: boolean }>`
+    display: flex;
+    align-items: center;
+    border-radius: 6px;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
+    ${props => props.$export && `
+      background-color: #f6ffed;
+      color: #52c41a;
+      border-color: #b7eb8f;
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
+      transition: all 0.3s ease;
+    `}
+    ${props => props.$import && `
+      background-color: #e6f7ff;
+      color: #1890ff;
+      border-color: #91d5ff;
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
+      transition: all 0.3s ease;
+    `}
+    ${props => props.$danger && `
+      background-color: #fff1f0;
+      border-color: #ffa39e;
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
+      transition: all 0.3s ease;
+    `}
+  `
+const StyledInput = styled(Input)`
+    width: 200px;
+    border-radius: 6px;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
+  `
+const StyledTable = styled(Table)`
+    margin-top: 16px;
+    border-radius: 8px;
+    overflow: hidden;
+  `
+const ModalTitle = styled.div`
+    color: #1890ff;
+    font-weight: 500;
+  `
+const ModalInput = styled(Input)`
+    border-radius: 4px;
+  `
 
 const Page = ({ template }) => {
   const dispatch = useDispatch()
@@ -36,14 +81,12 @@ const Page = ({ template }) => {
 
   const state = useSelector((state: RootState) => state)
   const { templateManage }: any = state
-  console.log('templateManage', templateManage)
 
   if (!templateManage.firstLoadFlag) {
     template = templateManage.template
   }
 
   const { totalCounts, items: templateItems } = _.cloneDeep(template)
-  console.log('template', template)
 
   _.each(templateItems, (item, index) => {
     const { id } = item
@@ -81,11 +124,9 @@ const Page = ({ template }) => {
         return (
           <Space size="small">
             <Button type="primary" size="small" onClick={() => {
-              console.log('record', record)
               updateTemplate(record)
             }} style={{ borderRadius: '4px' }}>修改</Button>
             <Button danger size="small" onClick={() => {
-              console.log('record', record)
               const { id } = record
               deleteTemplate(id)
             }} style={{ borderRadius: '4px' }}>删除</Button>
@@ -97,7 +138,7 @@ const Page = ({ template }) => {
 
   const rowSelection = {
     onChange: (selectedRowKeys: any, selectedRows: any) => {
-      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows)
+      //
       setBatchDelIds(selectedRowKeys)
     }
   }
@@ -144,7 +185,7 @@ const Page = ({ template }) => {
     const modalObj = {
       name: handleXSS(modalName)
     }
-    console.log('handleOk', modalObj)
+    //
 
     const checkResult = checkModalObj(modalObj)
 
@@ -198,8 +239,8 @@ const Page = ({ template }) => {
       wb.xlsx.writeBuffer().then((data) => {
         const blob = new Blob([data], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
         saveAs(blob, "Template.xlsx")
-      }).catch((error) => {
-        console.error('导出失败', error?.message)
+      }).catch(() => {
+        // 导出失败
       })
     } else {
       message.info("没有数据无需导出")
@@ -210,9 +251,7 @@ const Page = ({ template }) => {
     name: 'file',
     action: '/rest/template/import',
     onChange(info: any) {
-      if (info.file.status !== 'uploading') {
-        console.log(info.file, info.fileList)
-      }
+      //
 
       if (info.file.status === 'done') {
         message.success(`${info.file.name} 文件上传成功`)
@@ -247,92 +286,38 @@ const Page = ({ template }) => {
         <SearchRow>
           <Space size="middle" wrap>
             <Space size="small">
-              <Button 
-                type="primary" 
-                onClick={createTemplate} 
-                style={{ 
-                  display: 'flex', 
-                  alignItems: 'center',
-                  borderRadius: '6px',
-                  boxShadow: '0 2px 0 rgba(0, 0, 0, 0.045)'
-                }}
-              >
+              <StyledButton type="primary" onClick={createTemplate} $primary>
                 <i className="fa fa-plus" style={{ marginRight: '5px' }}></i>
                 新增
-              </Button>
-              <Input
+              </StyledButton>
+              <StyledInput
                 value={searchName}
                 placeholder="请输入名称搜索"
                 allowClear
-                style={{ 
-                  width: 200, 
-                  borderRadius: '6px',
-                  boxShadow: '0 2px 0 rgba(0, 0, 0, 0.015)'
-                }}
                 onChange={(e) => setSearchName(e.target.value)}
                 onPressEnter={doSearch}
               />
-              <Button 
-                type="primary" 
-                onClick={doSearch} 
-                style={{ 
-                  display: 'flex', 
-                  alignItems: 'center',
-                  borderRadius: '6px',
-                  boxShadow: '0 2px 0 rgba(0, 0, 0, 0.045)'
-                }}
-              >
+              <StyledButton type="primary" onClick={doSearch} $primary>
                 <i className="fa fa-search" style={{ marginRight: '5px' }}></i>
                 搜索
-              </Button>
+              </StyledButton>
             </Space>
             <Space size="small">
-              <Button 
-                onClick={exportTemplate} 
-                icon={<UploadOutlined rev={undefined} rotate={180} />} 
-                style={{ 
-                  backgroundColor: '#f6ffed', 
-                  color: '#52c41a', 
-                  borderColor: '#b7eb8f',
-                  borderRadius: '6px',
-                  boxShadow: '0 2px 0 rgba(0, 0, 0, 0.015)',
-                  transition: 'all 0.3s ease'
-                }}
-              >
+              <StyledButton onClick={exportTemplate} icon={<UploadOutlined rev={undefined} rotate={180} />} $export>
                 导出
-              </Button>
+              </StyledButton>
               <Upload {...uploadProps}>
-                <Button 
-                  icon={<UploadOutlined rev={undefined} />} 
-                  style={{ 
-                    backgroundColor: '#e6f7ff', 
-                    color: '#1890ff', 
-                    borderColor: '#91d5ff',
-                    borderRadius: '6px',
-                    boxShadow: '0 2px 0 rgba(0, 0, 0, 0.015)',
-                    transition: 'all 0.3s ease'
-                  }}
-                >
+                <StyledButton icon={<UploadOutlined rev={undefined} />} $import>
                   导入
-                </Button>
+                </StyledButton>
               </Upload>
-              <Button 
-                danger 
-                onClick={batchDeleteTemplate} 
-                style={{ 
-                  backgroundColor: '#fff1f0', 
-                  borderColor: '#ffa39e',
-                  borderRadius: '6px',
-                  boxShadow: '0 2px 0 rgba(0, 0, 0, 0.015)',
-                  transition: 'all 0.3s ease'
-                }}
-              >
+              <StyledButton danger onClick={batchDeleteTemplate} $danger>
                 批量删除
-              </Button>
+              </StyledButton>
             </Space>
           </Space>
         </SearchRow>
-        <Table
+        <StyledTable
           rowSelection={{
             type: 'checkbox',
             ...rowSelection,
@@ -348,19 +333,13 @@ const Page = ({ template }) => {
             showQuickJumper: true,
             showTotal: (total) => `共 ${total} 条记录`,
             onChange: (page, pageSize) => {
-              console.log('onChange', page, pageSize)
               dispatch(searchTemplate(page - 1, pageSize, { name: handleXSS(searchName) }))
             },
             style: { marginTop: '16px', marginBottom: '16px' }
           }}
-          style={{ 
-            marginTop: '16px',
-            borderRadius: '8px',
-            overflow: 'hidden'
-          }}
         />
         <Modal
-          title={<div style={{ color: '#1890ff', fontWeight: 500 }}>{(modalId == 0 ? "新增" : "修改") + " 模板"}</div>}
+          title={<ModalTitle>{(modalId == 0 ? "新增" : "修改") + " 模板"}</ModalTitle>}
           open={isModalVisiable}
           onOk={handleOk}
           onCancel={handleCancel}
@@ -375,12 +354,11 @@ const Page = ({ template }) => {
           <ModalContainer>
             <div className="line">
               <label>{keyTitles.name}：</label>
-              <Input
+              <ModalInput
                 value={modalName}
                 placeholder="请输入名称"
                 allowClear
                 autoFocus
-                style={{ borderRadius: '4px' }}
                 onChange={(e) => setModalName(e.target.value)}
               />
             </div>
@@ -395,12 +373,9 @@ Page.getInitialProps = async () => {
   let template = null
 
   await getTemplateService(0, pageSize).then((res: any) => {
-    console.log('res', res)
     const { data } = res
     template = data.template
   })
-
-  console.log('template-getInitialProps', template)
 
   return {
     template
