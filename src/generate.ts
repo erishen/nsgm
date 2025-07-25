@@ -735,9 +735,11 @@ export const createFiles = (controller: string, action: string) => {
     {
       from: /null\s*\n/,
       to:
-        `null\n  },\n  {\n    // ${controller}_${action}_start\n    key: (++key).toString(),\n    text: '${controller
+        `null\n  },\n  {\n    // ${controller}_${action}_start\n    key: (++key).toString(),\n    text: '${
+          controller
         }',\n    url: '/${controller}/${action}',\n    icon: <SolutionOutlined rev={undefined} />,\n    ` +
-        `subMenus: [\n      {\n        key: key + '_1',\n        text: '${action}',\n        url: '/${controller}/${action
+        `subMenus: [\n      {\n        key: key + '_1',\n        text: '${action}',\n        url: '/${controller}/${
+          action
         }'\n      }\n    ]\n    // ${controller}_${action}_end\n`,
       files: [destClientUtilsMenuPath]
     }
