@@ -1,28 +1,62 @@
 # NSGM CLI
-- 技术栈: [Next](https://github.com/vercel/next.js), [Styled-components](https://github.com/styled-components/styled-components), [Graphql](https://graphql.org/), [Mysql](https://www.mysql.com/)
-- 全栈架构，代码模板生成，快速开发
-- 数据库采用 Mysql, 配置见 mysql.config.js
-- 项目配置见 project.config.js
-- Next 框架配置见 next.config.js
-  
-## 命令
-- nsgm init    初始化项目
-- nsgm upgrade 升级项目基础文件
-- nsgm create  创建模板页面
-- nsgm delete  删除模板页面
-- nsgm deletedb 删除模板页面及数据库表
-- nsgm dev     开发模式
-- nsgm start   生产模式
-- nsgm build   编译
-- nsgm export  导出静态页面
-        
-## 参数
-- dictionary: 在 export/init 的时候使用, 默认 webapp, 譬如: nsgm init|export dictionary=webapp 或者 nsgm init|export webapp
-- controller: 在 create/delete 的时候使用， 必须有。譬如：nsgm create|delete math
-- action:     在 create/delete 的时候使用， 默认 manage, 跟在 controller 后面， 譬如 nsgm create|delete math test
 
-## 根目录新增 next.config.js
-```
+A full-stack development framework with code template generation capabilities, helping developers efficiently build web applications.
+
+## Tech Stack
+
+- [Next.js](https://github.com/vercel/next.js) - React framework
+- [Styled-components](https://github.com/styled-components/styled-components) - CSS-in-JS solution
+- [GraphQL](https://graphql.org/) - API query language
+- [MySQL](https://www.mysql.com/) - Relational database
+
+## Features
+
+- Full-stack architecture design
+- Automatic code template generation
+- Rapid development workflow
+- Integrated GraphQL API
+- MySQL database support
+
+## Command Line Tools
+
+### Basic Commands
+
+| Command | Description |
+|------|------|
+| `nsgm init` | Initialize project |
+| `nsgm upgrade` | Upgrade project base files |
+| `nsgm create` | Create template page |
+| `nsgm delete` | Delete template page |
+| `nsgm deletedb` | Delete template page and database table |
+| `nsgm dev` | Development mode |
+| `nsgm start` | Production mode |
+| `nsgm build` | Build project |
+| `nsgm export` | Export static pages |
+
+### Parameter Description
+
+- **dictionary**: Used with `export`/`init` commands, default value is `webapp`
+  ```
+  nsgm init dictionary=webapp
+  # or simplified as
+  nsgm init webapp
+  ```
+
+- **controller**: Used with `create`/`delete` commands, required parameter
+  ```
+  nsgm create math
+  ```
+
+- **action**: Used with `create`/`delete` commands, default value is `manage`, follows the controller
+  ```
+  nsgm create math test
+  ```
+
+## Project Configuration
+
+### next.config.js
+
+```javascript
 const { nextConfig } = require('nsgm-cli')
 const projectConfig = require('./project.config')
 
@@ -37,8 +71,9 @@ module.exports = (phase, defaultConfig) => {
 }
 ```
 
-## 根目录新增 mysql.config.js
-```
+### mysql.config.js
+
+```javascript
 const { mysqlConfig } = require('nsgm-cli')
 const { mysqlOptions } = mysqlConfig
 const { user, password, host, port, database } = mysqlOptions
@@ -54,8 +89,9 @@ module.exports = {
 }
 ```
 
-## 根目录新增 project.config.js
-```
+### project.config.js
+
+```javascript
 const { projectConfig } = require('nsgm-cli')
 const pkg = require('./package.json')
 
@@ -71,34 +107,44 @@ module.exports = {
 }
 ```
 
-## 根目录新增 server 
-- apis    存放 Rest Api 
-- modules 存放 graphql 的 resolver 和 schema
-- plugins 存放 graphql 的 plugin
-- *.js  举例： test.js =>  用于响应 /test/*, ${prefix}/test/* 请求
+## Server Directory Structure
 
+The `server` folder in the project root contains the following:
+
+### Directory Description
+
+- `apis/` - Stores REST API interfaces
+- `modules/` - Stores GraphQL resolvers and schemas
+- `plugins/` - Stores GraphQL plugins
+- `*.js` - Route files, e.g., `test.js` handles requests to `/test/*` and `${prefix}/test/*`
+
+### Example Code
+
+#### Route File Example (server/test.js)
+
+```javascript
+const express = require('express')
+const moment = require('moment')
+
+const router = express.Router()
+
+router.use((req, res, next) => {
+    const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl
+    console.log(moment().format('YYYY-MM-DD HH:mm:ss') + ' ' + fullUrl)
+    next()
+})
+
+router.get('/*', (req, res) => {
+    res.statusCode = 200
+    res.json({ name: 'TEST' })
+})
+
+module.exports = router
 ```
-  const express = require('express')
-  const moment = require('moment')
 
-  const router = express.Router()
+#### REST API Example (server/apis/hello.js)
 
-  router.use((req, res, next) => {
-      const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl
-      console.log(moment().format('YYYY-MM-DD HH:mm:ss') + ' ' + fullUrl)
-      next()
-  })
-
-  router.get('/*', (req, res) => {
-      res.statusCode = 200
-      res.json({ name: 'TEST' })
-  })
-
-  module.exports = router
-```
-
-- apis/hello.js
-```
+```javascript
 const express = require('express')
 const router = express.Router()
 
@@ -110,8 +156,9 @@ router.get('/*', (req, res) => {
 module.exports = router
 ```
 
-- modules/link/schema.js
-```
+#### GraphQL Schema Example (server/modules/link/schema.js)
+
+```javascript
 module.exports = {
     query: `
         link: String
@@ -124,15 +171,16 @@ module.exports = {
 } 
 ```
 
-- modules/link/resolver.js
-```
+#### GraphQL Resolver Example (server/modules/link/resolver.js)
+
+```javascript
 let localLink = ''
 
 module.exports = {
     link: () => {
         return localLink
     },
-    linkUpdate: ({ link }) =>{
+    linkUpdate: ({ link }) => {
         console.log('link', link)
         localLink = link
         return localLink
@@ -140,8 +188,9 @@ module.exports = {
 }
 ```
 
-- plugins/date.js
-```
+#### GraphQL Plugin Example (server/plugins/date.js)
+
+```javascript
 const moment = require('moment')
 const { Kind } = require('graphql/language')
 const { GraphQLScalarType } = require('graphql')
@@ -158,4 +207,3 @@ const customScalarDate = new GraphQLScalarType({
 
 module.exports = { Date: customScalarDate }
 ```
-
