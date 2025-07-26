@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Layout, Menu, Breadcrumb, Image, Select, Avatar, Dropdown, Space, Tooltip } from 'antd'
+import { Layout, Menu, Breadcrumb, Image, Select, Dropdown, Space, Tooltip } from 'antd'
 import { Container } from '../styled/layout'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
@@ -7,7 +7,7 @@ import _ from 'lodash'
 import menuConfig from '../utils/menu'
 import { logout } from '../utils/sso'
 import getConfig from 'next/config'
-import { UserOutlined, LogoutOutlined, SettingOutlined, BellOutlined } from '@ant-design/icons'
+import { LogoutOutlined, SettingOutlined, BellOutlined, UserOutlined } from '@ant-design/icons'
 
 const { Option } = Select
 const { SubMenu } = Menu
@@ -25,24 +25,80 @@ const FlexLayout = styled(Layout)`
 const StyledSider = styled(Sider)`
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    box-shadow: 2px 0 8px -4px rgba(0, 0, 0, 0.1);
+    z-index: 5;
+    position: relative;
   `
-const SiderFooter = styled.div<{ collapsed: boolean }>`
-    padding: ${props => props.collapsed ? '8px 0' : '8px 16px'};
-    text-align: center;
-    color: rgba(0,0,0,0.45);
-    font-size: 12px;
-    border-top: 1px solid #ebeef5;
-    background: #f5f7fa;
-  `
+
 const SideMenu = styled(Menu)`
     height: 100%;
     border-right: 0;
+    padding: 8px 0;
   `
+
 const ContentLayout = styled(Layout)`
     display: flex;
     flex-direction: column;
     flex: 1;
+    background: #f5f7fa;
+    position: relative;
+    z-index: 1;
+  `
+const StyledHeader = styled(Header)`
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+    z-index: 11;
+    
+    .logo {
+      margin-right: 24px;
+    }
+    
+    .main-menu {
+      flex: 1;
+    }
+    
+    .user-actions {
+      display: flex;
+      align-items: center;
+      
+      .action-icon {
+        font-size: 18px;
+        color: rgba(255, 255, 255, 0.85);
+        cursor: pointer;
+        padding: 0 8px;
+        transition: color 0.3s;
+        
+        &:hover {
+          color: #fff;
+        }
+      }
+      
+      .user-dropdown {
+        cursor: pointer;
+        padding: 0 8px;
+        
+        .username {
+          color: rgba(255, 255, 255, 0.85);
+          margin-left: 8px;
+        }
+      }
+    }
+  `
+const StyledBreadcrumb = styled(Breadcrumb)`
+    margin: 16px 24px;
+    font-size: 14px;
+  `
+const StyledContent = styled(Content)`
+    margin: 0 24px 24px;
+    padding: 24px;
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    min-height: calc(100vh - 180px);
+    position: relative;
+    z-index: 1;
   `
 
 const getLocationKey = () => {
@@ -208,9 +264,9 @@ const LayoutComponent = ({ user, children }) => {
   return (
     <Layout className="main-layout">
       <Container>
-        <Header className="header">
+        <StyledHeader>
           <div className="logo">
-            <Image width={100} src={prefix + "/images/zhizuotu_1.png"} preview={false} />
+            <Image width={120} src={prefix + "/images/zhizuotu_1.png"} preview={false} />
           </div>
           <Menu
             theme="dark"
@@ -221,7 +277,7 @@ const LayoutComponent = ({ user, children }) => {
             className="main-menu"
           />
           <div className="user-actions">
-            <Space size={16} align="center">
+            <Space size={20} align="center">
               <Tooltip title="通知">
                 <BellOutlined className="action-icon" />
               </Tooltip>
@@ -259,10 +315,10 @@ const LayoutComponent = ({ user, children }) => {
               </Dropdown>
             </Space>
           </div>
-        </Header>
+        </StyledHeader>
         <FlexLayout>
           <StyledSider
-            width={200}
+            width={220}
             className="site-layout-background sidebar"
             collapsible
             collapsed={collapsed}
@@ -279,12 +335,9 @@ const LayoutComponent = ({ user, children }) => {
                 className="side-menu"
               />
             </div>
-            <SiderFooter collapsed={collapsed}>
-              {collapsed ? '©' : '© 2025 NSGM'}
-            </SiderFooter>
           </StyledSider>
           <ContentLayout className="content-layout">
-            <Breadcrumb className="breadcrumb-container">
+            <StyledBreadcrumb>
               {_.map(menuConfig, (item, index) => {
                 const { key, text, subMenus } = item
 
@@ -294,7 +347,7 @@ const LayoutComponent = ({ user, children }) => {
                     const { key: subKey, text: subText } = subItem
                     if (subKey === topMenuKey + '_' + sliderMenuKey) {
                       subContent.push(<Breadcrumb.Item key={'breadcrumb' + subIndex}>{text}</Breadcrumb.Item>)
-                      subContent.push(<Breadcrumb.Item key={'breadcrumb' + subIndex}>{subText}</Breadcrumb.Item>)
+                      subContent.push(<Breadcrumb.Item key={'breadcrumb' + subIndex + '_sub'}>{subText}</Breadcrumb.Item>)
                       return false
                     }
                   })
@@ -305,12 +358,10 @@ const LayoutComponent = ({ user, children }) => {
                   }
                 }
               })}
-            </Breadcrumb>
-            <Content
-              className="site-layout-background content-container"
-            >
+            </StyledBreadcrumb>
+            <StyledContent>
               {children}
-            </Content>
+            </StyledContent>
           </ContentLayout>
         </FlexLayout>
       </Container>
