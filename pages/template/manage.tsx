@@ -302,7 +302,7 @@ const Page = ({ template }) => {
   return (
     <Container>
       <GlobalStyle />
-      <div className="page-title">模板管理</div>
+      <div className="page-title">Template 管理</div>
       <ConfigProvider locale={locale}>
         <SearchRow>
           <Space size="middle" wrap>
@@ -360,7 +360,7 @@ const Page = ({ template }) => {
           }}
         />
         <Modal
-          title={<ModalTitle>{(modalId == 0 ? "新增" : "修改") + " 模板"}</ModalTitle>}
+          title={<ModalTitle>{(modalId == 0 ? "新增" : "修改") + " Template"}</ModalTitle>}
           open={isModalVisiable}
           onOk={handleOk}
           onCancel={handleCancel}
