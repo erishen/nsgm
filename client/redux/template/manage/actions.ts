@@ -1,5 +1,5 @@
 import * as types from './types'
-import { getTemplateService, addTemplateService, updateTemplateService, deleteTemplateService, searchTemplateService, batchDeleteTemplateService } from '../../../service/template/manage'
+import { getTemplateService, addTemplateService, updateTemplateService, deleteTemplateService, searchTemplateService, batchDeleteTemplateService } from '@/service/template/manage'
 
 export const getTemplate = (page=0, pageSize=10) => (
   dispatch: (arg0: {

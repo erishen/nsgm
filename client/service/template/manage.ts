@@ -1,7 +1,7 @@
-import { getLocalGraphql } from '../../utils/fetch'
+import { getLocalGraphql } from '@/utils/fetch'
 import _ from 'lodash'
 
-export const getTemplateService = (page=0, pageSize=10) => {
+export const getTemplateService = (page = 0, pageSize = 10) => {
   const getTemplateQuery = `query ($page: Int, $pageSize: Int) { template(page: $page, pageSize: $pageSize) { 
         totalCounts items { 
           id name
@@ -9,10 +9,10 @@ export const getTemplateService = (page=0, pageSize=10) => {
       } 
     }`
 
-    return getLocalGraphql(getTemplateQuery, {
-      page,
-      pageSize
-    })
+  return getLocalGraphql(getTemplateQuery, {
+    page,
+    pageSize
+  })
 }
 
 export const searchTemplateByIdService = (id: number) => {
@@ -39,7 +39,7 @@ export const searchTemplateService = (page = 0, pageSize = 10, data: any) => {
   }`
 
   return getLocalGraphql(searchTemplateQuery, {
-    page, 
+    page,
     pageSize,
     data: {
       name
@@ -47,7 +47,7 @@ export const searchTemplateService = (page = 0, pageSize = 10, data: any) => {
   })
 }
 
-export const addTemplateService = (data: any) => { 
+export const addTemplateService = (data: any) => {
   const { name } = data
 
   const addTemplateQuery = `mutation ($data: TemplateAddInput) { templateAdd(data: $data) }`
@@ -59,7 +59,7 @@ export const addTemplateService = (data: any) => {
   })
 }
 
-export const updateTemplateService = (id: number, data: any) => { 
+export const updateTemplateService = (id: number, data: any) => {
   const { name } = data
 
   const updateTemplateQuery = `mutation ($id: Int, $data: TemplateAddInput) { templateUpdate(id: $id, data: $data) }`
@@ -72,7 +72,7 @@ export const updateTemplateService = (id: number, data: any) => {
   })
 }
 
-export const deleteTemplateService = (id: number) => { 
+export const deleteTemplateService = (id: number) => {
   const deleteTemplateQuery = `mutation ($id: Int) { templateDelete(id: $id) }`
 
   return getLocalGraphql(deleteTemplateQuery, {
@@ -88,7 +88,7 @@ export const batchAddTemplateService = (datas: any) => {
   })
 }
 
-export const batchDeleteTemplateService = (ids: any) => { 
+export const batchDeleteTemplateService = (ids: any) => {
   const batchDeleteTemplateQuery = `mutation ($ids: [Int]) { templateBatchDelete(ids: $ids) }`
 
   return getLocalGraphql(batchDeleteTemplateQuery, {

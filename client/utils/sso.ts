@@ -8,17 +8,17 @@ const env = getLocalEnv()
 const LOGIN_COOKIE_ID = env + '_cas_nsgm'
 const LOGIN_COOKIE_USER = env + '_nsgm_user'
 
-const getPrincipalUrl = () => { 
+const getPrincipalUrl = () => {
   const url = getLocalApiPrefix() + '/rest/sso/sessionCheck'
   return url
 }
 
-const getValidateUrl = () => { 
+const getValidateUrl = () => {
   const url = getLocalApiPrefix() + '/rest/sso/ticketCheck'
   return url
 }
 
-const handleLocationHref = () => { 
+const handleLocationHref = () => {
   let newHref = ''
   if (typeof window !== 'undefined') {
     const locationHref = window.location.href
@@ -27,12 +27,12 @@ const handleLocationHref = () => {
       const locationHrefArrLen = locationHrefArr.length
 
       let newParamStr = ''
-      
+
       if (locationHrefArrLen > 1) {
         const paramStr = locationHrefArr[1]
         if (paramStr.indexOf('&') !== -1) {
           const paramArr = paramStr.split('&')
-          
+
           _.each(paramArr, (item, index) => {
             if (item.indexOf('=') !== -1) {
               const itemArr = item.split('=')
@@ -42,7 +42,7 @@ const handleLocationHref = () => {
               let value = ''
               if (itemArrLen > 1)
                 value = itemArr[1]
-              
+
               if ('ticket' !== key) {
                 newParamStr += key + '=' + value + '&'
               }
@@ -58,11 +58,11 @@ const handleLocationHref = () => {
       }
 
       const locationHrefArrFirst = locationHrefArr[0]
-      if(newParamStr !== '')
+      if (newParamStr !== '')
         newHref = locationHrefArrFirst + '?' + newParamStr
       else
         newHref = locationHrefArrFirst
-    } else { 
+    } else {
       newHref = locationHref
     }
   }
@@ -71,43 +71,43 @@ const handleLocationHref = () => {
   return encodeURIComponent(newHref)
 }
 
-const jumpToLogin = () => { 
+const jumpToLogin = () => {
   delCookie(LOGIN_COOKIE_ID)
   delCookie(LOGIN_COOKIE_USER)
-  
+
   if (typeof window !== 'undefined') {
     window.location.href = window.location.origin + '/login'
   }
 }
 
-const jumpToLogout = () => { 
+const jumpToLogout = () => {
   delCookie(LOGIN_COOKIE_ID)
   delCookie(LOGIN_COOKIE_USER)
-  
+
   if (typeof window !== 'undefined') {
     window.location.href = window.location.origin
   }
 }
 
-const principalLogin = (cookie:string, callback:any) => { 
+const principalLogin = (cookie: string, callback: any) => {
   let url = getPrincipalUrl()
 
   if (typeof window !== 'undefined') {
     url += '?cookieValue=' + cookie + '&redirectUrl=' + handleLocationHref()
   }
 
-  console.log('principalLogin_url', url)
-  axios.get(url, { params: { credentials: 'include' } }).then((res:any) => {
-    console.log('principalLogin_res', res)
+  // console.log('principalLogin_url', url)
+  axios.get(url, { params: { credentials: 'include' } }).then((res: any) => {
+    // console.log('principalLogin_res', res)
     const { data } = res
     if (data) {
       const { returnCode, userAttr } = data
       if (returnCode !== 0) {
         jumpToLogin()
-      } else { 
+      } else {
         storeLoginUser(userAttr, callback)
       }
-    } else { 
+    } else {
       jumpToLogin()
     }
   }).catch((e) => {
@@ -116,42 +116,42 @@ const principalLogin = (cookie:string, callback:any) => {
   })
 }
 
-const storeLoginUser = (userAttr:any, callback:any) => { 
-  console.log('storeLoginUser', userAttr)
+const storeLoginUser = (userAttr: any, callback: any) => {
+  // console.log('storeLoginUser', userAttr)
 
   if (userAttr) {
     const user = JSON.stringify(userAttr, ['city', 'company', 'department', 'displayName', 'employee', 'mail', 'name', 'sn'])
     setCookie(LOGIN_COOKIE_USER, user, null)
     callback && callback(JSON.parse(user))
-  } else { 
+  } else {
     callback && callback()
   }
 }
 
-const storeLogin = (cookie:any, cookieExpire:any, userAttr:any, callback:any) => { 
-  console.log('storeLogin_cookie', cookie)
+const storeLogin = (cookie: any, cookieExpire: any, userAttr: any, callback: any) => {
+  // console.log('storeLogin_cookie', cookie)
 
-  if (cookie) { 
+  if (cookie) {
     setCookie(LOGIN_COOKIE_ID, cookie, cookieExpire)
   }
 
   storeLoginUser(userAttr, callback)
 }
 
-const validateLogin = (ticket:string, name:string = '', callback:any) => { 
+const validateLogin = (ticket: string, name: string = '', callback: any) => {
   let url = getValidateUrl()
 
   if (typeof window !== 'undefined') {
     url += '?ticket=' + ticket
 
-    if(name !== ''){
+    if (name !== '') {
       url += '&name=' + name
     }
   }
-  
-  console.log('validateLogin_url', url)
-  axios.get(url, { params: { credentials: 'include' } }).then((res:any) => {
-    console.log('validateLogin_res', res)
+
+  // console.log('validateLogin_url', url)
+  axios.get(url, { params: { credentials: 'include' } }).then((res: any) => {
+    // console.log('validateLogin_res', res)
 
     if (res) {
       const { data } = res
@@ -159,13 +159,13 @@ const validateLogin = (ticket:string, name:string = '', callback:any) => {
         const { cookieValue, cookieExpire, returnCode, userAttr } = data
         if (returnCode === 0) {
           storeLogin(cookieValue, cookieExpire, userAttr, callback)
-        } else { 
+        } else {
           jumpToLogin()
         }
-      } else { 
+      } else {
         jumpToLogin()
       }
-    } else { 
+    } else {
       jumpToLogin()
     }
   }).catch((e) => {
@@ -173,25 +173,25 @@ const validateLogin = (ticket:string, name:string = '', callback:any) => {
   })
 }
 
-export const login = (callback:any) => { 
+export const login = (callback: any) => {
   const cookieLoginValue = getCookie(LOGIN_COOKIE_ID)
-  console.log('cookieLoginValue', cookieLoginValue)
+  // console.log('cookieLoginValue', cookieLoginValue)
 
-  if(typeof window !== 'undefined'){
+  if (typeof window !== 'undefined') {
     const locationHref = window.location.href
 
-    if(locationHref.indexOf('/login') === -1){
+    if (locationHref.indexOf('/login') === -1) {
 
       if (cookieLoginValue !== '') {
         principalLogin(cookieLoginValue, callback)
-      } else { 
+      } else {
         const urlParamTicket = getUrlParamByKey('ticket')
         const urlParamName = getUrlParamByKey('name')
-        console.log('urlParamTicket', urlParamTicket, urlParamName)
+        // console.log('urlParamTicket', urlParamTicket, urlParamName)
 
         if (urlParamTicket !== '') {
           validateLogin(urlParamTicket, urlParamName, callback)
-        } else { 
+        } else {
           jumpToLogin()
         }
       }
@@ -199,7 +199,7 @@ export const login = (callback:any) => {
   }
 }
 
-export const logout = () => { 
+export const logout = () => {
   jumpToLogout()
 }
 
