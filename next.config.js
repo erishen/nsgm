@@ -63,12 +63,17 @@ module.exports = (phase, defaultConfig, options) => {
     // Bundle 优化配置
     experimental: {
       optimizeCss: true, // 启用 CSS 优化（已安装 critters 依赖）
-      swcMinify: true,   // 使用 SWC 压缩器
       esmExternals: true // 支持 ESM 外部依赖
     },
     compiler: {
       removeConsole: phase !== PHASE_DEVELOPMENT_SERVER,
     },
+    allowedDevOrigins: [
+      'http://127.0.0.1:8080',
+      'http://localhost:8080',
+      'http://127.0.0.1:3000',
+      'http://localhost:3000'
+    ],
     webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
       // 启用压缩
       if (!dev && !isServer) {
@@ -105,7 +110,7 @@ module.exports = (phase, defaultConfig, options) => {
           },
           minimize: true,
         }
-        
+
         // 添加分析工具
         if (process.env.ANALYZE === 'true') {
           const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
@@ -117,13 +122,13 @@ module.exports = (phase, defaultConfig, options) => {
           )
         }
       }
-      
+
       // 优化模块解析
       config.resolve.alias = {
         ...config.resolve.alias,
         '@': path.resolve(__dirname, 'client'),
       }
-      
+
       return config
     },
     generateBuildId: async () => {
