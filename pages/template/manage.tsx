@@ -58,6 +58,11 @@ const StyledTable = styled(Table)`
     margin-top: 16px;
     border-radius: 8px;
     overflow: hidden;
+    
+    .styled-pagination {
+      margin-top: 16px;
+      margin-bottom: 16px;
+    }
   `
 const ModalTitle = styled.div`
     color: #1890ff;
@@ -65,6 +70,21 @@ const ModalTitle = styled.div`
   `
 const ModalInput = styled(Input)`
     border-radius: 4px;
+  `
+const IconWrapper = styled.i`
+    margin-right: 5px;
+  `
+const StyledPagination = styled.div`
+    margin-top: 16px;
+    margin-bottom: 16px;
+  `
+const RoundedButton = styled(Button)`
+    border-radius: 4px;
+  `
+const GlobalStyle = styled.div`
+    .rounded-button {
+      border-radius: 4px;
+    }
   `
 
 const Page = ({ template }) => {
@@ -123,13 +143,13 @@ const Page = ({ template }) => {
       render: (_: any, record: any) => {
         return (
           <Space size="small">
-            <Button type="primary" size="small" onClick={() => {
+            <RoundedButton type="primary" size="small" onClick={() => {
               updateTemplate(record)
-            }} style={{ borderRadius: '4px' }}>修改</Button>
-            <Button danger size="small" onClick={() => {
+            }}>修改</RoundedButton>
+            <RoundedButton danger size="small" onClick={() => {
               const { id } = record
               deleteTemplate(id)
-            }} style={{ borderRadius: '4px' }}>删除</Button>
+            }}>删除</RoundedButton>
           </Space>
         )
       }
@@ -281,13 +301,14 @@ const Page = ({ template }) => {
 
   return (
     <Container>
+      <GlobalStyle />
       <div className="page-title">模板管理</div>
       <ConfigProvider locale={locale}>
         <SearchRow>
           <Space size="middle" wrap>
             <Space size="small">
               <StyledButton type="primary" onClick={createTemplate} $primary>
-                <i className="fa fa-plus" style={{ marginRight: '5px' }}></i>
+                <IconWrapper className="fa fa-plus"></IconWrapper>
                 新增
               </StyledButton>
               <StyledInput
@@ -298,7 +319,7 @@ const Page = ({ template }) => {
                 onPressEnter={doSearch}
               />
               <StyledButton type="primary" onClick={doSearch} $primary>
-                <i className="fa fa-search" style={{ marginRight: '5px' }}></i>
+                <IconWrapper className="fa fa-search"></IconWrapper>
                 搜索
               </StyledButton>
             </Space>
@@ -335,7 +356,7 @@ const Page = ({ template }) => {
             onChange: (page, pageSize) => {
               dispatch(searchTemplate(page - 1, pageSize, { name: handleXSS(searchName) }))
             },
-            style: { marginTop: '16px', marginBottom: '16px' }
+            className: "styled-pagination"
           }}
         />
         <Modal
@@ -348,8 +369,8 @@ const Page = ({ template }) => {
           centered
           maskClosable={false}
           destroyOnClose
-          okButtonProps={{ style: { borderRadius: '4px' } }}
-          cancelButtonProps={{ style: { borderRadius: '4px' } }}
+          okButtonProps={{ className: 'rounded-button' }}
+          cancelButtonProps={{ className: 'rounded-button' }}
         >
           <ModalContainer>
             <div className="line">
