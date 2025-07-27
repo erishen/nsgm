@@ -53,13 +53,10 @@ const packagePath = '/package.json'
 const restPath = '/rest.js'
 
 const sourceGenerationPath = path.join(sourceFolder, generationPath)
-
 const sourceClientPath = path.join(sourceFolder, clientPathSource)
 const sourceClientPathGeneration = path.join(sourceGenerationPath, clientPath)
-
 const sourceServerPath = path.join(sourceFolder, serverPathSource)
 const sourceServerPathGeneration = path.join(sourceGenerationPath, serverPath)
-
 const sourcePagesPath = path.join(sourceFolder, pagesPathSource)
 const sourcePublicPath = path.join(sourceFolder, publicPathSource)
 const sourceScriptsPath = path.join(sourceFolder, scriptsPathSource)
@@ -71,13 +68,11 @@ const destClientStyledPath = resolve(destClientPath + styledPath)
 const destClientStyledLayoutPath = resolve(destClientStyledPath + styledLayoutPath)
 const destClientUtilsPath = resolve(destClientPath + utilsPath)
 const destClientLayoutPath = resolve(destClientPath + layoutPath)
-
 const destServerPath = path.join(destFolder, serverPath)
 const destServerModulesPath = resolve(destServerPath + modulesPath)
 const destServerApisPath = resolve(destServerPath + apisPath)
 const destServerSqlPath = resolve(destServerPath + sqlPath)
 const destServerUtilsPath = resolve(destServerPath + utilsPath)
-
 const destPagesPath = path.join(destFolder, pagesPath)
 const destPublicPath = path.join(destFolder, publicPath)
 const destScriptsPath = path.join(destFolder, scriptsPath)
@@ -126,7 +121,6 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
     const sourceClientReduxReducersAllPath = resolve(
       sourceClientPathGeneration + clientReduxPath + clientReduxReducersPath
     )
-
     const sourceClientReduxStorePath = resolve(sourceClientPath + clientReduxPath + clientReduxStorePath)
     const sourceClientLayoutIndexPath = resolve(sourceClientPath + clientLayoutPath + clientLayoutIndexPath)
     const sourceClientStyledLayoutIndexPath = resolve(
@@ -137,7 +131,6 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
     const sourceClientUtilsFetchPath = resolve(sourceClientPath + clientUtilsPath + clientUtilsFetchPath)
     const sourceClientUtilsCookiePath = resolve(sourceClientPath + clientUtilsPath + clientUtilsCookiePath)
     const sourceClientUtilsSsoPath = resolve(sourceClientPath + clientUtilsPath + clientUtilsSsoPath)
-
     const sourceClientUtilsMenuPath = resolve(sourceClientPathGeneration + clientUtilsPath + clientUtilsMenuPath)
 
     let destClientReduxStorePath = resolve(destClientReduxPath + clientReduxStorePath)
@@ -191,7 +184,6 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
     copyFileSync(sourceClientUtilsCommonPath, destClientUtilsCommonPath, upgradeFlag)
     copyFileSync(sourceClientUtilsFetchPath, destClientUtilsFetchPath, upgradeFlag)
     copyFileSync(sourceClientLayoutIndexPath, destClientLayoutIndexPath, upgradeFlag)
-
     copyFileSync(sourceClientReduxReducersAllPath, destClientReduxReducersAllPath)
     copyFileSync(sourceClientUtilsMenuPath, destClientUtilsMenuPath)
   }
@@ -244,7 +236,6 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
     const sourceServerUtilsDBPoolManagerPath = resolve(
       sourceServerPathGeneration + serverUtilsPath + serverUtilsDBPoolManagerPath
     )
-
     const sourceServerApisSsoPath = resolve(sourceServerPath + serverApisPath + serverApisSsoPath)
 
     let destServerApisSsoPath = resolve(destServerApisPath + serverApisSsoPath)
@@ -273,7 +264,6 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
     copyFileSync(sourceServerApisSsoPath, destServerApisSsoPath, upgradeFlag)
     copyFileSync(sourceServerUtilsCommonPath, destServerUtilsCommonPath, upgradeFlag)
     copyFileSync(sourceServerUtilsDBPoolManagerPath, destServerUtilsDBPoolManagerPath, upgradeFlag)
-
     copyFileSync(sourceServerRestPath, destServerRestPath)
   }
 
@@ -281,10 +271,10 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
     const publicImagesPath = '/images'
     const publicImagesZhizuotuPath = '/zhizuotu_1.png'
     const publicSlbHealthcheckPath = slbHealthCheckPath
-
     const destPublicImagesPath = resolve(destPublicPath + publicImagesPath)
     const sourcePublicImages1Path = resolve(sourcePublicPath + publicImagesPath + publicImagesZhizuotuPath)
     const sourcePublicHealthCheckPath = resolve(sourcePublicPath + publicSlbHealthcheckPath)
+
     let destPublicImages1Path = resolve(destPublicImagesPath + publicImagesZhizuotuPath)
 
     if (dictionary === '') {
@@ -311,6 +301,7 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
 
     const sourceScriptsStartupPath = resolve(sourceScriptsPath + scriptsStartupPath)
     const sourceScriptsShutdownPath = resolve(sourceScriptsPath + scriptsShutdownPath)
+
     let destScriptsStartupPath = resolve(destScriptsPath + scriptsStartupPath)
     let destScriptsShutdownPath = resolve(destScriptsPath + scriptsShutdownPath)
 
@@ -334,38 +325,26 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
     const rootProjectConfigPath = '/project.config.js'
     const rootPackagePath = packagePath
     const rootTsconfigPath = '/tsconfig.json'
-
     const rootGitignorePathSource = '/gitignore'
     const rootGitignorePath = '/.gitignore'
-
     const rootEslintrcPathSource = '/eslintrc.js'
     const rootEslintrcPath = '/.eslintrc.js'
-
     const rootNextEnvPathSource = '../next-env.d.ts'
     const rootNextEnvPath = '/next-env.d.ts'
-
     const rootReadmePath = '/README.md'
-
     const rootAppConfigPathSource = '../app.config.js'
     const rootAppConfigPath = '/app.config.js'
-
     const rootAppPath = '/app.js'
 
     const sourceNextConfigPath = resolve(sourceGenerationPath + rootNextConfigPath)
     const sourceMysqlConfigPath = resolve(sourceGenerationPath + rootMysqlConfigPath)
     const sourceProjectConfigPath = resolve(sourceGenerationPath + rootProjectConfigPath)
     const sourceTsConfigPath = resolve(sourceGenerationPath + rootTsconfigPath)
-
     const sourceGitignorePath = resolve(sourceGenerationPath + rootGitignorePathSource)
-
     const sourceEslintrcPath = resolve(sourceGenerationPath + rootEslintrcPathSource)
-
     const sourceNextEnvPath = path.join(sourceFolder, rootNextEnvPathSource)
-
     const sourceReadmePath = resolve(sourceGenerationPath + rootReadmePath)
-
     const sourceAppConfigPath = path.join(sourceFolder, rootAppConfigPathSource)
-
     const sourceAppath = resolve(sourceGenerationPath + rootAppPath)
     const sourcePackagePath = resolve(sourceGenerationPath + rootPackagePath)
 
@@ -471,9 +450,7 @@ export const createFiles = (controller: string, action: string) => {
   const destClientReduxTypesPath = resolve(`${destClientReduxControllerActionPath}/types.ts`)
 
   copyFileSync(sourceClientReduxActionsPath, destClientReduxActionsPath)
-
   copyFileSync(sourceClientReduxReducersPath, destClientReduxReducersPath)
-
   copyFileSync(sourceClientReduxTypesPath, destClientReduxTypesPath)
 
   console.log('client redux finished')
@@ -613,9 +590,11 @@ export const createFiles = (controller: string, action: string) => {
     {
       from: /null\s*\n/,
       to:
-        `null\n  },\n  {\n    // ${controller}_${action}_start\n    key: (++key).toString(),\n    text: '${controller
+        `null\n  },\n  {\n    // ${controller}_${action}_start\n    key: (++key).toString(),\n    text: '${
+          controller
         }',\n    url: '/${controller}/${action}',\n    icon: <SolutionOutlined rev={undefined} />,\n    ` +
-        `subMenus: [\n      {\n        key: key + '_1',\n        text: '${action}',\n        url: '/${controller}/${action
+        `subMenus: [\n      {\n        key: key + '_1',\n        text: '${action}',\n        url: '/${controller}/${
+          action
         }'\n      }\n    ]\n    // ${controller}_${action}_end\n`,
       files: [destClientUtilsMenuPath]
     }
