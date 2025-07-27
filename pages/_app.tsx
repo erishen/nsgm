@@ -18,13 +18,35 @@ const App = ({ Component, pageProps }) => {
   const store = useStore(pageProps.initialReduxState)
   const [ssoUser, setSsoUser] = useState(null)
   const [pageLoad, setPageLoad] = useState(false)
+  const [loginChecked, setLoginChecked] = useState(false)
 
   useEffect(() => {
+    // 检查当前路径是否为登录页
+    const isLoginPage = typeof window !== 'undefined' && window.location.pathname === '/login'
+    
+    // 如果是登录页，直接设置加载完成
+    if (isLoginPage) {
+      setLoginChecked(true)
+      setPageLoad(true)
+      return
+    }
+    
+    // 检查是否有登录凭证
+    const hasLoginCookie = typeof window !== 'undefined' && document.cookie.includes('_cas_nsgm')
+    
+    // 如果没有登录凭证，直接跳转到登录页面
+    if (!hasLoginCookie && typeof window !== 'undefined') {
+      window.location.href = window.location.origin + '/login'
+      return
+    }
+    
+    // 否则执行登录检查
     login((user: any) => {
       if (user) {
         // console.log('checkLogin_user', user)
         setSsoUser(user)
       }
+      setLoginChecked(true)
     })
 
     setTimeout(() => {
@@ -38,14 +60,23 @@ const App = ({ Component, pageProps }) => {
       <ThemeProvider theme={theme}>
         <Provider store={store}>
           {
-            pageLoad ?
-              ssoUser ? <LayoutComponent user={ssoUser}>
-                <Component {...pageProps} />
-              </LayoutComponent> :
-                <Component {...pageProps} /> :
+            !loginChecked ? (
               <Loading>
                 <Spin size="large" />
               </Loading>
+            ) : pageLoad ? (
+              ssoUser ? (
+                <LayoutComponent user={ssoUser}>
+                  <Component {...pageProps} />
+                </LayoutComponent>
+              ) : (
+                <Component {...pageProps} />
+              )
+            ) : (
+              <Loading>
+                <Spin size="large" />
+              </Loading>
+            )
           }
         </Provider>
       </ThemeProvider>

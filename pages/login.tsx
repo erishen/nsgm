@@ -3,10 +3,10 @@ import _ from 'lodash'
 import { LoginContainer } from '../client/styled/common'
 // import getConfig from 'next/config'
 import React, { useState } from 'react'
-import { handleXSS, getLocalEnv, getLocalApiPrefix } from '../client/utils/common'
-import { setCookie } from '../client/utils/cookie'
+import { getLocalEnv } from '../client/utils/common'
 import { Input, Button, Form, Typography, message } from 'antd'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
+import { directLogin } from '../client/utils/sso'
 
 const md = new MarkdownIt({
   html: true,
@@ -46,32 +46,15 @@ const Page = ({ html }) => {
         return;
       }
 
-      // 直接调用后端API验证登录信息
-      // 使用 encodeURIComponent 处理可能的特殊字符，然后再进行 Base64 编码
-      const safeStr = handleXSS(userName + "," + userPassword);
-      const encodedName = btoa(encodeURIComponent(safeStr));
-      const url = `${getLocalApiPrefix()}/rest/sso/ticketCheck?ticket=XXX&name=${encodedName}`;
-
-      fetch(url)
-        .then(response => response.json())
-        .then(data => {
-          if (data && data.returnCode === 0) {
-            // 登录成功，设置cookie并跳转到首页
-            if (typeof window !== 'undefined') {
-              setCookie(LOGIN_COOKIE_ID, data.cookieValue, data.cookieExpire);
-              const userStr = JSON.stringify(data.userAttr);
-              setCookie(LOGIN_COOKIE_USER, userStr, data.cookieExpire);
-              window.location.href = window.location.origin;
-            }
-          } else {
-            // 登录失败，显示错误信息
-            message.error('用户名或密码错误');
-          }
-        })
-        .catch(error => {
-          console.error('登录请求失败:', error);
-          message.error('登录请求失败，请稍后重试');
-        });
+      directLogin(userName, userPassword, (user) => {
+        if (user) {
+          window.location.href = window.location.origin;
+        }
+      }).then(result => {
+        if (!result.success) {
+          message.error(result.message);
+        }
+      });
     }
   }
 

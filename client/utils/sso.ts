@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { setCookie, getCookie, delCookie } from './cookie'
-import { getUrlParamByKey, getLocalApiPrefix, getLocalEnv } from './common'
+import { getUrlParamByKey, getLocalApiPrefix, getLocalEnv, handleXSS } from './common'
 import _ from 'lodash'
 
 const env = getLocalEnv()
@@ -180,23 +180,63 @@ export const login = (callback: any) => {
   if (typeof window !== 'undefined') {
     const locationHref = window.location.href
 
-    if (locationHref.indexOf('/login') === -1) {
+    // 如果已经在登录页面，不需要进行登录检查
+    if (locationHref.indexOf('/login') !== -1) {
+      callback && callback()
+      return
+    }
 
-      if (cookieLoginValue !== '') {
-        principalLogin(cookieLoginValue, callback)
+    // 如果没有登录凭证，立即跳转到登录页面
+    if (cookieLoginValue === '') {
+      const urlParamTicket = getUrlParamByKey('ticket')
+      const urlParamName = getUrlParamByKey('name')
+
+      if (urlParamTicket !== '') {
+        validateLogin(urlParamTicket, urlParamName, callback)
       } else {
-        const urlParamTicket = getUrlParamByKey('ticket')
-        const urlParamName = getUrlParamByKey('name')
-        // console.log('urlParamTicket', urlParamTicket, urlParamName)
+        // 没有ticket参数，直接跳转到登录页
+        jumpToLogin()
+        // 不执行回调，因为页面将被重定向
+        return
+      }
+    } else {
+      // 有登录凭证，验证登录状态
+      principalLogin(cookieLoginValue, callback)
+    }
+  } else {
+    callback && callback()
+  }
+}
 
-        if (urlParamTicket !== '') {
-          validateLogin(urlParamTicket, urlParamName, callback)
-        } else {
-          jumpToLogin()
+export const directLogin = (userName: string, userPassword: string, callback: any) => {
+  if (userName === '') {
+    return { success: false, message: '请输入用户名' };
+  }
+  if (userPassword === '') {
+    return { success: false, message: '请输入密码' };
+  }
+
+  // 使用 encodeURIComponent 处理可能的特殊字符，然后再进行 Base64 编码
+  const safeStr = handleXSS(userName + "," + userPassword);
+  const encodedName = btoa(encodeURIComponent(safeStr));
+  const url = `${getLocalApiPrefix()}/rest/sso/ticketCheck?ticket=XXX&name=${encodedName}`;
+
+  return fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      if (data && data.returnCode === 0) {
+        // 登录成功，设置cookie
+        if (typeof window !== 'undefined') {
+          storeLogin(data.cookieValue, data.cookieExpire, data.userAttr, callback);
+          return { success: true };
         }
       }
-    }
-  }
+      return { success: false, message: '用户名或密码错误' };
+    })
+    .catch(error => {
+      console.error('登录请求失败:', error);
+      return { success: false, message: '登录请求失败，请稍后重试' };
+    });
 }
 
 export const logout = () => {

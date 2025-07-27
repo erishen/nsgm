@@ -4,7 +4,7 @@ const router = express.Router()
 
 router.get('/sessionCheck', (req, res) => {
   const { query } = req
-  const { cookieValue, redirectUrl, appId } = query
+  // const { cookieValue, redirectUrl, appId } = query
 
   res.json({
     name: 'sessionCheck',
@@ -18,12 +18,10 @@ router.get('/sessionCheck', (req, res) => {
 
 router.get('/ticketCheck', (req, res) => {
   const { query } = req
-  const { ticket, name } = query
+  const { name } = query
   // 使用 Buffer 解码 Base64 字符串，然后使用 decodeURIComponent 处理特殊字符
   const decodedBase64 = Buffer.from(name, 'base64').toString('utf-8')
   const decodedName = decodeURIComponent(decodedBase64)
-
-  console.log('name', name, decodedName)
 
   if (decodedName === "erishen,123456") {
     res.json({
