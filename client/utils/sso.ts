@@ -200,6 +200,6 @@ export const login = (callback: any) => {
 }
 
 export const logout = () => {
-  jumpToLogout()
+  jumpToLogin()
 }
 
