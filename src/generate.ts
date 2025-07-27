@@ -1,11 +1,16 @@
-import fs from 'fs'
-import path from 'path'
+import path, { resolve } from 'path'
 import shell from 'shelljs'
 import serverDB from './server/db'
-import replace from 'replace'
-import { replaceInFile } from 'replace-in-file'
+import {
+  firstUpperCase,
+  mkdirSync,
+  rmFileSync,
+  rmdirSync,
+  copyFileSync,
+  handleReplace,
+  replaceInFileAll
+} from './utils'
 
-const { resolve } = path
 const { getMysqlConfig } = serverDB
 const { mysqlOptions }: any = getMysqlConfig()
 const {
@@ -15,115 +20,6 @@ const {
   port: mysqlPort,
   database: mysqlDatabase
 } = mysqlOptions
-
-const mkdirFlag = true
-const copyFileFlag = true
-const replaceFlag = true
-const replaceInFileFlag = true
-const rmdirFlag = true
-const rmfileFlag = true
-
-const firstUpperCase = (word: string) => {
-  return word.substring(0, 1).toUpperCase() + word.substring(1)
-}
-
-const mkdirSync = (dirPath: string) => {
-  if (mkdirFlag) {
-    if (!fs.existsSync(dirPath)) {
-      fs.mkdirSync(dirPath)
-    }
-  }
-}
-
-const rmFileSync = (filePath: string) => {
-  if (rmfileFlag) {
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath)
-    }
-  }
-}
-
-const rmdirSync = (dirPath: string) => {
-  if (rmdirFlag) {
-    if (fs.existsSync(dirPath)) {
-      const list = fs.readdirSync(dirPath)
-
-      list.forEach((item) => {
-        const resolverPath = resolve(`${dirPath}/${item}`)
-        const stat = fs.statSync(resolverPath)
-        const isDir = stat.isDirectory()
-        const isFile = stat.isFile()
-
-        if (isDir) {
-          rmdirSync(resolverPath)
-        } else if (isFile) {
-          rmFileSync(resolverPath)
-        }
-      })
-
-      fs.rmdirSync(dirPath)
-    }
-  }
-}
-
-const copyFileSync = (source: string, dest: string, upgradeFlag = false) => {
-  if (copyFileFlag) {
-    if (!upgradeFlag) {
-      if (!fs.existsSync(dest) && fs.existsSync(source)) {
-        fs.copyFileSync(source, dest)
-      }
-    } else {
-      if (fs.existsSync(source)) {
-        fs.copyFileSync(source, dest)
-      }
-    }
-  }
-}
-
-const handleReplace = ({ regex, replacement, paths }: any) => {
-  if (replaceFlag) {
-    replace({
-      regex,
-      replacement,
-      paths,
-      recursive: true,
-      silent: true
-    })
-  }
-}
-
-const replaceInFileAll = async (array: any, index = 0, callback: any) => {
-  if (replaceInFileFlag) {
-    console.log('replaceInFileAll', index)
-    const arrayLen = array.length
-    if (index < arrayLen) {
-      const item = array[index]
-
-      replaceInFile(item)
-        .then((changedFiles) => {
-          console.log('Modified files:', changedFiles)
-          replaceInFileAll(array, ++index, callback)
-        })
-        .catch((error) => {
-          if (error) {
-            console.error('Error occurred:', error)
-          }
-        })
-
-      // replaceInFile(item, (error, changedFiles) => {
-      //   if (error) {
-      //     console.error('Error occurred:', error)
-      //   }
-      //   console.log('Modified files:', changedFiles)
-      //   replaceInFileAll(array, ++index, callback)
-      // })
-    } else {
-      return callback?.()
-    }
-  } else {
-    return callback?.()
-  }
-}
 
 const sourceFolder = __dirname
 const destFolder = process.cwd()
@@ -141,7 +37,6 @@ const publicPathSource = '../public'
 const publicPath = './public'
 const scriptsPathSource = '../scripts'
 const scriptsPath = './scripts'
-
 const reduxPath = '/redux'
 const servicePath = '/service'
 const styledPath = '/styled'
@@ -151,7 +46,6 @@ const layoutPath = '/layout'
 const modulesPath = '/modules'
 const apisPath = '/apis'
 const sqlPath = '/sql'
-
 const utilsMenuPath = '/menu.tsx'
 const reduxReducersPath = '/reducers.ts'
 const slbHealthCheckPath = '/slbhealthcheck.html'
@@ -229,7 +123,6 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
     const clientLayoutPath = layoutPath
     const clientLayoutIndexPath = '/index.tsx'
 
-    // 仍旧使用 generation/client/redux/reducers.ts
     const sourceClientReduxReducersAllPath = resolve(
       sourceClientPathGeneration + clientReduxPath + clientReduxReducersPath
     )
@@ -245,7 +138,6 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
     const sourceClientUtilsCookiePath = resolve(sourceClientPath + clientUtilsPath + clientUtilsCookiePath)
     const sourceClientUtilsSsoPath = resolve(sourceClientPath + clientUtilsPath + clientUtilsSsoPath)
 
-    // 仍旧使用 generation/client/utils/menu.tsx
     const sourceClientUtilsMenuPath = resolve(sourceClientPathGeneration + clientUtilsPath + clientUtilsMenuPath)
 
     let destClientReduxStorePath = resolve(destClientReduxPath + clientReduxStorePath)
@@ -346,10 +238,7 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
     const serverUtilsCommonPath = '/common.js'
     const serverUtilsDBPoolManagerPath = '/db-pool-manager.js'
 
-    // 仍旧使用 generation/server/rest.js
     const sourceServerRestPath = resolve(sourceServerPathGeneration + serverRestPath)
-
-    // 仍旧使用 generation/server/utils/common.js
     const sourceServerUtilsCommonPath = resolve(sourceServerPathGeneration + serverUtilsPath + serverUtilsCommonPath)
 
     const sourceServerUtilsDBPoolManagerPath = resolve(
@@ -446,8 +335,6 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
     const rootPackagePath = packagePath
     const rootTsconfigPath = '/tsconfig.json'
 
-    // const rootBabelrcPath = '/.babelrc'
-
     const rootGitignorePathSource = '/gitignore'
     const rootGitignorePath = '/.gitignore'
 
@@ -469,7 +356,6 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
     const sourceProjectConfigPath = resolve(sourceGenerationPath + rootProjectConfigPath)
     const sourceTsConfigPath = resolve(sourceGenerationPath + rootTsconfigPath)
 
-    // const sourceBabelrcPath = path.join(sourceGenerationPath, rootBabelrcPath)
     const sourceGitignorePath = resolve(sourceGenerationPath + rootGitignorePathSource)
 
     const sourceEslintrcPath = resolve(sourceGenerationPath + rootEslintrcPathSource)
@@ -487,7 +373,6 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
     let destMysqlConfigPath = resolve(destFolder + rootMysqlConfigPath)
     let destProjectConfigPath = resolve(destFolder + rootProjectConfigPath)
     let destTsConfigPath = resolve(destFolder + rootTsconfigPath)
-    // let destBabelrcPath = resolve(destFolder + rootBabelrcPath)
     let destGitignorePath = resolve(destFolder + rootGitignorePath)
     let destEslintrcPath = resolve(destFolder + rootEslintrcPath)
     let destNextEnvPath = resolve(destFolder + rootNextEnvPath)
@@ -499,9 +384,7 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
       destNextConfigPath = resolve(newDestFolder + rootNextConfigPath)
       destMysqlConfigPath = resolve(newDestFolder + rootMysqlConfigPath)
       destProjectConfigPath = resolve(newDestFolder + rootProjectConfigPath)
-
       destTsConfigPath = resolve(newDestFolder + rootTsconfigPath)
-      // destBabelrcPath = resolve(newDestFolder + rootBabelrcPath)
       destGitignorePath = resolve(newDestFolder + rootGitignorePath)
       destEslintrcPath = resolve(newDestFolder + rootEslintrcPath)
       destNextEnvPath = resolve(newDestFolder + rootNextEnvPath)
@@ -516,7 +399,6 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
     copyFileSync(sourceProjectConfigPath, destProjectConfigPath)
     copyFileSync(sourcePackagePath, destPackagePath)
     copyFileSync(sourceTsConfigPath, destTsConfigPath)
-    // copyFileSync(sourceBabelrcPath, destBabelrcPath)
     copyFileSync(sourceGitignorePath, destGitignorePath)
     copyFileSync(sourceEslintrcPath, destEslintrcPath)
     copyFileSync(sourceNextEnvPath, destNextEnvPath)
@@ -549,7 +431,6 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
       shell.exec(
         'npm install --save-dev @types/node@^20 @types/react@^18 @types/lodash@^4 typescript@^5 --legacy-peer-deps'
       )
-      // shell.exec('npm install --save-dev babel-plugin-styled-components@2.1.4 --legacy-peer-deps')
     }
   }
 
@@ -732,11 +613,9 @@ export const createFiles = (controller: string, action: string) => {
     {
       from: /null\s*\n/,
       to:
-        `null\n  },\n  {\n    // ${controller}_${action}_start\n    key: (++key).toString(),\n    text: '${
-          controller
+        `null\n  },\n  {\n    // ${controller}_${action}_start\n    key: (++key).toString(),\n    text: '${controller
         }',\n    url: '/${controller}/${action}',\n    icon: <SolutionOutlined rev={undefined} />,\n    ` +
-        `subMenus: [\n      {\n        key: key + '_1',\n        text: '${action}',\n        url: '/${controller}/${
-          action
+        `subMenus: [\n      {\n        key: key + '_1',\n        text: '${action}',\n        url: '/${controller}/${action
         }'\n      }\n    ]\n    // ${controller}_${action}_end\n`,
       files: [destClientUtilsMenuPath]
     }
