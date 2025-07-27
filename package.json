@@ -32,7 +32,6 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch",
-    "test:cli": "./test-cli.sh",
     "performance": "./scripts/performance-check.sh",
     "size-limit": "npx size-limit"
   },
