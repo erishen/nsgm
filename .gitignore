@@ -8,3 +8,10 @@ lib/ignite.log
 .DS_Store
 .vscode
 coverage
+
+# 环境变量和敏感信息
+.env
+.env.local
+.env.production
+.env.development
+*.log

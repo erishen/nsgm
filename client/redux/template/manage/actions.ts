@@ -1,11 +1,9 @@
 import * as types from './types'
 import { getTemplateService, addTemplateService, updateTemplateService, deleteTemplateService, searchTemplateService, batchDeleteTemplateService } from '@/service/template/manage'
+import { AppDispatch } from '@/redux/store'
 
 export const getTemplate = (page=0, pageSize=10) => (
-  dispatch: (arg0: {
-    type: string
-    payload?: { template: any }
-  }) => void
+  dispatch: AppDispatch
 ) => {
   dispatch({
     type: types.GET_TEMPLATE
@@ -30,10 +28,7 @@ export const getTemplate = (page=0, pageSize=10) => (
 }
 
 export const searchTemplate = (page=0, pageSize=10, data: any) => (
-  dispatch: (arg0: {
-    type: string
-    payload?: { template: any }
-  }) => void
+  dispatch: AppDispatch
 ) => {
   dispatch({
     type: types.SEARCH_TEMPLATE
@@ -58,10 +53,7 @@ export const searchTemplate = (page=0, pageSize=10, data: any) => (
 }
 
 export const updateSSRTemplate = (template: any) => (
-  dispatch: (arg0: {
-    type: string
-    payload?: { template: any }
-  }) => void
+  dispatch: AppDispatch
 ) => {
   dispatch({
     type: types.UPDATE_SSR_TEMPLATE,
@@ -72,10 +64,7 @@ export const updateSSRTemplate = (template: any) => (
 }
 
 export const addTemplate = (obj:any) => (
-  dispatch: (arg0: {
-    type: string
-    payload?: { template: any }
-  }) => void
+  dispatch: AppDispatch
 ) => {
   dispatch({
     type: types.ADD_TEMPLATE
@@ -104,10 +93,7 @@ export const addTemplate = (obj:any) => (
 }
 
 export const modTemplate = (id: number, obj: any) => (
-  dispatch: (arg0: {
-    type: string
-    payload?: { template: any }
-  }) => void
+  dispatch: AppDispatch
 ) => {
   dispatch({
     type: types.MOD_TEMPLATE
@@ -135,10 +121,7 @@ export const modTemplate = (id: number, obj: any) => (
 }
 
 export const delTemplate = (id: number) => (
-  dispatch: (arg0: {
-    type: string
-    payload?: { id: number }
-  }) => void
+  dispatch: AppDispatch
 ) => {
   dispatch({
     type: types.DEL_TEMPLATE
@@ -163,10 +146,7 @@ export const delTemplate = (id: number) => (
 }
 
 export const batchDelTemplate = (ids:any) => (
-  dispatch: (arg0: {
-    type: string
-    payload?: { ids: any }
-  }) => void
+  dispatch: AppDispatch
 ) => {
   dispatch({
     type: types.BATCH_DEL_TEMPLATE

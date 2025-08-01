@@ -16,26 +16,28 @@ A full-stack development framework with code template generation capabilities, h
 - Rapid development workflow
 - Integrated GraphQL API
 - MySQL database support
+- Secure login system with bcrypt encryption
 
 ## Command Line Tools
 
 ### Basic Commands
 
-| Command | Description |
-|------|------|
-| `nsgm init` | Initialize project |
-| `nsgm upgrade` | Upgrade project base files |
-| `nsgm create` | Create template page |
-| `nsgm delete` | Delete template page |
+| Command         | Description                             |
+| --------------- | --------------------------------------- |
+| `nsgm init`     | Initialize project                      |
+| `nsgm upgrade`  | Upgrade project base files              |
+| `nsgm create`   | Create template page                    |
+| `nsgm delete`   | Delete template page                    |
 | `nsgm deletedb` | Delete template page and database table |
-| `nsgm dev` | Development mode |
-| `nsgm start` | Production mode |
-| `nsgm build` | Build project |
-| `nsgm export` | Export static pages |
+| `nsgm dev`      | Development mode                        |
+| `nsgm start`    | Production mode                         |
+| `nsgm build`    | Build project                           |
+| `nsgm export`   | Export static pages                     |
 
 ### Parameter Description
 
 - **dictionary**: Used with `export`/`init` commands, default value is `webapp`
+
   ```
   nsgm init dictionary=webapp
   # or simplified as
@@ -43,6 +45,7 @@ A full-stack development framework with code template generation capabilities, h
   ```
 
 - **controller**: Used with `create`/`delete` commands, required parameter
+
   ```
   nsgm create math
   ```
@@ -52,6 +55,29 @@ A full-stack development framework with code template generation capabilities, h
   nsgm create math test
   ```
 
+## Security Configuration
+
+For security setup and login configuration, please refer to [SECURITY.md](./SECURITY.md).
+
+### Quick Setup
+
+1. Generate password hash:
+
+   ```bash
+   npm run generate-password yourSecurePassword
+   ```
+
+2. Create `.env` file:
+
+   ```bash
+   LOGIN_USERNAME=admin
+   LOGIN_PASSWORD_HASH=your_generated_hash_here
+   ```
+
+3. Make sure `.env` is in your `.gitignore` file.
+
+**⚠️ Important:** Never commit passwords or `.env` files to version control.
+
 ## Project Configuration
 
 ### next.config.js
@@ -60,14 +86,17 @@ A full-stack development framework with code template generation capabilities, h
 const { nextConfig } = require('nsgm-cli')
 const projectConfig = require('./project.config')
 
-const { version, prefix, protocol, host } = projectConfig 
+const { version, prefix, protocol, host } = projectConfig
 
 module.exports = (phase, defaultConfig) => {
-    let configObj = nextConfig(phase, defaultConfig, { 
-        version, prefix, protocol, host
-    })
+  let configObj = nextConfig(phase, defaultConfig, {
+    version,
+    prefix,
+    protocol,
+    host
+  })
 
-    return configObj
+  return configObj
 }
 ```
 
@@ -79,13 +108,13 @@ const { mysqlOptions } = mysqlConfig
 const { user, password, host, port, database } = mysqlOptions
 
 module.exports = {
-    mysqlOptions: {
-        user,
-        password,
-        host,
-        port,
-        database
-    }
+  mysqlOptions: {
+    user,
+    password,
+    host,
+    port,
+    database
+  }
 }
 ```
 
@@ -99,11 +128,11 @@ const { prefix, protocol, host, port } = projectConfig
 const { version } = pkg
 
 module.exports = {
-    version,
-    prefix,
-    protocol,
-    host,
-    port
+  version,
+  prefix,
+  protocol,
+  host,
+  port
 }
 ```
 
@@ -116,11 +145,11 @@ The `server` folder in the project root contains the following:
 - `apis/` - Stores REST API interfaces
 - `modules/` - Stores GraphQL resolvers and schemas
 - `plugins/` - Stores GraphQL plugins
-- `*.js` - Route files, e.g., `test.js` handles requests to `/test/*` and `${prefix}/test/*`
+- `*.js` - Route files, e.g., `csrf-test.js` handles requests to `/csrf-test/*` and `${prefix}/csrf-test/*`
 
 ### Example Code
 
-#### Route File Example (server/test.js)
+#### Route File Example (server/csrf-test.js)
 
 ```javascript
 const express = require('express')
@@ -129,14 +158,14 @@ const moment = require('moment')
 const router = express.Router()
 
 router.use((req, res, next) => {
-    const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl
-    console.log(moment().format('YYYY-MM-DD HH:mm:ss') + ' ' + fullUrl)
-    next()
+  const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl
+  console.log(moment().format('YYYY-MM-DD HH:mm:ss') + ' ' + fullUrl)
+  next()
 })
 
 router.get('/*', (req, res) => {
-    res.statusCode = 200
-    res.json({ name: 'TEST' })
+  res.statusCode = 200
+  res.json({ name: 'TEST' })
 })
 
 module.exports = router
@@ -149,8 +178,8 @@ const express = require('express')
 const router = express.Router()
 
 router.get('/*', (req, res) => {
-    res.statusCode = 200
-    res.json({ name: 'Hello' })
+  res.statusCode = 200
+  res.json({ name: 'Hello' })
 })
 
 module.exports = router
@@ -160,15 +189,15 @@ module.exports = router
 
 ```javascript
 module.exports = {
-    query: `
+  query: `
         link: String
     `,
-    mutation: `
+  mutation: `
         linkUpdate(link: Date): String
     `,
-    subscription: ``,
-    type: ``
-} 
+  subscription: ``,
+  type: ``
+}
 ```
 
 #### GraphQL Resolver Example (server/modules/link/resolver.js)
@@ -177,14 +206,14 @@ module.exports = {
 let localLink = ''
 
 module.exports = {
-    link: () => {
-        return localLink
-    },
-    linkUpdate: ({ link }) => {
-        console.log('link', link)
-        localLink = link
-        return localLink
-    }
+  link: () => {
+    return localLink
+  },
+  linkUpdate: ({ link }) => {
+    console.log('link', link)
+    localLink = link
+    return localLink
+  }
 }
 ```
 
@@ -196,13 +225,11 @@ const { Kind } = require('graphql/language')
 const { GraphQLScalarType } = require('graphql')
 
 const customScalarDate = new GraphQLScalarType({
-    name: 'Date',
-    description: 'Date custom scalar type',
-    parseValue: value => moment(value).valueOf(),
-    serialize: value => moment(value).format('YYYY-MM-DD HH:mm:ss:SSS'),
-    parseLiteral: ast => (ast.kind === Kind.INT)
-        ? parseInt(ast.value, 10)
-        : null
+  name: 'Date',
+  description: 'Date custom scalar type',
+  parseValue: (value) => moment(value).valueOf(),
+  serialize: (value) => moment(value).format('YYYY-MM-DD HH:mm:ss:SSS'),
+  parseLiteral: (ast) => (ast.kind === Kind.INT ? parseInt(ast.value, 10) : null)
 })
 
 module.exports = { Date: customScalarDate }

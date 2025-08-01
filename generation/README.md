@@ -8,34 +8,37 @@
 - [Styled-components](https://github.com/styled-components/styled-components) - CSS-in-JS 解决方案
 - [GraphQL](https://graphql.org/) - API 查询语言
 - [MySQL](https://www.mysql.com/) - 关系型数据库
+- 安全登录系统 - 基于 bcrypt 加密
 
 ## 快速入门
 
 ### 开发命令
 
-| 命令 | 说明 |
-|---------|-------------|
-| `npm run dev` | 开发模式 |
-| `npm run start` | 生产模式 |
-| `npm run build` | 编译项目 |
+| 命令             | 说明         |
+| ---------------- | ------------ |
+| `npm run dev`    | 开发模式     |
+| `npm run start`  | 生产模式     |
+| `npm run build`  | 编译项目     |
 | `npm run export` | 导出静态页面 |
 
 ### 代码生成命令
 
-| 命令 | 说明 |
-|---------|-------------|
+| 命令             | 说明         |
+| ---------------- | ------------ |
 | `npm run create` | 创建模板页面 |
 | `npm run delete` | 删除模板页面 |
 
 ### 项目维护命令
 
-| 命令 | 说明 |
-|---------|-------------|
-| `npm run upgrade` | 升级项目基础文件 |
+| 命令                        | 说明             |
+| --------------------------- | ---------------- |
+| `npm run upgrade`           | 升级项目基础文件 |
+| `npm run generate-password` | 生成安全密码哈希 |
 
 ## 参数说明
 
 ### controller
+
 - 用于 `create`/`delete` 命令
 - 必填参数
 - 示例:
@@ -44,6 +47,7 @@
   ```
 
 ### action
+
 - 用于 `create`/`delete` 命令
 - 默认值为 `manage`
 - 跟在 controller 参数后面
@@ -53,6 +57,7 @@
   ```
 
 ### dictionary
+
 - 用于 `export` 命令
 - 默认值为 `webapp`
 - 示例:
@@ -88,14 +93,17 @@
 const { nextConfig } = require('nsgm-cli')
 const projectConfig = require('./project.config')
 
-const { version, prefix, protocol, host } = projectConfig 
+const { version, prefix, protocol, host } = projectConfig
 
 module.exports = (phase, defaultConfig) => {
-    let configObj = nextConfig(phase, defaultConfig, { 
-        version, prefix, protocol, host
-    })
+  let configObj = nextConfig(phase, defaultConfig, {
+    version,
+    prefix,
+    protocol,
+    host
+  })
 
-    return configObj
+  return configObj
 }
 ```
 
@@ -107,13 +115,13 @@ const { mysqlOptions } = mysqlConfig
 const { user, password, host, port, database } = mysqlOptions
 
 module.exports = {
-    mysqlOptions: {
-        user,
-        password,
-        host,
-        port,
-        database
-    }
+  mysqlOptions: {
+    user,
+    password,
+    host,
+    port,
+    database
+  }
 }
 ```
 
@@ -127,13 +135,45 @@ const { prefix, protocol, host, port } = projectConfig
 const { version } = pkg
 
 module.exports = {
-    version,
-    prefix,
-    protocol,
-    host,
-    port
+  version,
+  prefix,
+  protocol,
+  host,
+  port
 }
 ```
+
+## 安全配置
+
+项目集成了安全的登录系统，使用 bcrypt 加密。在部署前请配置登录凭证：
+
+### 快速设置
+
+1. **生成密码哈希**：
+
+   ```bash
+   npm run generate-password yourSecurePassword
+   ```
+
+2. **创建环境变量文件**：
+
+   ```bash
+   # 在项目根目录创建 .env 文件
+   LOGIN_USERNAME=admin
+   LOGIN_PASSWORD_HASH=your_generated_hash_here
+   ```
+
+3. **确保 .env 文件在 .gitignore 中**（已预配置）
+
+### 详细安全配置
+
+更多安全配置和最佳实践，请参考 [SECURITY.md](./SECURITY.md) 文档。
+
+**⚠️ 重要提醒：**
+
+- 不要在代码中硬编码密码
+- 不要将 `.env` 文件提交到版本控制系统
+- 定期更换登录密码
 
 ## 开发指南
 

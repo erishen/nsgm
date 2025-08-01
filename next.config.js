@@ -129,6 +129,12 @@ module.exports = (phase, defaultConfig, options) => {
         '@': path.resolve(__dirname, 'client'),
       }
 
+      // 支持 TypeScript 路径映射
+      config.resolve.modules = [
+        path.resolve(__dirname, 'client'),
+        'node_modules'
+      ]
+
       return config
     },
     generateBuildId: async () => {

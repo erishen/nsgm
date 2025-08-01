@@ -18,8 +18,8 @@ export const getLocalApiPrefix = () => {
   
   if(!isExport){
     if (typeof window !== 'undefined') { 
+      // 客户端：使用当前页面的 location
       const location = window.location
-      // console.log('location', location)
 
       protocol = location.protocol
       if (protocol.indexOf(':') != -1) { 
@@ -28,10 +28,10 @@ export const getLocalApiPrefix = () => {
       host = location.hostname
       port = location.port || (protocol.indexOf('https') !== -1 ? "443" : "80")
     }
+    // 服务器端：直接使用配置中的值，无需额外处理
   } 
 
   localApiPrefix = protocol + '://' + host + ':' + port + prefix
-  // console.log('localApiPrefix', localApiPrefix)
   return localApiPrefix
 }
 

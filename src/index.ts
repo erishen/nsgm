@@ -1,4 +1,7 @@
 #! /usr/bin/env node
+// 加载环境变量
+require('dotenv').config()
+
 // 仅在开发环境中禁用TLS证书验证
 if (process.env.NODE_ENV === 'development') {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
@@ -18,6 +21,8 @@ import getConfig from 'next/config'
 import { initFiles, createFiles, deleteFiles } from './generate'
 import _ from 'lodash'
 import cors from 'cors'
+import session from 'express-session'
+import { csrfProtection, getCSRFToken, securityMiddleware, createCSPMiddleware } from './server/csrf'
 
 const { resolve } = path
 const curFolder = process.cwd()
@@ -97,6 +102,26 @@ export const startExpress = (options: any, callback?: () => void) => {
 
       const server = express()
 
+      // 配置 session（CSRF 保护需要）
+      server.use(
+        session({
+          secret: process.env.SESSION_SECRET || 'nsgm-default-secret-key-change-in-production',
+          resave: false,
+          saveUninitialized: true, // 改为 true，确保 session 被创建
+          name: 'sessionId', // 明确指定 session cookie 名称
+          cookie: {
+            secure: false, // 开发环境总是使用 false，生产环境再考虑 HTTPS
+            httpOnly: true,
+            maxAge: 24 * 60 * 60 * 1000, // 24小时
+            sameSite: 'lax', // 设置 SameSite 策略
+            domain: undefined // 不设置 domain，使用默认
+          }
+        })
+      )
+
+      // 初始化 CSRF token - 移除全局初始化，让每个端点自己处理
+      // server.use(setupCSRFToken)
+
       server.use(
         bodyParser.urlencoded({
           extended: false
@@ -104,9 +129,23 @@ export const startExpress = (options: any, callback?: () => void) => {
       )
 
       // 支持跨域，nsgm export 之后前后分离
-      server.use(cors())
+      server.use(
+        cors({
+          credentials: true, // 允许发送 cookies
+          origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000']
+        })
+      )
 
       server.use(bodyParser.json())
+
+      // 添加基本安全中间件
+      server.use(securityMiddleware.basicHeaders)
+      if (process.env.NODE_ENV === 'production') {
+        server.use(createCSPMiddleware()) // 内容安全策略
+      }
+
+      // 添加 CSRF 保护中间件（在解析 body 之后）
+      server.use(csrfProtection)
 
       server.use(fileUpload())
 
@@ -117,7 +156,10 @@ export const startExpress = (options: any, callback?: () => void) => {
       const { publicRuntimeConfig } = nextConfig
       const { host, port, prefix } = publicRuntimeConfig
 
+      // 提供 CSRF token 的端点
+      server.get('/csrf-token', getCSRFToken)
       if (prefix !== '') {
+        server.get(`${prefix}/csrf-token`, getCSRFToken)
         server.use(`${prefix}/static`, express.static(path.join(__dirname, 'public')))
         server.use(`${prefix}/graphql`, localGraphql(command))
       }

@@ -3,7 +3,6 @@ import _ from 'lodash'
 import { LoginContainer } from '../client/styled/common'
 // import getConfig from 'next/config'
 import React, { useState } from 'react'
-import { getLocalEnv } from '../client/utils/common'
 import { Input, Button, Form, Typography, message } from 'antd'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import { directLogin } from '../client/utils/sso'
@@ -25,9 +24,6 @@ renderArr.push('Login')
 const Page = ({ html }) => {
   const [userName, setUserName] = useState("")
   const [userPassword, setUserPassword] = useState("")
-  const env = getLocalEnv()
-  const LOGIN_COOKIE_ID = env + '_cas_nsgm'
-  const LOGIN_COOKIE_USER = env + '_nsgm_user'
 
   const createMarkup = () => {
     return {
@@ -46,15 +42,26 @@ const Page = ({ html }) => {
         return;
       }
 
-      directLogin(userName, userPassword, (user) => {
+      const result = directLogin(userName, userPassword, (user) => {
         if (user) {
           window.location.href = window.location.origin;
         }
-      }).then(result => {
-        if (!result.success) {
-          message.error(result.message);
-        }
       });
+
+      // 检查是否是 Promise
+      if (result && typeof (result as any).then === 'function') {
+        (result as Promise<any>).then(loginResult => {
+          if (!loginResult.success) {
+            message.error(loginResult.message);
+          }
+        });
+      } else {
+        // 直接返回的结果
+        const syncResult = result as { success: boolean; message?: string };
+        if (!syncResult.success) {
+          message.error(syncResult.message || '登录失败');
+        }
+      }
     }
   }
 
@@ -103,7 +110,7 @@ const Page = ({ html }) => {
 
 Page.getInitialProps = () => {
   let html = ''
-  _.each(renderArr, (item, index) => {
+  _.each(renderArr, (item) => {
     html += md.render(item)
   })
 

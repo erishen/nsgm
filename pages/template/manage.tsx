@@ -3,20 +3,18 @@ import { ConfigProvider, Table, Modal, Button, Input, Space, Upload, message } f
 import { Container, SearchRow, ModalContainer } from '@/styled/template/manage'
 import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
-import { getTemplate, addTemplate, modTemplate, delTemplate, updateSSRTemplate, searchTemplate, batchDelTemplate } from '@/redux/template/manage/actions'
+import { addTemplate, modTemplate, delTemplate, updateSSRTemplate, searchTemplate, batchDelTemplate } from '@/redux/template/manage/actions'
 import { getTemplateService } from '@/service/template/manage'
-import { RootState } from '@/redux/store'
+import { RootState, AppDispatch } from '@/redux/store'
 import _ from 'lodash'
-import dayjs from 'dayjs'
 import locale from 'antd/lib/locale/zh_CN'
 import { handleXSS, checkModalObj } from '@/utils/common'
 import { UploadOutlined } from '@ant-design/icons'
 import ExcelJS from 'exceljs'
 import { saveAs } from 'file-saver'
+import { createCSRFUploadProps } from '@/utils/fetch'
 
 const pageSize = 100
-const dateFormat = 'YYYY-MM-DD'
-const currentDate = dayjs().format(dateFormat)
 
 const keyTitles = {
   name: '名称'
@@ -74,10 +72,6 @@ const ModalInput = styled(Input)`
 const IconWrapper = styled.i`
     margin-right: 5px;
   `
-const StyledPagination = styled.div`
-    margin-top: 16px;
-    margin-bottom: 16px;
-  `
 const RoundedButton = styled(Button)`
     border-radius: 4px;
   `
@@ -88,7 +82,7 @@ const GlobalStyle = styled.div`
   `
 
 const Page = ({ template }) => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch<AppDispatch>()
   const [isModalVisiable, setIsModalVisible] = useState(false)
   const [modalId, setModalId] = useState(0)
   const [modalName, setModalName] = useState('')
@@ -108,7 +102,7 @@ const Page = ({ template }) => {
 
   const { totalCounts, items: templateItems } = _.cloneDeep(template)
 
-  _.each(templateItems, (item, index) => {
+  _.each(templateItems, (item) => {
     const { id } = item
     item.key = id
   })
@@ -157,7 +151,7 @@ const Page = ({ template }) => {
   ]
 
   const rowSelection = {
-    onChange: (selectedRowKeys: any, selectedRows: any) => {
+    onChange: (selectedRowKeys: any) => {
       //
       setBatchDelIds(selectedRowKeys)
     }
@@ -183,7 +177,7 @@ const Page = ({ template }) => {
       content: '确认删除吗',
       okText: '确认',
       cancelText: '取消',
-      onOk: (e) => {
+      onOk: () => {
         dispatch(delTemplate(id))
         Modal.destroyAll()
       }
@@ -267,20 +261,31 @@ const Page = ({ template }) => {
     }
   }
 
-  const uploadProps = {
+  const uploadProps = createCSRFUploadProps('/rest/template/import', {
     name: 'file',
-    action: '/rest/template/import',
-    onChange(info: any) {
-      //
-
-      if (info.file.status === 'done') {
-        message.success(`${info.file.name} 文件上传成功`)
-        window.location.reload()
-      } else if (info.file.status === 'error') {
-        message.error(`${info.file.name} 文件上传失败`)
+    onSuccess: (fileName) => {
+      message.success(`${fileName} 文件上传成功`)
+      window.location.reload()
+    },
+    onError: (fileName) => {
+      message.error(`${fileName} 文件上传失败`)
+    },
+    beforeUpload: (file) => {
+      // 可以在这里添加文件类型、大小等验证
+      const isExcel = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || 
+                     file.type === 'application/vnd.ms-excel'
+      if (!isExcel) {
+        message.error('只能上传 Excel 文件!')
+        return false
       }
+      const isLt2M = file.size / 1024 / 1024 < 2
+      if (!isLt2M) {
+        message.error('文件大小不能超过 2MB!')
+        return false
+      }
+      return true
     }
-  }
+  })
 
   const batchDeleteTemplate = () => {
     if (batchDelIds.length > 0) {
@@ -289,7 +294,7 @@ const Page = ({ template }) => {
         content: '确认批量删除吗',
         okText: '确认',
         cancelText: '取消',
-        onOk: (e) => {
+        onOk: () => {
           dispatch(batchDelTemplate(batchDelIds))
           Modal.destroyAll()
         }
@@ -328,7 +333,10 @@ const Page = ({ template }) => {
                 导出
               </StyledButton>
               <Upload {...uploadProps}>
-                <StyledButton icon={<UploadOutlined rev={undefined} />} $import>
+                <StyledButton 
+                  icon={<UploadOutlined rev={undefined} />} 
+                  $import
+                >
                   导入
                 </StyledButton>
               </Upload>
@@ -346,7 +354,7 @@ const Page = ({ template }) => {
           dataSource={dataSource}
           columns={columns}
           bordered
-          rowClassName={(record, index) => index % 2 === 0 ? 'table-row-light' : 'table-row-dark'}
+          rowClassName={(_, index) => index % 2 === 0 ? 'table-row-light' : 'table-row-dark'}
           pagination={{
             total: totalCounts,
             pageSize: pageSize,
