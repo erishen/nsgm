@@ -327,25 +327,6 @@ switch (command) {
     */
     process.exit(0)
 
-  case 'password':
-  case 'generate-password':
-    const passwordScript = path.resolve(__dirname, '../scripts/generate-password-hash.js')
-    if (fs.existsSync(passwordScript)) {
-      const password = controller || '' // 使用controller参数作为密码
-      const cmd = `node ${passwordScript} ${password}`
-      exec(cmd, {}, (err, stdout) => {
-        if (err) {
-          console.error('Error generating password hash:', err)
-          return
-        }
-        console.log(stdout)
-        process.exit(0)
-      })
-    } else {
-      console.error('Password generation script not found!')
-      process.exit(1)
-    }
-
   case '-h':
   case 'help':
   case '--help':
@@ -357,7 +338,6 @@ switch (command) {
     console.log(`   -u or upgrade: nsgm upgrade`)
     console.log(`   -c or create: nsgm create controller action (default action is manage)`)
     console.log(`   -d or delete: nsgm delete controller action (default action is manage)`)
-    console.log(`   password or generate-password: nsgm password yourpassword (generate password hash)`)
     console.log(`   dev: nsgm dev (development mode)`)
     console.log(`   build: nsgm build (production mode)`)
     console.log(`   start: nsgm start (production mode)`)

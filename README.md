@@ -22,18 +22,17 @@ A full-stack development framework with code template generation capabilities, h
 
 ### Basic Commands
 
-| Command              | Description                             |
-| -------------------- | --------------------------------------- |
-| `nsgm init`          | Initialize project                      |
-| `nsgm upgrade`       | Upgrade project base files              |
-| `nsgm create`        | Create template page                    |
-| `nsgm delete`        | Delete template page                    |
-| `nsgm deletedb`      | Delete template page and database table |
-| `nsgm password`      | Generate password hash                  |
-| `nsgm dev`           | Development mode                        |
-| `nsgm start`         | Production mode                         |
-| `nsgm build`         | Build project                           |
-| `nsgm export`        | Export static pages                     |
+| Command         | Description                             |
+| --------------- | --------------------------------------- |
+| `nsgm init`     | Initialize project                      |
+| `nsgm upgrade`  | Upgrade project base files              |
+| `nsgm create`   | Create template page                    |
+| `nsgm delete`   | Delete template page                    |
+| `nsgm deletedb` | Delete template page and database table |
+| `nsgm dev`      | Development mode                        |
+| `nsgm start`    | Production mode                         |
+| `nsgm build`    | Build project                           |
+| `nsgm export`   | Export static pages                     |
 
 ### Parameter Description
 
@@ -56,11 +55,6 @@ A full-stack development framework with code template generation capabilities, h
   nsgm create math test
   ```
 
-- **password**: Used with `password` command, optional parameter
-  ```
-  nsgm password yourSecurePassword
-  ```
-
 ## Security Configuration
 
 For security setup and login configuration, please refer to [SECURITY.md](./SECURITY.md).
@@ -72,9 +66,6 @@ For security setup and login configuration, please refer to [SECURITY.md](./SECU
    ```bash
    # Using npm script
    npm run generate-password yourSecurePassword
-   
-   # Or using nsgm directly
-   nsgm password yourSecurePassword
    ```
 
 2. Create `.env` file:

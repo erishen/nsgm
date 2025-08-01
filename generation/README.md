@@ -67,15 +67,6 @@
   npm run export webapp
   ```
 
-### password
-
-- 用于 `generate-password` 命令
-- 可选参数
-- 示例:
-  ```
-  npm run generate-password yourSecurePassword
-  ```
-
 ## 项目结构
 
 ```
@@ -163,9 +154,6 @@ module.exports = {
    ```bash
    # 使用 npm 脚本
    npm run generate-password yourSecurePassword
-   
-   # 或直接使用 nsgm 命令
-   npx nsgm password yourSecurePassword
    ```
 
 2. **创建环境变量文件**：
