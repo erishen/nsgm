@@ -298,12 +298,15 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
   const initScriptsFiles = () => {
     const scriptsStartupPath = '/startup.sh'
     const scriptsShutdownPath = '/shutdown.sh'
+    const scriptsPasswordPath = '/generate-password-hash.js'
 
     const sourceScriptsStartupPath = resolve(sourceScriptsPath + scriptsStartupPath)
     const sourceScriptsShutdownPath = resolve(sourceScriptsPath + scriptsShutdownPath)
+    const sourceScriptsPasswordPath = resolve(sourceScriptsPath + scriptsPasswordPath)
 
     let destScriptsStartupPath = resolve(destScriptsPath + scriptsStartupPath)
     let destScriptsShutdownPath = resolve(destScriptsPath + scriptsShutdownPath)
+    let destScriptsPasswordPath = resolve(destScriptsPath + scriptsPasswordPath)
 
     if (dictionary === '') {
       mkdirSync(destScriptsPath)
@@ -313,10 +316,12 @@ export const initFiles = (dictionary: string, upgradeFlag = false) => {
 
       destScriptsStartupPath = resolve(newDestScriptsPath + scriptsStartupPath)
       destScriptsShutdownPath = resolve(newDestScriptsPath + scriptsShutdownPath)
+      destScriptsPasswordPath = resolve(newDestScriptsPath + scriptsPasswordPath)
     }
 
     copyFileSync(sourceScriptsStartupPath, destScriptsStartupPath)
     copyFileSync(sourceScriptsShutdownPath, destScriptsShutdownPath)
+    copyFileSync(sourceScriptsPasswordPath, destScriptsPasswordPath)
   }
 
   const initRootFiles = () => {

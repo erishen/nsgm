@@ -30,10 +30,10 @@
 
 ### 项目维护命令
 
-| 命令                        | 说明             |
-| --------------------------- | ---------------- |
-| `npm run upgrade`           | 升级项目基础文件 |
-| `npm run generate-password` | 生成安全密码哈希 |
+| 命令                                | 说明             |
+| ----------------------------------- | ---------------- |
+| `npm run upgrade`                   | 升级项目基础文件 |
+| `npm run generate-password [密码]`  | 生成安全密码哈希 |
 
 ## 参数说明
 
@@ -65,6 +65,15 @@
   npm run export dictionary=webapp
   # 或简化为
   npm run export webapp
+  ```
+
+### password
+
+- 用于 `generate-password` 命令
+- 可选参数
+- 示例:
+  ```
+  npm run generate-password yourSecurePassword
   ```
 
 ## 项目结构
@@ -152,7 +161,11 @@ module.exports = {
 1. **生成密码哈希**：
 
    ```bash
+   # 使用 npm 脚本
    npm run generate-password yourSecurePassword
+   
+   # 或直接使用 nsgm 命令
+   npx nsgm password yourSecurePassword
    ```
 
 2. **创建环境变量文件**：
