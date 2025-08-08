@@ -32,13 +32,13 @@ export const Container = styled.div`
       align-items: center;
       margin-left: auto;
       height: 100%;
-      
+
       .ant-space {
         display: flex;
         align-items: center;
         height: 100%;
       }
-      
+
       .action-icon {
         color: rgba(255, 255, 255, 0.85);
         font-size: 20px;
@@ -49,18 +49,18 @@ export const Container = styled.div`
         justify-content: center;
         height: 32px;
         width: 32px;
-        
+
         &:hover {
           color: #fff;
         }
       }
-      
+
       .user-dropdown {
         cursor: pointer;
         padding: 0 8px;
         display: flex;
         align-items: center;
-        
+
         .username {
           color: rgba(255, 255, 255, 0.85);
           margin-left: 8px;
@@ -68,56 +68,56 @@ export const Container = styled.div`
       }
     }
   }
-  
+
   .sidebar {
     box-shadow: 2px 0 8px 0 rgba(29, 35, 41, 0.05);
     background: #f5f7fa;
     border-right: 1px solid #ebeef5;
-    
+
     .side-menu {
       border-right: none;
       background: #f5f7fa;
-      
+
       .ant-menu-item {
         margin: 0;
         border-radius: 0;
-        
+
         &:hover {
           background-color: #e6f7ff;
         }
-        
+
         &.ant-menu-item-selected {
           background-color: #e6f7ff;
           border-right: 3px solid #1890ff;
           font-weight: 500;
         }
       }
-      
+
       .ant-menu-submenu-title {
         &:hover {
           background-color: #e6f7ff;
         }
       }
-      
+
       .ant-menu-submenu-selected > .ant-menu-submenu-title {
         color: #1890ff;
         font-weight: 500;
       }
     }
   }
-  
+
   .content-layout {
     padding: 0 24px 24px;
     display: flex;
     flex-direction: column;
     flex: 1;
     height: 100%;
-    
+
     .breadcrumb-container {
       margin: 16px 0;
       font-size: 14px;
     }
-    
+
     .content-container {
       padding: 24px;
       margin: 0;
@@ -130,17 +130,17 @@ export const Container = styled.div`
       flex-direction: column;
     }
   }
-  
+
   .site-layout-background {
     background: #fff;
   }
-  
+
   .ant-layout-sider-trigger {
     background: #e6f7ff;
     color: #1890ff;
     border-top: 1px solid #ebeef5;
     border-right: 1px solid #ebeef5;
-    
+
     &:hover {
       background: #bae7ff;
     }

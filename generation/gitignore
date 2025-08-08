@@ -3,3 +3,8 @@ node_modules
 out
 build
 scripts/dump.*
+.env
+.env.local
+.env.production
+.env.development
+*.log

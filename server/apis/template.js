@@ -4,7 +4,6 @@ const { templateBatchAdd } = require('../modules/template/resolver')
 const router = express.Router()
 
 router.post('/import', async (req, res) => {
-    // console.log('files', req.files)
     // 从上传的文件读取数据
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.load(req.files.file.data);
@@ -30,7 +29,6 @@ router.post('/import', async (req, res) => {
         jsonData.push(rowData);
     });
 
-    // console.log('jsonData', jsonData)
     templateBatchAdd({ datas: jsonData })
     res.json({ name: 'Template' })
 })

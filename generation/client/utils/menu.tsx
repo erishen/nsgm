@@ -5,7 +5,14 @@ let key = 1
 
 export default [
   {
-    key: key.toString(),
+    key: (++key).toString(),
+    text: '', // 空目录不显示，为了使用 SolutionOutlined 而不报错
+    url: '/',
+    icon: <SolutionOutlined rev={undefined} />,
+    subMenus: null
+  },
+  {
+    key: (++key).toString(),
     text: '介绍',
     url: '/',
     icon: <BookOutlined rev={undefined} />,

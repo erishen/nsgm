@@ -24,12 +24,12 @@
     "paths": {
       "@/*": ["client/*"]
     },
-    // TypeScript 检查配置
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "exactOptionalPropertyTypes": false,
-    "noImplicitReturns": false,
-    "noFallthroughCasesInSwitch": false
+    // TypeScript 检查配置（建议启用以提高代码质量）
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
   },
   "include": [
     "next-env.d.ts",

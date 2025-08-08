@@ -22,8 +22,8 @@ const renderArr: any = []
 renderArr.push('Login')
 
 const Page = ({ html }) => {
-  const [userName, setUserName] = useState("")
-  const [userPassword, setUserPassword] = useState("")
+  const [userName, setUserName] = useState('')
+  const [userPassword, setUserPassword] = useState('')
 
   const createMarkup = () => {
     return {
@@ -32,34 +32,34 @@ const Page = ({ html }) => {
   }
 
   const doLogin = () => {
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
       if (userName === '') {
-        message.error('请输入用户名');
-        return;
+        message.error('请输入用户名')
+        return
       }
       if (userPassword === '') {
-        message.error('请输入密码');
-        return;
+        message.error('请输入密码')
+        return
       }
 
       const result = directLogin(userName, userPassword, (user) => {
         if (user) {
-          window.location.href = window.location.origin;
+          window.location.href = window.location.origin
         }
-      });
+      })
 
       // 检查是否是 Promise
       if (result && typeof (result as any).then === 'function') {
-        (result as Promise<any>).then(loginResult => {
+        ;(result as Promise<any>).then((loginResult) => {
           if (!loginResult.success) {
-            message.error(loginResult.message);
+            message.error(loginResult.message)
           }
-        });
+        })
       } else {
         // 直接返回的结果
-        const syncResult = result as { success: boolean; message?: string };
+        const syncResult = result as { success: boolean; message?: string }
         if (!syncResult.success) {
-          message.error(syncResult.message || '登录失败');
+          message.error(syncResult.message || '登录失败')
         }
       }
     }
@@ -76,7 +76,9 @@ const Page = ({ html }) => {
   return (
     <LoginContainer>
       <div dangerouslySetInnerHTML={createMarkup()} />
-      <Typography.Title level={3} style={{ textAlign: 'center', marginBottom: 24 }}>系统登录</Typography.Title>
+      <Typography.Title level={3} style={{ textAlign: 'center', marginBottom: 24 }}>
+        系统登录
+      </Typography.Title>
       <Form layout="vertical" style={{ width: '100%' }}>
         <Form.Item>
           <Input
@@ -113,8 +115,6 @@ Page.getInitialProps = () => {
   _.each(renderArr, (item) => {
     html += md.render(item)
   })
-
-  console.log("Generated HTML:", html);
 
   return {
     html

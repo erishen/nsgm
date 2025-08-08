@@ -5,7 +5,7 @@ let key = 1
 
 export default [
   {
-    key: key.toString(),
+    key: (++key).toString(),
     text: '介绍',
     url: '/',
     icon: <BookOutlined rev={undefined} />,
@@ -18,7 +18,7 @@ export default [
     icon: <SolutionOutlined rev={undefined} />,
     subMenus: [
       {
-        key: key + '_1',
+        key: `${key}_1`,
         text: '模板1',
         url: '/template/manage'
       }

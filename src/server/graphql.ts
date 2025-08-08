@@ -75,8 +75,6 @@ function generateTypeDefsAndResolvers() {
     scalarStr += `scalar ${item}\n    `
   })
 
-  // console.log('resolvers', resolvers, _.keys(resolvers), scalarStr)
-
   const _generateAllComponentRecursive = (path = defaultPath) => {
     if (!fs.existsSync(path)) return
 

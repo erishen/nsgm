@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 // 加载环境变量
-require('dotenv').config()
+require('dotenv').config({ quiet: true })
 
 // 仅在开发环境中禁用TLS证书验证
 if (process.env.NODE_ENV === 'development') {
@@ -12,27 +12,19 @@ import express from 'express'
 import { parse } from 'url'
 import fs from 'fs'
 import path from 'path'
-import { exec } from 'child_process'
 import bodyParser from 'body-parser'
 import fileUpload from 'express-fileupload'
-import { getProcessArgvs } from './args'
 import localGraphql from './server/graphql'
 import getConfig from 'next/config'
-import { initFiles, createFiles, deleteFiles } from './generate'
-import _ from 'lodash'
 import cors from 'cors'
 import session from 'express-session'
 import { csrfProtection, getCSRFToken, securityMiddleware, createCSPMiddleware } from './server/csrf'
+import { runCli } from './cli'
 
 const { resolve } = path
 const curFolder = process.cwd()
-const processArgvs = getProcessArgvs(2)
-// console.log('processArgvs', processArgvs)
 
-const { command, dictionary, controller, action } = processArgvs
-// console.log('processArgvs', processArgvs)
-
-const handleServer = (server: express.Express, prefix: string) => {
+const handleServer = (server: express.Express, prefix: string, _command: string) => {
   // 本项目路径是 NSGM-CLI/server 目录，生成项目路径是 generation/server 目录
   const serverPath = resolve(`${curFolder}/server/`)
   if (fs.existsSync(serverPath)) {
@@ -49,8 +41,6 @@ const handleServer = (server: express.Express, prefix: string) => {
         if (item.indexOf('.') !== -1) {
           filename = item.split('.')[0]
         }
-
-        // console.log('resolverPath', resolverPath, filename)
 
         if (server && filename !== undefined && filename !== '') {
           try {
@@ -75,7 +65,7 @@ const handleServer = (server: express.Express, prefix: string) => {
   }
 }
 
-export const startExpress = (options: any, callback?: () => void) => {
+export const startExpress = (options: any, callback?: () => void, command = 'dev') => {
   // console.info('startExpress', curFolder)
 
   const app = next(options)
@@ -164,12 +154,10 @@ export const startExpress = (options: any, callback?: () => void) => {
         server.use(`${prefix}/graphql`, localGraphql(command))
       }
 
-      handleServer(server, prefix)
+      handleServer(server, prefix, command)
 
       server.get('*', (req, res) => {
         const { url } = req
-        // console.log('url: ' + url)
-
         const parsedUrl = parse(url, true)
         return handle(req, res, parsedUrl)
       })
@@ -184,166 +172,8 @@ export const startExpress = (options: any, callback?: () => void) => {
     })
 }
 
-console.log()
-switch (command) {
-  case 'dev':
-    startExpress({ dev: true }, undefined)
-    break
-  case 'start':
-    startExpress({ dev: false }, undefined)
-    break
-  case 'build':
-    exec('next build', {}, (err, stdout) => {
-      if (err) {
-        console.log(err)
-        return
-      }
-      console.log(`stdout: ${stdout}`)
-      process.exit(0)
-    })
-    break
-  case 'export':
-    let shellCommand = `next ${command}`
-    // console.log('dictionary', dictionary)
-
-    if (dictionary === '') {
-      shellCommand += ' -o webapp'
-    } else {
-      shellCommand += ` -o ${dictionary}`
-    }
-
-    exec(shellCommand, {}, (err, stdout) => {
-      if (err) {
-        console.log(err)
-        return
-      }
-      console.log(`stdout: ${stdout}`)
-      process.exit(0)
-    })
-
-    break
-  case '-i':
-  case 'init':
-  case '--init':
-    let initFlag = true
-    // console.log('process.argv', process.argv)
-    const argvArr = process.argv
-    const argvArrLen = argvArr.length
-
-    let fileName = ''
-    if (argvArrLen > 2) {
-      fileName = argvArr[2]
-    } else if (argvArrLen > 1) {
-      fileName = argvArr[1]
-    }
-
-    // console.log('fileName', fileName)
-    if (fileName !== '') {
-      if (fileName.indexOf('\\') !== -1) {
-        fileName = fileName.replace(/\\/g, '/')
-        // console.log('fileName2', fileName)
-      }
-
-      const fileNameArr = fileName.split('/')
-      const fileNameArrLen = fileNameArr.length
-      const fileNameStr = fileNameArr[fileNameArrLen - 1]
-      // console.log('fileNameStr', fileNameStr)
-      if (fileNameStr === 'app') {
-        initFlag = false
-      }
-
-      _.each(fileNameArr, (item) => {
-        if (item === 'pm2') {
-          initFlag = false
-          return false
-        }
-        return
-      })
-    }
-
-    console.log('initFlag', initFlag)
-    if (initFlag) {
-      initFiles(dictionary)
-    }
-    process.exit(0)
-
-  case '-u':
-  case 'upgrade':
-  case '--upgrade':
-    initFiles(dictionary, true)
-    process.exit(0)
-
-  case '-c':
-  case 'create':
-  case '--create':
-    console.log(command, controller, action)
-    if (controller !== '') {
-      if (action === '') {
-        createFiles(controller, 'manage')
-      } else {
-        createFiles(controller, action)
-      }
-    }
-    break
-
-  case '-d':
-  case 'delete':
-  case '--delete':
-    console.log(command, controller, action)
-    if (controller !== '') {
-      if (action === '' || action === 'all') {
-        deleteFiles(controller, 'all')
-      } else {
-        deleteFiles(controller, action)
-      }
-    }
-    break
-  case '-db':
-  case 'deletedb':
-  case '--deletedb':
-    console.log(command, controller, action)
-    if (controller !== '') {
-      if (action === '' || action === 'all') {
-        deleteFiles(controller, 'all', true)
-      } else {
-        deleteFiles(controller, action)
-      }
-    }
-    break
-  case '-v':
-  case 'version':
-  case '--version':
-    const { version } = require('../package.json')
-    console.log(`version: ${version}`)
-
-    /*
-    startExpress({ dev: true, quiet: true, dir: '.' }, () => {
-      const nextConfig = getConfig()
-      const { publicRuntimeConfig } = nextConfig
-      const { version } = publicRuntimeConfig
-      console.log('version: ' + version)
-      process.exit(0)
-    })
-    */
-    process.exit(0)
-
-  case '-h':
-  case 'help':
-  case '--help':
-  default:
-    console.log('Welcome to use NSGM')
-    console.log(`   -h or help: get nsgm help infomation`)
-    console.log(`   -v or version: get nsgm version`)
-    console.log(`   -i or init: nsgm init dictionary (default dictionary is .)`)
-    console.log(`   -u or upgrade: nsgm upgrade`)
-    console.log(`   -c or create: nsgm create controller action (default action is manage)`)
-    console.log(`   -d or delete: nsgm delete controller action (default action is manage)`)
-    console.log(`   dev: nsgm dev (development mode)`)
-    console.log(`   build: nsgm build (production mode)`)
-    console.log(`   start: nsgm start (production mode)`)
-    console.log(`   export: nsgm export dictionary (default dictionary is webapp)`)
-    console.log('Happy to use')
-    console.log('If you have some question, please contact Erishen (787058731@qq.com). Thanks!')
-    break
-}
-console.log()
+// 使用新的 CLI 架构
+runCli().catch((error) => {
+  console.error('CLI 执行失败:', error)
+  process.exit(1)
+})

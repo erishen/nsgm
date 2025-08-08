@@ -25,12 +25,8 @@ module.exports = (phase, defaultConfig, options) => {
     pkg = require('./package.json')
   }
 
-  // const env = (pkg && pkg.config && pkg.config.env && pkg.config.env.toUpperCase()) || 'PROD'
-
-  // console.log('projectConfig', projectConfig)
   let { env, version, prefix, protocol, host, port } = projectConfig
 
-  // console.log('options', options)
   if (options != undefined) {
     version = options.version
     prefix = options.prefix
@@ -42,9 +38,7 @@ module.exports = (phase, defaultConfig, options) => {
   if (phase === PHASE_DEVELOPMENT_SERVER) {
     prefix = ''
   }
-
-  // console.log('phase', phase, version, prefix, protocol, host, port)
-
+  
   let configObj = {
     // target: 'serverless',
     // crossOrign: 'anonymous',
@@ -67,12 +61,22 @@ module.exports = (phase, defaultConfig, options) => {
     },
     compiler: {
       removeConsole: phase !== PHASE_DEVELOPMENT_SERVER,
+      styledComponents: true
     },
+    ...(phase === PHASE_DEVELOPMENT_SERVER && {
+      devIndicators: {
+        position: 'bottom-right'
+      }
+    }),
     allowedDevOrigins: [
       'http://127.0.0.1:8080',
       'http://localhost:8080',
       'http://127.0.0.1:3000',
-      'http://localhost:3000'
+      'http://localhost:3000',
+      '127.0.0.1:8080',
+      'localhost:8080',
+      '127.0.0.1',
+      'localhost'
     ],
     webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
       // 启用压缩

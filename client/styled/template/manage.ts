@@ -2,38 +2,38 @@ import styled from 'styled-components'
 
 export const Container = styled.div`
   margin: 20px;
-  
+
   .ant-table {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     border-radius: 8px;
     overflow: hidden;
     transition: all 0.3s ease;
-    
+
     &:hover {
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
     }
   }
-  
+
   .table-row-light {
     background-color: #ffffff;
   }
-  
+
   .table-row-dark {
     background-color: #f9f9f9;
   }
-  
+
   .ant-table-thead > tr > th {
     background-color: #f0f5ff;
     color: #1890ff;
     font-weight: 500;
     padding: 12px 16px;
   }
-  
+
   .ant-table-tbody > tr > td {
     padding: 12px 16px;
     transition: background-color 0.3s;
   }
-  
+
   .page-title {
     font-size: 24px;
     font-weight: 500;
@@ -42,7 +42,7 @@ export const Container = styled.div`
     padding-bottom: 10px;
     border-bottom: 1px solid #f0f0f0;
     position: relative;
-    
+
     &:after {
       content: '';
       position: absolute;
@@ -68,7 +68,7 @@ export const SearchRow = styled.div`
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
-  
+
   &:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   }
@@ -95,7 +95,7 @@ export const ModalContainer = styled.div`
       font-weight: 500;
       color: #333;
       position: relative;
-      
+
       &:after {
         content: '';
         position: absolute;
@@ -113,8 +113,9 @@ export const ModalContainer = styled.div`
       flex: 1;
       border-radius: 6px;
       transition: all 0.3s ease;
-      
-      &:hover, &:focus {
+
+      &:hover,
+      &:focus {
         border-color: #40a9ff;
         box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
       }

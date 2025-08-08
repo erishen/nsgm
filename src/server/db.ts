@@ -18,8 +18,6 @@ const getMysqlConfig = () => {
       mysqlConfig = require('../../mysql.config.js')
     }
   }
-
-  // console.log('mysqlConfig', mysqlConfig)
   return mysqlConfig
 }
 
@@ -153,12 +151,12 @@ const mysqlConnect = ({ user, password, host, port, database }) => {
           if (!err) {
             resolve(connection)
           } else {
-            console.log('err_mysqlConnect: ', err)
+            console.error('err_mysqlConnect: ', err)
             reject()
           }
         })
       } catch (e) {
-        console.log('e_mysqlConnect: ', e)
+        console.error('e_mysqlConnect: ', e)
         reject()
       }
     } else {
@@ -180,7 +178,7 @@ const getConnection = () => {
           mysqlConnect(mysqlOptions)
             .then(resolve)
             .catch((err) => {
-              console.log('e_getConnection')
+              console.error('e_getConnection', err)
               reject(err)
             })
         } else {

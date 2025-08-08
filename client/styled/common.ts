@@ -18,18 +18,18 @@ export const Container = styled.div`
 `
 
 export const LoginContainer = styled.div`
-   margin: auto;
-   margin-top: 100px;
-   width: 350px;
-   display: flex;
-   flex-direction: column;
-   justify-content: center;
-   align-items: center;
-   border: 1px solid #e8e8e8;
-   border-radius: 8px;
-   padding: 30px;
-   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-   background-color: #fff;
+  margin: auto;
+  margin-top: 100px;
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
 
   .ant-form-item {
     margin-bottom: 20px;
@@ -53,4 +53,3 @@ export const Loading = styled.div`
   align-items: center;
   margin-top: 100px;
 `
-

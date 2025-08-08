@@ -16,14 +16,15 @@ if (reducersKeysLen > 0) {
 export type RootState = ReturnType<typeof combineReducer>
 
 // 创建一个临时 store 实例来获取正确的 dispatch 类型
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const tempStore = configureStore({
   reducer: combineReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
-      },
-    }),
+        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE']
+      }
+    })
 })
 
 export type AppDispatch = typeof tempStore.dispatch
@@ -36,9 +37,9 @@ function initStore(initialState?: any): EnhancedStore {
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
         serializableCheck: {
-          ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
-        },
-      }),
+          ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE']
+        }
+      })
   })
 }
 

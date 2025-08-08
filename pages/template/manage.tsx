@@ -1,9 +1,16 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ConfigProvider, Table, Modal, Button, Input, Space, Upload, message } from 'antd'
 import { Container, SearchRow, ModalContainer } from '@/styled/template/manage'
 import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
-import { addTemplate, modTemplate, delTemplate, updateSSRTemplate, searchTemplate, batchDelTemplate } from '@/redux/template/manage/actions'
+import {
+  addTemplate,
+  modTemplate,
+  delTemplate,
+  updateSSRTemplate,
+  searchTemplate,
+  batchDelTemplate
+} from '@/redux/template/manage/actions'
 import { getTemplateService } from '@/service/template/manage'
 import { RootState, AppDispatch } from '@/redux/store'
 import _ from 'lodash'
@@ -21,65 +28,71 @@ const keyTitles = {
 }
 
 // styled-components
-const StyledButton = styled(Button) <{ $primary?: boolean; $export?: boolean; $import?: boolean; $danger?: boolean }>`
-    display: flex;
-    align-items: center;
-    border-radius: 6px;
-    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
-    ${props => props.$export && `
+const StyledButton = styled(Button)<{ $primary?: boolean; $export?: boolean; $import?: boolean; $danger?: boolean }>`
+  display: flex;
+  align-items: center;
+  border-radius: 6px;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
+  ${(props) =>
+    props.$export &&
+    `
       background-color: #f6ffed;
       color: #52c41a;
       border-color: #b7eb8f;
       box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
       transition: all 0.3s ease;
     `}
-    ${props => props.$import && `
+  ${(props) =>
+    props.$import &&
+    `
       background-color: #e6f7ff;
       color: #1890ff;
       border-color: #91d5ff;
       box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
       transition: all 0.3s ease;
     `}
-    ${props => props.$danger && `
+    ${(props) =>
+    props.$danger &&
+    `
       background-color: #fff1f0;
       border-color: #ffa39e;
       box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
       transition: all 0.3s ease;
     `}
-  `
+`
 const StyledInput = styled(Input)`
-    width: 200px;
-    border-radius: 6px;
-    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
-  `
+  width: 200px;
+  border-radius: 6px;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
+`
 const StyledTable = styled(Table)`
+  margin-top: 16px;
+  border-radius: 8px;
+  overflow: hidden;
+
+  .styled-pagination {
     margin-top: 16px;
-    border-radius: 8px;
-    overflow: hidden;
-    
-    .styled-pagination {
-      margin-top: 16px;
-      margin-bottom: 16px;
-    }
-  `
+    margin-bottom: 16px;
+  }
+`
 const ModalTitle = styled.div`
-    color: #1890ff;
-    font-weight: 500;
-  `
+  color: #1890ff;
+  font-weight: 500;
+`
 const ModalInput = styled(Input)`
-    border-radius: 4px;
-  `
+  border-radius: 4px;
+`
 const IconWrapper = styled.i`
-    margin-right: 5px;
-  `
+  margin-right: 5px;
+`
 const RoundedButton = styled(Button)`
-    border-radius: 4px;
-  `
+  border-radius: 4px;
+`
 const GlobalStyle = styled.div`
-    .rounded-button {
-      border-radius: 4px;
-    }
-  `
+  .rounded-button {
+    border-radius: 4px;
+  }
+`
 
 const Page = ({ template }) => {
   const dispatch = useDispatch<AppDispatch>()
@@ -93,8 +106,7 @@ const Page = ({ template }) => {
     dispatch(updateSSRTemplate(template))
   }, [dispatch])
 
-  const state = useSelector((state: RootState) => state)
-  const { templateManage }: any = state
+  const templateManage = useSelector((state: RootState) => state.templateManage)
 
   if (!templateManage.firstLoadFlag) {
     template = templateManage.template
@@ -137,13 +149,25 @@ const Page = ({ template }) => {
       render: (_: any, record: any) => {
         return (
           <Space size="small">
-            <RoundedButton type="primary" size="small" onClick={() => {
-              updateTemplate(record)
-            }}>修改</RoundedButton>
-            <RoundedButton danger size="small" onClick={() => {
-              const { id } = record
-              deleteTemplate(id)
-            }}>删除</RoundedButton>
+            <RoundedButton
+              type="primary"
+              size="small"
+              onClick={() => {
+                updateTemplate(record)
+              }}
+            >
+              修改
+            </RoundedButton>
+            <RoundedButton
+              danger
+              size="small"
+              onClick={() => {
+                const { id } = record
+                deleteTemplate(id)
+              }}
+            >
+              删除
+            </RoundedButton>
           </Space>
         )
       }
@@ -164,7 +188,7 @@ const Page = ({ template }) => {
   }
 
   const updateTemplate = (record: any) => {
-    let { id, name } = record
+    const { id, name } = record
 
     setModalId(id)
     setModalName(name)
@@ -190,8 +214,7 @@ const Page = ({ template }) => {
 
   const getMessageTitle = (key: string) => {
     let result = keyTitles[key]
-    if (result == undefined)
-      result = key
+    if (result == undefined) result = key
     return result
   }
 
@@ -204,7 +227,8 @@ const Page = ({ template }) => {
     const checkResult = checkModalObj(modalObj)
 
     if (!checkResult) {
-      if (modalId == 0) {  // 新增
+      if (modalId == 0) {
+        // 新增
         dispatch(addTemplate(modalObj))
       } else {
         dispatch(modTemplate(modalId, modalObj))
@@ -226,38 +250,41 @@ const Page = ({ template }) => {
 
   const exportTemplate = () => {
     if (templateItems.length > 0) {
-      const wb = new ExcelJS.Workbook();
-      const ws = wb.addWorksheet("Template")
+      const wb = new ExcelJS.Workbook()
+      const ws = wb.addWorksheet('Template')
       const jsonData = _.map(templateItems, (item) => _.omit(item, ['key']))
 
       // 提取表头
-      const headers = Object.keys(jsonData[0]);
+      const headers = Object.keys(jsonData[0])
 
       // 将 JSON 数据转换为二维数组
-      const data = [headers, ...jsonData.map(item => headers.map(header => item[header]))];
+      const data = [headers, ...jsonData.map((item) => headers.map((header) => item[header]))]
 
-      // 将数据写入工作表 
+      // 将数据写入工作表
       ws.addRows(data)
 
       // 设置表头样式加粗
       ws.getRow(1).eachCell((cell) => {
-        cell.font = { bold: true };
-      });
+        cell.font = { bold: true }
+      })
 
       // 设置列宽
       ws.columns = [
         { header: 'ID', key: 'header1', width: 20 },
-        { header: 'NAME', key: 'header2', width: 30 },
-      ];
+        { header: 'NAME', key: 'header2', width: 30 }
+      ]
 
-      wb.xlsx.writeBuffer().then((data) => {
-        const blob = new Blob([data], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-        saveAs(blob, "Template.xlsx")
-      }).catch(() => {
-        // 导出失败
-      })
+      wb.xlsx
+        .writeBuffer()
+        .then((data) => {
+          const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+          saveAs(blob, 'Template.xlsx')
+        })
+        .catch(() => {
+          // 导出失败
+        })
     } else {
-      message.info("没有数据无需导出")
+      message.info('没有数据无需导出')
     }
   }
 
@@ -272,8 +299,9 @@ const Page = ({ template }) => {
     },
     beforeUpload: (file) => {
       // 可以在这里添加文件类型、大小等验证
-      const isExcel = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || 
-                     file.type === 'application/vnd.ms-excel'
+      const isExcel =
+        file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+        file.type === 'application/vnd.ms-excel'
       if (!isExcel) {
         message.error('只能上传 Excel 文件!')
         return false
@@ -300,7 +328,7 @@ const Page = ({ template }) => {
         }
       })
     } else {
-      message.info("没有数据不能批量删除")
+      message.info('没有数据不能批量删除')
     }
   }
 
@@ -329,14 +357,11 @@ const Page = ({ template }) => {
               </StyledButton>
             </Space>
             <Space size="small">
-              <StyledButton onClick={exportTemplate} icon={<UploadOutlined rev={undefined} rotate={180} />} $export>
+              <StyledButton onClick={exportTemplate} icon={<UploadOutlined rotate={180} />} $export>
                 导出
               </StyledButton>
               <Upload {...uploadProps}>
-                <StyledButton 
-                  icon={<UploadOutlined rev={undefined} />} 
-                  $import
-                >
+                <StyledButton icon={<UploadOutlined />} $import>
                   导入
                 </StyledButton>
               </Upload>
@@ -349,12 +374,12 @@ const Page = ({ template }) => {
         <StyledTable
           rowSelection={{
             type: 'checkbox',
-            ...rowSelection,
+            ...rowSelection
           }}
           dataSource={dataSource}
           columns={columns}
           bordered
-          rowClassName={(_, index) => index % 2 === 0 ? 'table-row-light' : 'table-row-dark'}
+          rowClassName={(_, index) => (index % 2 === 0 ? 'table-row-light' : 'table-row-dark')}
           pagination={{
             total: totalCounts,
             pageSize: pageSize,
@@ -364,11 +389,11 @@ const Page = ({ template }) => {
             onChange: (page, pageSize) => {
               dispatch(searchTemplate(page - 1, pageSize, { name: handleXSS(searchName) }))
             },
-            className: "styled-pagination"
+            className: 'styled-pagination'
           }}
         />
         <Modal
-          title={<ModalTitle>{(modalId == 0 ? "新增" : "修改") + " Template"}</ModalTitle>}
+          title={<ModalTitle>{`${modalId == 0 ? '新增' : '修改'} Template`}</ModalTitle>}
           open={isModalVisiable}
           onOk={handleOk}
           onCancel={handleCancel}
@@ -376,7 +401,7 @@ const Page = ({ template }) => {
           cancelText="取消"
           centered
           maskClosable={false}
-          destroyOnClose
+          destroyOnHidden
           okButtonProps={{ className: 'rounded-button' }}
           cancelButtonProps={{ className: 'rounded-button' }}
         >

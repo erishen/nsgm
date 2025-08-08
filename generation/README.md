@@ -8,6 +8,7 @@
 - [Styled-components](https://github.com/styled-components/styled-components) - CSS-in-JS 解决方案
 - [GraphQL](https://graphql.org/) - API 查询语言
 - [MySQL](https://www.mysql.com/) - 关系型数据库
+- [Jest](https://jestjs.io/) - JavaScript 测试框架
 - 安全登录系统 - 基于 bcrypt 加密
 
 ## 快速入门
@@ -21,6 +22,14 @@
 | `npm run build`  | 编译项目     |
 | `npm run export` | 导出静态页面 |
 
+### 测试命令
+
+| 命令                    | 说明             |
+| ----------------------- | ---------------- |
+| `npm test`              | 运行所有测试     |
+| `npm run test:watch`    | 监视模式运行测试 |
+| `npm run test:coverage` | 生成覆盖率报告   |
+
 ### 代码生成命令
 
 | 命令             | 说明         |
@@ -30,10 +39,10 @@
 
 ### 项目维护命令
 
-| 命令                                | 说明             |
-| ----------------------------------- | ---------------- |
-| `npm run upgrade`                   | 升级项目基础文件 |
-| `npm run generate-password [密码]`  | 生成安全密码哈希 |
+| 命令                               | 说明             |
+| ---------------------------------- | ---------------- |
+| `npm run upgrade`                  | 升级项目基础文件 |
+| `npm run generate-password [密码]` | 生成安全密码哈希 |
 
 ## 参数说明
 
@@ -70,6 +79,7 @@
 ## 项目结构
 
 ```
+├── __tests__/        # 测试文件
 ├── components/       # 公共组件
 ├── pages/            # 页面文件
 │   ├── api/          # API 路由
@@ -80,6 +90,8 @@
 │   ├── modules/      # GraphQL 解析器和模式
 │   └── plugins/      # GraphQL 插件
 ├── styles/           # 全局样式
+├── coverage/         # 测试覆盖率报告
+├── jest.config.js    # Jest 测试配置
 ├── next.config.js    # Next.js 配置
 ├── mysql.config.js   # MySQL 配置
 └── project.config.js # 项目配置
@@ -180,8 +192,15 @@ module.exports = {
 
 1. **创建新页面**：使用 `npm run create [controller] [action]` 命令
 2. **启动开发服务器**：运行 `npm run dev`
-3. **构建生产版本**：运行 `npm run build` 然后 `npm run start`
-4. **导出静态网站**：运行 `npm run export`
+3. **运行测试**：使用 `npm test` 运行测试，`npm run test:watch` 进行开发时的实时测试
+4. **构建生产版本**：运行 `npm run build` 然后 `npm run start`
+5. **导出静态网站**：运行 `npm run export`
+
+### 测试开发
+
+- 测试文件放在 `__tests__/` 目录下
+- 测试文件以 `.test.js`、`.test.ts`、`.spec.js` 或 `.spec.ts` 结尾
+- 查看测试覆盖率报告：运行 `npm run test:coverage` 后打开 `coverage/index.html`
 
 ## 更多资源
 

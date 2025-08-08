@@ -6,7 +6,8 @@ const prettier = require('eslint-plugin-prettier');
 module.exports = [
   js.configs.recommended,
   {
-    files: ['src/**/*.{ts,tsx}'],
+    files: ['src/**/*.{ts,tsx}', 'client/**/*.{ts,tsx}', 'pages/**/*.{ts,tsx}'],
+    ignores: ['**/__tests__/**/*'],
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {
@@ -51,6 +52,42 @@ module.exports = [
       }],
       '@typescript-eslint/no-inferrable-types': 'warn',
       '@typescript-eslint/prefer-optional-chain': 'warn',
+      '@typescript-eslint/no-explicit-any': 'off',
+      'prettier/prettier': 'error'
+    }
+  },
+  {
+    files: ['**/__tests__/**/*.{ts,tsx}', '**/*.test.{ts,tsx}', '**/*.spec.{ts,tsx}'],
+    languageOptions: {
+      parser: typescriptParser,
+      parserOptions: {
+        ecmaVersion: 2022,
+        sourceType: 'module'
+      },
+      globals: {
+        describe: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        jest: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        process: 'readonly',
+        Buffer: 'readonly',
+        console: 'readonly'
+      }
+    },
+    plugins: {
+      '@typescript-eslint': typescript,
+      'prettier': prettier
+    },
+    rules: {
+      'no-console': 'off',
+      'no-undef': 'off',
+      'no-unused-vars': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       'prettier/prettier': 'error'
     }

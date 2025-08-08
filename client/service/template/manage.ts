@@ -12,11 +12,10 @@ export const getTemplateService = (page = 0, pageSize = 10) => {
   return getLocalGraphql(getTemplateQuery, {
     page,
     pageSize
-  }, true) // 启用缓存，因为这是查询操作
+  })
 }
 
 export const searchTemplateByIdService = (id: number) => {
-
   const searchTemplateByIdQuery = `query ($id: Int) { templateGet(id: $id){
       id name
     }
@@ -24,7 +23,7 @@ export const searchTemplateByIdService = (id: number) => {
 
   return getLocalGraphql(searchTemplateByIdQuery, {
     id
-  }, true) // 启用缓存，因为这是查询操作
+  })
 }
 
 export const searchTemplateService = (page = 0, pageSize = 10, data: any) => {
@@ -44,7 +43,7 @@ export const searchTemplateService = (page = 0, pageSize = 10, data: any) => {
     data: {
       name
     }
-  }, true) // 启用缓存，因为这是查询操作
+  })
 }
 
 export const addTemplateService = (data: any) => {
@@ -56,7 +55,7 @@ export const addTemplateService = (data: any) => {
     data: {
       name
     }
-  }, false) // 不使用缓存，因为这是变更操作，会自动添加 CSRF token
+  })
 }
 
 export const updateTemplateService = (id: number, data: any) => {
@@ -69,7 +68,7 @@ export const updateTemplateService = (id: number, data: any) => {
     data: {
       name
     }
-  }, false) // 不使用缓存，因为这是变更操作，会自动添加 CSRF token
+  })
 }
 
 export const deleteTemplateService = (id: number) => {
@@ -77,7 +76,7 @@ export const deleteTemplateService = (id: number) => {
 
   return getLocalGraphql(deleteTemplateQuery, {
     id
-  }, false) // 不使用缓存，因为这是变更操作，会自动添加 CSRF token
+  })
 }
 
 export const batchAddTemplateService = (datas: any) => {
@@ -85,7 +84,7 @@ export const batchAddTemplateService = (datas: any) => {
 
   return getLocalGraphql(batchAddTemplateQuery, {
     datas
-  }, false) // 不使用缓存，因为这是变更操作，会自动添加 CSRF token
+  })
 }
 
 export const batchDeleteTemplateService = (ids: any) => {
@@ -93,5 +92,5 @@ export const batchDeleteTemplateService = (ids: any) => {
 
   return getLocalGraphql(batchDeleteTemplateQuery, {
     ids
-  }, false) // 不使用缓存，因为这是变更操作，会自动添加 CSRF token
+  })
 }

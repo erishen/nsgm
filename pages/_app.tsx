@@ -23,27 +23,26 @@ const App = ({ Component, pageProps }) => {
   useEffect(() => {
     // 检查当前路径是否为登录页
     const isLoginPage = typeof window !== 'undefined' && window.location.pathname === '/login'
-    
+
     // 如果是登录页，直接设置加载完成
     if (isLoginPage) {
       setLoginChecked(true)
       setPageLoad(true)
       return
     }
-    
+
     // 检查是否有登录凭证
     const hasLoginCookie = typeof window !== 'undefined' && document.cookie.includes('_cas_nsgm')
-    
+
     // 如果没有登录凭证，直接跳转到登录页面
     if (!hasLoginCookie && typeof window !== 'undefined') {
-      window.location.href = window.location.origin + '/login'
+      window.location.href = `${window.location.origin}/login`
       return
     }
-    
+
     // 否则执行登录检查
     login((user: any) => {
       if (user) {
-        // console.log('checkLogin_user', user)
         setSsoUser(user)
       }
       setLoginChecked(true)
@@ -59,25 +58,23 @@ const App = ({ Component, pageProps }) => {
       <GlobalStyle whiteColor={true} />
       <ThemeProvider theme={theme}>
         <Provider store={store}>
-          {
-            !loginChecked ? (
-              <Loading>
-                <Spin size="large" />
-              </Loading>
-            ) : pageLoad ? (
-              ssoUser ? (
-                <LayoutComponent user={ssoUser}>
-                  <Component {...pageProps} />
-                </LayoutComponent>
-              ) : (
+          {!loginChecked ? (
+            <Loading>
+              <Spin size="large" />
+            </Loading>
+          ) : pageLoad ? (
+            ssoUser ? (
+              <LayoutComponent user={ssoUser}>
                 <Component {...pageProps} />
-              )
+              </LayoutComponent>
             ) : (
-              <Loading>
-                <Spin size="large" />
-              </Loading>
+              <Component {...pageProps} />
             )
-          }
+          ) : (
+            <Loading>
+              <Spin size="large" />
+            </Loading>
+          )}
         </Provider>
       </ThemeProvider>
     </>
@@ -85,8 +82,6 @@ const App = ({ Component, pageProps }) => {
 }
 
 App.getInitialProps = async ({ Component, ctx }) => {
-  // console.log('app_ctx', ctx)
-
   return {
     pageProps: await Component?.getInitialProps(ctx)
   }
