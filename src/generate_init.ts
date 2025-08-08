@@ -30,7 +30,7 @@ import {
   destServerPath,
   destPagesPath,
   destPublicPath,
-  destScriptsPath
+  destScriptsPath,
 } from './constants'
 import { mkdirSync, copyFileSync } from './utils'
 
@@ -54,31 +54,31 @@ const CLIENT_FILES = {
   utilsFetch: '/fetch.ts',
   utilsCookie: '/cookie.ts',
   utilsSso: '/sso.ts',
-  layoutIndex: '/index.tsx'
+  layoutIndex: '/index.tsx',
 } as const
 
 const PAGES_FILES = {
   index: '/index.tsx',
   app: '/_app.tsx',
   document: '/_document.tsx',
-  login: '/login.tsx'
+  login: '/login.tsx',
 } as const
 
 const SERVER_FILES = {
   apisSso: '/sso.js',
   utilsCommon: '/common.js',
-  utilsDBPoolManager: '/db-pool-manager.js'
+  utilsDBPoolManager: '/db-pool-manager.js',
 } as const
 
 const PUBLIC_FILES = {
   images: '/images',
-  zhizuotuImage: '/zhizuotu_1.png'
+  zhizuotuImage: '/zhizuotu_1.png',
 } as const
 
 const SCRIPTS_FILES = {
   startup: '/startup.sh',
   shutdown: '/shutdown.sh',
-  password: '/generate-password-hash.js'
+  password: '/generate-password-hash.js',
 } as const
 
 const ROOT_FILES = {
@@ -99,7 +99,7 @@ const ROOT_FILES = {
   envExample: '/.env.example',
   jestConfig: '/jest.config.js',
   jestSetup: '/jest.setup.js',
-  jestSetupGlobals: '/jest.setup-globals.js'
+  jestSetupGlobals: '/jest.setup-globals.js',
 } as const
 
 // 辅助函数
@@ -132,7 +132,7 @@ export const initClientFiles = (dictionary: string, newDestFolder: string, upgra
       styled: resolve(baseDestPath + styledPath),
       styledLayout: resolve(baseDestPath + styledPath + styledLayoutPath),
       utils: resolve(baseDestPath + utilsPath),
-      layout: resolve(baseDestPath + layoutPath)
+      layout: resolve(baseDestPath + layoutPath),
     }
 
     // 2. 创建目录结构
@@ -142,7 +142,7 @@ export const initClientFiles = (dictionary: string, newDestFolder: string, upgra
       destPaths.styled,
       destPaths.styledLayout,
       destPaths.utils,
-      destPaths.layout
+      destPaths.layout,
     ]
 
     createDirectoryStructure(directoriesToCreate)
@@ -152,52 +152,52 @@ export const initClientFiles = (dictionary: string, newDestFolder: string, upgra
       {
         source: resolve(sourceClientPath + reduxPath + CLIENT_FILES.reduxStore),
         dest: resolve(destPaths.redux + CLIENT_FILES.reduxStore),
-        upgradeFlag
+        upgradeFlag,
       },
       {
         source: resolve(sourceClientPath + styledPath + CLIENT_FILES.styledCommon),
         dest: resolve(destPaths.styled + CLIENT_FILES.styledCommon),
-        upgradeFlag
+        upgradeFlag,
       },
       {
         source: resolve(sourceClientPath + styledPath + styledLayoutPath + CLIENT_FILES.styledLayoutIndex),
         dest: resolve(destPaths.styledLayout + CLIENT_FILES.styledLayoutIndex),
-        upgradeFlag
+        upgradeFlag,
       },
       {
         source: resolve(sourceClientPath + utilsPath + CLIENT_FILES.utilsCookie),
         dest: resolve(destPaths.utils + CLIENT_FILES.utilsCookie),
-        upgradeFlag
+        upgradeFlag,
       },
       {
         source: resolve(sourceClientPath + utilsPath + CLIENT_FILES.utilsSso),
         dest: resolve(destPaths.utils + CLIENT_FILES.utilsSso),
-        upgradeFlag
+        upgradeFlag,
       },
       {
         source: resolve(sourceClientPath + utilsPath + CLIENT_FILES.utilsCommon),
         dest: resolve(destPaths.utils + CLIENT_FILES.utilsCommon),
-        upgradeFlag
+        upgradeFlag,
       },
       {
         source: resolve(sourceClientPath + utilsPath + CLIENT_FILES.utilsFetch),
         dest: resolve(destPaths.utils + CLIENT_FILES.utilsFetch),
-        upgradeFlag
+        upgradeFlag,
       },
       {
         source: resolve(sourceClientPath + layoutPath + CLIENT_FILES.layoutIndex),
         dest: resolve(destPaths.layout + CLIENT_FILES.layoutIndex),
-        upgradeFlag
+        upgradeFlag,
       },
       // 这些文件不使用 upgradeFlag
       {
         source: resolve(sourceClientPathGeneration + reduxPath + reduxReducersPath),
-        dest: resolve(destPaths.redux + reduxReducersPath)
+        dest: resolve(destPaths.redux + reduxReducersPath),
       },
       {
         source: resolve(sourceClientPathGeneration + utilsPath + utilsMenuPath),
-        dest: resolve(destPaths.utils + utilsMenuPath)
-      }
+        dest: resolve(destPaths.utils + utilsMenuPath),
+      },
     ]
 
     // 4. 复制文件
@@ -207,7 +207,7 @@ export const initClientFiles = (dictionary: string, newDestFolder: string, upgra
 
     return {
       destClientUtilsMenuPath: resolve(destPaths.utils + utilsMenuPath),
-      destClientReduxReducersAllPath: resolve(destPaths.redux + reduxReducersPath)
+      destClientReduxReducersAllPath: resolve(destPaths.redux + reduxReducersPath),
     }
   } catch (error) {
     console.error('Failed to initialize client files:', error)
@@ -236,23 +236,23 @@ export const initPagesFiles = (dictionary: string, newDestFolder: string, upgrad
       {
         source: resolve(sourcePagesPath + PAGES_FILES.index),
         dest: resolve(baseDestPath + PAGES_FILES.index),
-        upgradeFlag
+        upgradeFlag,
       },
       {
         source: resolve(sourcePagesPath + PAGES_FILES.app),
         dest: resolve(baseDestPath + PAGES_FILES.app),
-        upgradeFlag
+        upgradeFlag,
       },
       {
         source: resolve(sourcePagesPath + PAGES_FILES.document),
         dest: resolve(baseDestPath + PAGES_FILES.document),
-        upgradeFlag
+        upgradeFlag,
       },
       {
         source: resolve(sourcePagesPath + PAGES_FILES.login),
         dest: resolve(baseDestPath + PAGES_FILES.login),
-        upgradeFlag
-      }
+        upgradeFlag,
+      },
     ]
 
     // 4. 复制文件
@@ -281,7 +281,7 @@ export const initServerFiles = (dictionary: string, newDestFolder: string, upgra
     const destPaths = {
       server: baseDestPath,
       apis: resolve(baseDestPath + apisPath),
-      utils: resolve(baseDestPath + utilsPath)
+      utils: resolve(baseDestPath + utilsPath),
     }
 
     // 2. 创建目录结构
@@ -294,23 +294,23 @@ export const initServerFiles = (dictionary: string, newDestFolder: string, upgra
       {
         source: resolve(sourceServerPath + apisPath + SERVER_FILES.apisSso),
         dest: resolve(destPaths.apis + SERVER_FILES.apisSso),
-        upgradeFlag
+        upgradeFlag,
       },
       {
         source: resolve(sourceServerPathGeneration + utilsPath + SERVER_FILES.utilsCommon),
         dest: resolve(destPaths.utils + SERVER_FILES.utilsCommon),
-        upgradeFlag
+        upgradeFlag,
       },
       {
         source: resolve(sourceServerPathGeneration + utilsPath + SERVER_FILES.utilsDBPoolManager),
         dest: resolve(destPaths.utils + SERVER_FILES.utilsDBPoolManager),
-        upgradeFlag
+        upgradeFlag,
       },
       // REST 文件不使用 upgradeFlag
       {
         source: resolve(sourceServerPathGeneration + restPath),
-        dest: resolve(destPaths.server + restPath)
-      }
+        dest: resolve(destPaths.server + restPath),
+      },
     ]
 
     // 4. 复制文件
@@ -319,7 +319,7 @@ export const initServerFiles = (dictionary: string, newDestFolder: string, upgra
     console.log('Server files initialization completed')
 
     return {
-      destServerRestPath: resolve(destPaths.server + restPath)
+      destServerRestPath: resolve(destPaths.server + restPath),
     }
   } catch (error) {
     console.error('Failed to initialize server files:', error)
@@ -342,7 +342,7 @@ export const initPublicFiles = (dictionary: string, newDestFolder: string, upgra
 
     const destPaths = {
       public: baseDestPath,
-      images: resolve(baseDestPath + PUBLIC_FILES.images)
+      images: resolve(baseDestPath + PUBLIC_FILES.images),
     }
 
     // 2. 创建目录结构
@@ -355,13 +355,13 @@ export const initPublicFiles = (dictionary: string, newDestFolder: string, upgra
       {
         source: resolve(sourcePublicPath + slbHealthCheckPath),
         dest: resolve(destPaths.public + slbHealthCheckPath),
-        upgradeFlag
+        upgradeFlag,
       },
       {
         source: resolve(sourcePublicPath + PUBLIC_FILES.images + PUBLIC_FILES.zhizuotuImage),
         dest: resolve(destPaths.images + PUBLIC_FILES.zhizuotuImage),
-        upgradeFlag
-      }
+        upgradeFlag,
+      },
     ]
 
     // 4. 复制文件
@@ -370,7 +370,7 @@ export const initPublicFiles = (dictionary: string, newDestFolder: string, upgra
     console.log('Public files initialization completed')
 
     return {
-      destPublicHealthCheckPath: resolve(destPaths.public + slbHealthCheckPath)
+      destPublicHealthCheckPath: resolve(destPaths.public + slbHealthCheckPath),
     }
   } catch (error) {
     console.error('Failed to initialize public files:', error)
@@ -397,16 +397,16 @@ export const initScriptsFiles = (dictionary: string, newDestFolder: string): voi
     const fileMappings: FileMapping[] = [
       {
         source: resolve(sourceScriptsPath + SCRIPTS_FILES.startup),
-        dest: resolve(baseDestPath + SCRIPTS_FILES.startup)
+        dest: resolve(baseDestPath + SCRIPTS_FILES.startup),
       },
       {
         source: resolve(sourceScriptsPath + SCRIPTS_FILES.shutdown),
-        dest: resolve(baseDestPath + SCRIPTS_FILES.shutdown)
+        dest: resolve(baseDestPath + SCRIPTS_FILES.shutdown),
       },
       {
         source: resolve(sourceScriptsPath + SCRIPTS_FILES.password),
-        dest: resolve(baseDestPath + SCRIPTS_FILES.password)
-      }
+        dest: resolve(baseDestPath + SCRIPTS_FILES.password),
+      },
     ]
 
     // 4. 复制文件
@@ -435,64 +435,64 @@ export const initRootFiles = (dictionary: string, newDestFolder: string): InitRe
     const fileMappings: FileMapping[] = [
       {
         source: resolve(sourceGenerationPath + ROOT_FILES.nextConfig),
-        dest: resolve(baseDestPath + ROOT_FILES.nextConfig)
+        dest: resolve(baseDestPath + ROOT_FILES.nextConfig),
       },
       {
         source: resolve(sourceGenerationPath + ROOT_FILES.mysqlConfig),
-        dest: resolve(baseDestPath + ROOT_FILES.mysqlConfig)
+        dest: resolve(baseDestPath + ROOT_FILES.mysqlConfig),
       },
       {
         source: resolve(sourceGenerationPath + ROOT_FILES.projectConfig),
-        dest: resolve(baseDestPath + ROOT_FILES.projectConfig)
+        dest: resolve(baseDestPath + ROOT_FILES.projectConfig),
       },
       {
         source: resolve(sourceGenerationPath + packagePath),
-        dest: resolve(baseDestPath + packagePath)
+        dest: resolve(baseDestPath + packagePath),
       },
       {
         source: resolve(sourceGenerationPath + ROOT_FILES.tsconfig),
-        dest: resolve(baseDestPath + ROOT_FILES.tsconfig)
+        dest: resolve(baseDestPath + ROOT_FILES.tsconfig),
       },
       {
         source: resolve(sourceGenerationPath + ROOT_FILES.gitignoreSource),
-        dest: resolve(baseDestPath + ROOT_FILES.gitignore)
+        dest: resolve(baseDestPath + ROOT_FILES.gitignore),
       },
       {
         source: resolve(sourceGenerationPath + ROOT_FILES.eslintrc),
-        dest: resolve(baseDestPath + ROOT_FILES.eslintrc)
+        dest: resolve(baseDestPath + ROOT_FILES.eslintrc),
       },
       {
         source: path.join(sourceFolder, ROOT_FILES.nextEnvSource),
-        dest: resolve(baseDestPath + ROOT_FILES.nextEnv)
+        dest: resolve(baseDestPath + ROOT_FILES.nextEnv),
       },
       {
         source: resolve(sourceGenerationPath + ROOT_FILES.readme),
-        dest: resolve(baseDestPath + ROOT_FILES.readme)
+        dest: resolve(baseDestPath + ROOT_FILES.readme),
       },
       {
         source: path.join(sourceFolder, ROOT_FILES.appConfigSource),
-        dest: resolve(baseDestPath + ROOT_FILES.appConfig)
+        dest: resolve(baseDestPath + ROOT_FILES.appConfig),
       },
       {
         source: resolve(sourceGenerationPath + ROOT_FILES.app),
-        dest: resolve(baseDestPath + ROOT_FILES.app)
+        dest: resolve(baseDestPath + ROOT_FILES.app),
       },
       {
         source: resolve(sourceGenerationPath + ROOT_FILES.envExampleSource),
-        dest: resolve(baseDestPath + ROOT_FILES.envExample)
+        dest: resolve(baseDestPath + ROOT_FILES.envExample),
       },
       {
         source: resolve(sourceGenerationPath + ROOT_FILES.jestConfig),
-        dest: resolve(baseDestPath + ROOT_FILES.jestConfig)
+        dest: resolve(baseDestPath + ROOT_FILES.jestConfig),
       },
       {
         source: resolve(path.join(sourceFolder, '..', ROOT_FILES.jestSetup)),
-        dest: resolve(baseDestPath + ROOT_FILES.jestSetup)
+        dest: resolve(baseDestPath + ROOT_FILES.jestSetup),
       },
       {
         source: resolve(path.join(sourceFolder, '..', ROOT_FILES.jestSetupGlobals)),
-        dest: resolve(baseDestPath + ROOT_FILES.jestSetupGlobals)
-      }
+        dest: resolve(baseDestPath + ROOT_FILES.jestSetupGlobals),
+      },
     ]
 
     // 3. 复制文件
@@ -501,7 +501,7 @@ export const initRootFiles = (dictionary: string, newDestFolder: string): InitRe
     console.log('Root files initialization completed')
 
     return {
-      destPackagePath: resolve(baseDestPath + packagePath)
+      destPackagePath: resolve(baseDestPath + packagePath),
     }
   } catch (error) {
     console.error('Failed to initialize root files:', error)
@@ -529,8 +529,8 @@ export const initTestFiles = (dictionary: string, newDestFolder: string): void =
     const fileMappings: FileMapping[] = [
       {
         source: path.join(sourceGenerationPath, '__tests__', 'example.test.js'),
-        dest: path.join(testDestPath, 'example.test.js')
-      }
+        dest: path.join(testDestPath, 'example.test.js'),
+      },
     ]
 
     // 4. 复制文件

@@ -26,5 +26,5 @@ export const buildCommand: Command = {
       console.error('❌ 构建失败:', error)
       process.exit(1)
     }
-  }
+  },
 }

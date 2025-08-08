@@ -14,26 +14,26 @@ export const deleteCommand: Command = {
       name: 'controller',
       description: '控制器名称',
       required: false,
-      type: 'string'
+      type: 'string',
     },
     {
       name: 'action',
       description: '操作名称',
       default: 'all',
-      type: 'string'
+      type: 'string',
     },
     {
       name: 'dictionary',
       description: '项目目录',
       default: '',
-      type: 'string'
+      type: 'string',
     },
     {
       name: 'interactive',
       description: '使用交互式向导',
       default: true,
-      type: 'boolean'
-    }
+      type: 'boolean',
+    },
   ],
   execute: async (options: CommandOptions) => {
     try {
@@ -83,7 +83,7 @@ export const deleteCommand: Command = {
 
       const finalOptions = ArgumentParser.applyDefaults(options, {
         action: 'all',
-        dictionary: ''
+        dictionary: '',
       })
 
       Console.highlight(`🗑️ 删除控制器: ${finalOptions.controller}`)
@@ -122,7 +122,7 @@ export const deleteCommand: Command = {
       Console.error(`删除失败: ${error}`)
       process.exit(1)
     }
-  }
+  },
 }
 
 export const deleteDbCommand: Command = {
@@ -136,14 +136,14 @@ export const deleteDbCommand: Command = {
       name: 'controller',
       description: '控制器名称',
       required: true,
-      type: 'string'
+      type: 'string',
     },
     {
       name: 'action',
       description: '操作名称',
       default: 'all',
-      type: 'string'
-    }
+      type: 'string',
+    },
   ],
   execute: async (options: CommandOptions) => {
     try {
@@ -156,7 +156,7 @@ export const deleteDbCommand: Command = {
       }
 
       const finalOptions = ArgumentParser.applyDefaults(options, {
-        action: 'all'
+        action: 'all',
       })
 
       console.log(`🗑️  删除控制器和数据库: ${finalOptions.controller}`)
@@ -169,5 +169,5 @@ export const deleteDbCommand: Command = {
       console.error('❌ 删除失败:', error)
       process.exit(1)
     }
-  }
+  },
 }

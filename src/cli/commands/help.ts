@@ -42,5 +42,5 @@ export const helpCommand: Command = {
     Console.info('❓ If you have questions, please contact Erishen (787058731@qq.com)')
 
     process.exit(0)
-  }
+  },
 }

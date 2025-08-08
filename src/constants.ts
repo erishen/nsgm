@@ -13,7 +13,7 @@ const {
   password: mysqlPassword,
   host: mysqlHost,
   port: mysqlPort,
-  database: mysqlDatabase
+  database: mysqlDatabase,
 } = mysqlOptions
 
 const generationPath = '../generation'
@@ -134,5 +134,5 @@ export {
   mysqlPassword,
   mysqlHost,
   mysqlPort,
-  mysqlDatabase
+  mysqlDatabase,
 }

@@ -108,7 +108,7 @@ function updateReadme(projectPath: string, config: ProjectConfig): void {
           graphql: 'GraphQL API',
           mysql: 'MySQL 数据库',
           typescript: 'TypeScript 强类型支持',
-          eslint: 'ESLint 代码质量检查'
+          eslint: 'ESLint 代码质量检查',
         }
 
         const featureNames = config.features.map((feature) => featureMap[feature] || feature)

@@ -28,7 +28,7 @@ export class Prompt {
       type: 'confirm',
       name: 'confirmed',
       message,
-      default: defaultValue
+      default: defaultValue,
     })
     return confirmed
   }
@@ -45,7 +45,7 @@ export class Prompt {
       type: 'input',
       name: 'value',
       message,
-      validate: validate || (() => true)
+      validate: validate || (() => true),
     }
 
     if (defaultValue !== undefined) {
@@ -64,7 +64,7 @@ export class Prompt {
       type: 'password',
       name: 'value',
       message,
-      validate: validate || (() => true)
+      validate: validate || (() => true),
     })
     return value
   }
@@ -77,7 +77,7 @@ export class Prompt {
       type: 'list',
       name: 'selected',
       message,
-      choices
+      choices,
     })
     return selected
   }
@@ -93,7 +93,7 @@ export class Prompt {
       type: 'checkbox',
       name: 'selected',
       message,
-      choices
+      choices,
     })
     return selected
   }
@@ -129,27 +129,27 @@ export class Prompt {
           // 允许路径格式，包括相对路径和绝对路径
           if (!/^[a-zA-Z0-9\-_./\\]+$/.test(input)) return '项目名称只能包含字母、数字、横线、下划线和路径分隔符'
           return true
-        }
+        },
       },
       {
         type: 'input',
         name: 'description',
         message: '项目描述:',
-        default: 'A NSGM fullstack project'
+        default: 'A NSGM fullstack project',
       },
       {
         type: 'input',
         name: 'author',
         message: '作者:',
-        default: 'Your Name'
-      }
+        default: 'Your Name',
+      },
     ])
 
     // 设置默认配置
     const result = {
       ...answers,
       database: true,
-      features: ['nextjs', 'styled-components', 'graphql', 'mysql', 'typescript', 'eslint']
+      features: ['nextjs', 'styled-components', 'graphql', 'mysql', 'typescript', 'eslint'],
     }
 
     return result
@@ -178,13 +178,13 @@ export class Prompt {
           if (!input.trim()) return '控制器名称不能为空'
           if (!/^[a-zA-Z][a-zA-Z0-9]*$/.test(input)) return '控制器名称必须以字母开头，只能包含字母和数字'
           return true
-        }
+        },
       },
       {
         type: 'input',
         name: 'description',
         message: '控制器描述:',
-        default: (answers: any) => `${answers.controller} 控制器`
+        default: (answers: any) => `${answers.controller} 控制器`,
       },
       {
         type: 'input',
@@ -194,14 +194,14 @@ export class Prompt {
         validate: (input: string) => {
           if (!input.trim()) return '项目目录不能为空'
           return true
-        }
+        },
       },
       {
         type: 'confirm',
         name: 'useCustomFields',
         message: '是否自定义字段配置？(默认字段: id, name, create_date, update_date)',
-        default: false
-      }
+        default: false,
+      },
     ])
 
     // 设置默认action为manage（包含完整的CRUD + 导入 + 导出 + 批量删除功能）
@@ -223,10 +223,10 @@ export class Prompt {
           comment: '名称',
           showInList: true,
           showInForm: true,
-          searchable: true
+          searchable: true,
         },
         { name: 'create_date', type: 'timestamp', required: true, comment: '创建时间', isSystemField: true },
-        { name: 'update_date', type: 'timestamp', required: true, comment: '更新时间', isSystemField: true }
+        { name: 'update_date', type: 'timestamp', required: true, comment: '更新时间', isSystemField: true },
       ]
     }
 
@@ -247,7 +247,7 @@ export class Prompt {
       required: true,
       comment: '主键',
       isPrimaryKey: true,
-      isAutoIncrement: true
+      isAutoIncrement: true,
     })
 
     Console.info('💡 提示：系统会自动添加 create_date 和 update_date 字段')
@@ -265,7 +265,7 @@ export class Prompt {
             if (fields.some((f) => f.name === input.trim())) return '字段名称已存在'
             if (['create_date', 'update_date'].includes(input.trim())) return '系统字段将自动添加'
             return true
-          }
+          },
         },
         {
           type: 'list',
@@ -279,46 +279,46 @@ export class Prompt {
             { name: 'boolean - 布尔值', value: 'boolean' },
             { name: 'date - 日期', value: 'date' },
             { name: 'datetime - 日期时间', value: 'datetime' },
-            { name: 'timestamp - 时间戳', value: 'timestamp' }
-          ]
+            { name: 'timestamp - 时间戳', value: 'timestamp' },
+          ],
         },
         {
           type: 'input',
           name: 'length',
           message: '字段长度 (可选，数字类型可指定精度):',
           when: (answers: any) => ['varchar', 'decimal'].includes(answers.type),
-          default: (answers: any) => (answers.type === 'varchar' ? '255' : '10,2')
+          default: (answers: any) => (answers.type === 'varchar' ? '255' : '10,2'),
         },
         {
           type: 'confirm',
           name: 'required',
           message: '是否必填:',
-          default: false
+          default: false,
         },
         {
           type: 'input',
           name: 'comment',
           message: '字段注释:',
-          default: (answers: any) => answers.name
+          default: (answers: any) => answers.name,
         },
         {
           type: 'confirm',
           name: 'showInList',
           message: '是否在列表页显示:',
-          default: true
+          default: true,
         },
         {
           type: 'confirm',
           name: 'showInForm',
           message: '是否在表单中显示:',
-          default: true
+          default: true,
         },
         {
           type: 'confirm',
           name: 'searchable',
           message: '是否可搜索:',
-          default: (answers: any) => answers.type === 'varchar'
-        }
+          default: (answers: any) => answers.type === 'varchar',
+        },
       ])
 
       fields.push({
@@ -329,7 +329,7 @@ export class Prompt {
         comment: fieldAnswers.comment.trim(),
         showInList: fieldAnswers.showInList,
         showInForm: fieldAnswers.showInForm,
-        searchable: fieldAnswers.searchable
+        searchable: fieldAnswers.searchable,
       })
 
       const continueAnswer = await inquirer.prompt([
@@ -337,8 +337,8 @@ export class Prompt {
           type: 'confirm',
           name: 'addMore',
           message: '是否继续添加字段:',
-          default: false
-        }
+          default: false,
+        },
       ])
 
       addMore = continueAnswer.addMore
@@ -351,14 +351,14 @@ export class Prompt {
         type: 'timestamp',
         required: true,
         comment: '创建时间',
-        isSystemField: true
+        isSystemField: true,
       },
       {
         name: 'update_date',
         type: 'timestamp',
         required: true,
         comment: '更新时间',
-        isSystemField: true
+        isSystemField: true,
       }
     )
 
@@ -386,7 +386,7 @@ export class Prompt {
           if (!input.trim()) return '控制器名称不能为空'
           if (!/^[a-zA-Z][a-zA-Z0-9]*$/.test(input)) return '控制器名称必须以字母开头，只能包含字母和数字'
           return true
-        }
+        },
       },
       {
         type: 'list',
@@ -394,9 +394,9 @@ export class Prompt {
         message: '删除范围:',
         choices: [
           { name: '删除所有相关文件', value: 'all' },
-          { name: '仅删除指定操作', value: 'manage' }
+          { name: '仅删除指定操作', value: 'manage' },
         ],
-        default: 'all'
+        default: 'all',
       },
       {
         type: 'input',
@@ -406,14 +406,14 @@ export class Prompt {
         validate: (input: string) => {
           if (!input.trim()) return '项目目录不能为空'
           return true
-        }
+        },
       },
       {
         type: 'confirm',
         name: 'deleteDatabase',
         message: '是否同时删除数据库表?',
-        default: false
-      }
+        default: false,
+      },
     ])
 
     return answers

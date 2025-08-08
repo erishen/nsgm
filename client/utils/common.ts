@@ -48,7 +48,7 @@ export const checkModalObj = (modalObj: {}, ignoreKeys: any = []) => {
       if (_.trim(value) === '') {
         result = {
           key,
-          reason: '不能为空'
+          reason: '不能为空',
         }
         return false
       }

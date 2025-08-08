@@ -37,7 +37,7 @@ const createPool = ({ user, password, host, port, database }) => {
         maxIdle: 10, // 最大空闲连接数
         multipleStatements: false, // 禁用多语句查询以提高安全性
         bigNumberStrings: true, // 将大数字作为字符串返回
-        supportBigNumbers: true // 支持大数字
+        supportBigNumbers: true, // 支持大数字
       })
 
       // 监听连接池事件
@@ -113,7 +113,7 @@ const executePaginatedQuery = async (
 
     return {
       totalCounts: countResults[0].counts,
-      items: results
+      items: results,
     }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error)
@@ -198,5 +198,5 @@ export default {
   getPool, // 新的连接池方法
   executeQuery, // 新的查询方法
   executePaginatedQuery, // 新的分页查询方法
-  closePool // 关闭连接池方法
+  closePool, // 关闭连接池方法
 }

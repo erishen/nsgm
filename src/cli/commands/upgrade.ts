@@ -13,13 +13,13 @@ export const upgradeCommand: Command = {
       name: 'dictionary',
       description: '项目目录名称',
       default: '',
-      type: 'string'
-    }
+      type: 'string',
+    },
   ],
   execute: async (options: CommandOptions) => {
     try {
       const finalOptions = ArgumentParser.applyDefaults(options, {
-        dictionary: ''
+        dictionary: '',
       })
 
       console.log('⬆️  升级 NSGM 项目...')
@@ -35,5 +35,5 @@ export const upgradeCommand: Command = {
       console.error('❌ 升级失败:', error)
       process.exit(1)
     }
-  }
+  },
 }

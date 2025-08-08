@@ -17,7 +17,7 @@ export class GeneratorFactory {
       sql: new SQLGenerator(controller, action, fields),
       schema: new SchemaGenerator(controller, action, fields),
       resolver: new ResolverGenerator(controller, action, fields),
-      service: new ServiceGenerator(controller, action, fields)
+      service: new ServiceGenerator(controller, action, fields),
     }
   }
 }

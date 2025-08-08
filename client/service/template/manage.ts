@@ -11,7 +11,7 @@ export const getTemplateService = (page = 0, pageSize = 10) => {
 
   return getLocalGraphql(getTemplateQuery, {
     page,
-    pageSize
+    pageSize,
   })
 }
 
@@ -22,7 +22,7 @@ export const searchTemplateByIdService = (id: number) => {
   }`
 
   return getLocalGraphql(searchTemplateByIdQuery, {
-    id
+    id,
   })
 }
 
@@ -41,8 +41,8 @@ export const searchTemplateService = (page = 0, pageSize = 10, data: any) => {
     page,
     pageSize,
     data: {
-      name
-    }
+      name,
+    },
   })
 }
 
@@ -53,8 +53,8 @@ export const addTemplateService = (data: any) => {
 
   return getLocalGraphql(addTemplateQuery, {
     data: {
-      name
-    }
+      name,
+    },
   })
 }
 
@@ -66,8 +66,8 @@ export const updateTemplateService = (id: number, data: any) => {
   return getLocalGraphql(updateTemplateQuery, {
     id,
     data: {
-      name
-    }
+      name,
+    },
   })
 }
 
@@ -75,7 +75,7 @@ export const deleteTemplateService = (id: number) => {
   const deleteTemplateQuery = `mutation ($id: Int) { templateDelete(id: $id) }`
 
   return getLocalGraphql(deleteTemplateQuery, {
-    id
+    id,
   })
 }
 
@@ -83,7 +83,7 @@ export const batchAddTemplateService = (datas: any) => {
   const batchAddTemplateQuery = `mutation ($datas: [TemplateAddInput]) { templateBatchAdd(datas: $datas) }`
 
   return getLocalGraphql(batchAddTemplateQuery, {
-    datas
+    datas,
   })
 }
 
@@ -91,6 +91,6 @@ export const batchDeleteTemplateService = (ids: any) => {
   const batchDeleteTemplateQuery = `mutation ($ids: [Int]) { templateBatchDelete(ids: $ids) }`
 
   return getLocalGraphql(batchDeleteTemplateQuery, {
-    ids
+    ids,
   })
 }

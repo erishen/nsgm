@@ -16,13 +16,13 @@ export const exportCommand: Command = {
       name: 'dictionary',
       description: '输出目录名称',
       default: 'webapp',
-      type: 'string'
-    }
+      type: 'string',
+    },
   ],
   execute: async (options: CommandOptions) => {
     try {
       const finalOptions = ArgumentParser.applyDefaults(options, {
-        dictionary: 'webapp'
+        dictionary: 'webapp',
       })
 
       console.log(`📦 开始导出到目录: ${finalOptions.dictionary}`)
@@ -41,5 +41,5 @@ export const exportCommand: Command = {
       console.error('❌ 导出失败:', error)
       process.exit(1)
     }
-  }
+  },
 }

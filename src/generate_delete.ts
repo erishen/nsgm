@@ -8,7 +8,7 @@ import {
   mysqlPassword,
   mysqlHost,
   mysqlPort,
-  mysqlDatabase
+  mysqlDatabase,
 } from './constants'
 import { firstUpperCase, rmFileSync, rmdirSync, replaceInFileAll } from './utils'
 
@@ -60,8 +60,8 @@ const generateDeletePaths = (controller: string, action: string, dictionary?: st
       destPagesAction: path.join(basePath, 'pages', controller, `${action}.tsx`),
       destClientReduxControllerAction: path.join(basePath, 'client', 'redux', controller, action),
       destClientAction: path.join(basePath, 'client', 'components', controller, action),
-      destClientStyledAction: path.join(basePath, 'client', 'styled', controller, `${action}.js`)
-    })
+      destClientStyledAction: path.join(basePath, 'client', 'styled', controller, `${action}.js`),
+    }),
   }
 }
 
@@ -71,7 +71,7 @@ const deleteAllControllerFiles = (paths: DeletePaths): void => {
     paths.destClientReduxController,
     paths.destClientServiceController,
     paths.destClientStyledController,
-    paths.destServerModulesController
+    paths.destServerModulesController,
   ]
 
   const filesToDelete = [paths.destServerApisController, paths.destServerSqlController]
@@ -134,13 +134,13 @@ const performAdvancedCleanup = (controller: string, action: string, paths: Delet
     {
       from: /\n\s*\n/,
       to: '\n\n',
-      files: [paths.destClientReduxReducersAllPath]
+      files: [paths.destClientReduxReducersAllPath],
     },
     {
       from: /Reducer,?\s*\n/,
       to: 'Reducer\n',
-      files: [paths.destClientReduxReducersAllPath]
-    }
+      files: [paths.destClientReduxReducersAllPath],
+    },
   ]
 
   if (action === 'all') {
@@ -148,12 +148,12 @@ const performAdvancedCleanup = (controller: string, action: string, paths: Delet
       {
         from: /'(.\/apis\/template.*?)'\)\s*\n/,
         to: "'./apis/template')\n\n",
-        files: [paths.destServerRestPath]
+        files: [paths.destServerRestPath],
       },
       {
         from: /template\)\s*\n/,
         to: 'template)\n\n',
-        files: [paths.destServerRestPath]
+        files: [paths.destServerRestPath],
       },
       {
         from: new RegExp(
@@ -161,7 +161,7 @@ const performAdvancedCleanup = (controller: string, action: string, paths: Delet
           'gm'
         ),
         to: ',',
-        files: [paths.destClientUtilsMenuPath]
+        files: [paths.destClientUtilsMenuPath],
       }
     )
   }

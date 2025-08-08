@@ -74,7 +74,7 @@ export const handleReplace = ({ regex, replacement, paths }: any) => {
       replacement,
       paths,
       recursive: true,
-      silent: true
+      silent: true,
     })
   }
 }

@@ -14,26 +14,26 @@ export const createCommand: Command = {
       name: 'controller',
       description: '控制器名称',
       required: false,
-      type: 'string'
+      type: 'string',
     },
     {
       name: 'action',
       description: '操作名称',
       default: 'manage',
-      type: 'string'
+      type: 'string',
     },
     {
       name: 'dictionary',
       description: '项目目录',
       default: '',
-      type: 'string'
+      type: 'string',
     },
     {
       name: 'interactive',
       description: '使用交互式向导',
       default: true,
-      type: 'boolean'
-    }
+      type: 'boolean',
+    },
   ],
   execute: async (options: CommandOptions) => {
     try {
@@ -86,7 +86,7 @@ export const createCommand: Command = {
 
       const finalOptions = ArgumentParser.applyDefaults(options, {
         action: 'manage',
-        dictionary: ''
+        dictionary: '',
       })
 
       Console.highlight(`🎯 创建控制器: ${finalOptions.controller}`)
@@ -126,5 +126,5 @@ export const createCommand: Command = {
       Console.error(`创建失败: ${error}`)
       process.exit(1)
     }
-  }
+  },
 }

@@ -10,7 +10,7 @@ import { directLogin } from '../client/utils/sso'
 const md = new MarkdownIt({
   html: true,
   linkify: true,
-  typographer: true
+  typographer: true,
 })
 
 // const nextConfig = getConfig()
@@ -27,7 +27,7 @@ const Page = ({ html }) => {
 
   const createMarkup = () => {
     return {
-      __html: html
+      __html: html,
     }
   }
 
@@ -117,7 +117,7 @@ Page.getInitialProps = () => {
   })
 
   return {
-    html
+    html,
   }
 }
 

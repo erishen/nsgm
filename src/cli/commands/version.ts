@@ -20,5 +20,5 @@ export const versionCommand: Command = {
       console.error('❌ 无法获取版本信息:', error)
       process.exit(1)
     }
-  }
+  },
 }

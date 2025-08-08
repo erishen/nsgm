@@ -112,7 +112,7 @@ export class Console {
       fail(message?: string): void {
         this.stop()
         Console.error(message || text)
-      }
+      },
     }
   }
 
@@ -124,14 +124,14 @@ export class Console {
       success: chalk.green,
       error: chalk.red,
       warning: chalk.yellow,
-      info: chalk.blue
+      info: chalk.blue,
     }
 
     const icons = {
       success: '✅',
       error: '❌',
       warning: '⚠️',
-      info: 'ℹ️'
+      info: 'ℹ️',
     }
 
     const color = colors[type]

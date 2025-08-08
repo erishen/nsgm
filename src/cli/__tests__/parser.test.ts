@@ -49,7 +49,7 @@ describe('ArgumentParser 测试', () => {
     expect(options).toEqual({
       controller: 'user',
       action: 'manage',
-      dictionary: ''
+      dictionary: '',
     })
   })
 })

@@ -30,7 +30,7 @@ const customScalarDate = new GraphQLScalarType({
       return date.valueOf()
     }
     return null
-  }
+  },
 })
 
 export default { Date: customScalarDate }

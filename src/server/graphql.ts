@@ -39,7 +39,7 @@ const handleOutPlugins = () => {
         const pluginModule = require(resolverPath)
         result = {
           ...result,
-          ...(pluginModule.default || pluginModule)
+          ...(pluginModule.default || pluginModule),
         }
       }
     })
@@ -55,7 +55,7 @@ function generateTypeDefsAndResolvers() {
   if (process.env.NODE_ENV === 'production' && cachedSchema && cachedResolvers) {
     return {
       schemaStr: cachedSchema,
-      resolvers: cachedResolvers
+      resolvers: cachedResolvers,
     }
   }
 
@@ -66,7 +66,7 @@ function generateTypeDefsAndResolvers() {
 
   const resolvers = {
     ...datePlugins,
-    ...handleOutPlugins()
+    ...handleOutPlugins(),
   }
 
   const scalars = _.keys(resolvers)
@@ -164,7 +164,7 @@ const {
   typeSchemes: typeSchemesV,
   resolvers: resolversV,
   scalarStr: scalarStrV,
-  schemaStr: generatedSchemaStr
+  schemaStr: generatedSchemaStr,
 } = generateResult
 
 // 导出 handler 函数，兼容 express 用法
@@ -197,7 +197,7 @@ const handler = (command: string) => {
   // graphql-http 不再内置 graphiql，需手动集成 playground 或 altair，以下为基础 handler
   return createHandler({
     schema: buildSchema(schemaStr),
-    rootValue: resolversV
+    rootValue: resolversV,
   })
 }
 

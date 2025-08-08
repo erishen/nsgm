@@ -35,7 +35,7 @@ export const graphqlCacheMiddleware = (req: any, res: any, next: any) => {
       if (!data.errors) {
         queryCache.set(cacheKey, {
           data,
-          timestamp: now
+          timestamp: now,
         })
 
         // 清理过期缓存
@@ -73,7 +73,7 @@ export const getCacheStats = () => {
     size: queryCache.size,
     entries: Array.from(queryCache.keys()).map((key) => ({
       query: `${key.substring(0, 100)}...`,
-      age: Date.now() - (queryCache.get(key) as CacheEntry).timestamp
-    }))
+      age: Date.now() - (queryCache.get(key) as CacheEntry).timestamp,
+    })),
   }
 }

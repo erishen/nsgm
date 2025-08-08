@@ -1,369 +1,452 @@
 # NSGM CLI
 
-A full-stack development framework with code template generation capabilities, helping developers efficiently build web applications with interactive CLI wizards.
+<div align="center">
 
-## Installation
+![NSGM CLI](https://img.shields.io/npm/v/nsgm-cli?style=flat-square&logo=npm)
+![License](https://img.shields.io/github/license/erishen/nsgm?style=flat-square)
+![Node.js](https://img.shields.io/node/v/nsgm-cli?style=flat-square&logo=node.js)
+![Downloads](https://img.shields.io/npm/dm/nsgm-cli?style=flat-square)
+
+**A powerful full-stack development framework with intelligent code generation**
+
+[Installation](#installation) • [Quick Start](#quick-start) • [Features](#features) • [Documentation](#documentation) • [Contributing](#contributing)
+
+</div>
+
+## 🚀 Overview
+
+NSGM CLI is a comprehensive full-stack development framework that combines the power of modern web technologies with intelligent code generation capabilities. It helps developers rapidly build scalable web applications through an interactive CLI wizard and automated code templates.
+
+### 🏗️ Architecture
+
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Frontend      │    │   Backend       │    │   Database      │
+│   Next.js       │◄──►│   Express.js    │◄──►│   MySQL         │
+│   React         │    │   GraphQL       │    │   Native SQL    │
+│   Styled-Comp   │    │   REST API      │    │   Relations     │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+```
+
+## 🎯 Key Features
+
+### 🧙‍♂️ **Intelligent CLI Wizard**
+- **Smart Mode Detection**: Automatically switches between interactive and command-line modes
+- **Beginner-Friendly**: Step-by-step guided setup for newcomers
+- **Expert-Efficient**: Quick command-line shortcuts for experienced developers
+
+### ⚡ **Rapid Development**
+- **Code Generation**: Automatic CRUD operations, API endpoints, and database schemas
+- **Hot Reload**: Instant development feedback
+- **Type Safety**: Full TypeScript support throughout the stack
+
+### 🔒 **Production-Ready Security**
+- **CSRF Protection**: Built-in cross-site request forgery prevention
+- **Password Encryption**: bcrypt-based secure authentication
+- **Session Management**: Robust user session handling
+- **CSP Headers**: Content Security Policy implementation
+
+### 🏗️ **Modern Tech Stack**
+- **Frontend**: Next.js 13+, React 18+, Styled-components, Redux Toolkit
+- **Backend**: Express.js, GraphQL, REST APIs
+- **Database**: MySQL with native drivers
+- **DevTools**: TypeScript, ESLint, Prettier, Jest
+
+## 📦 Installation
+
+### Global Installation (Recommended)
 
 ```bash
+# Using npm
 npm install -g nsgm-cli
-# or
+
+# Using yarn
 yarn global add nsgm-cli
+
+# Using pnpm
+pnpm add -g nsgm-cli
 ```
 
-## Tech Stack
-
-- [Next.js](https://github.com/vercel/next.js) - React framework
-- [Styled-components](https://github.com/styled-components/styled-components) - CSS-in-JS solution
-- [GraphQL](https://graphql.org/) - API query language
-- [MySQL](https://www.mysql.com/) - Relational database
-
-## Features
-
-- Full-stack architecture design
-- Automatic code template generation
-- **Interactive CLI wizard** for beginners
-- **Smart mode detection** (auto-switch between interactive/command-line)
-- Rapid development workflow
-- Integrated GraphQL API
-- MySQL database support
-- Secure login system with bcrypt encryption
-- Complete CRUD operations with import/export
-- Batch operations support
-
-## Quick Start
-
-### 1. Initialize a New Project
+### Verify Installation
 
 ```bash
-# Start interactive wizard (recommended)
+nsgm --version
+# Should output: 2.1.13
+```
+
+## 🚀 Quick Start
+
+### 1. Initialize Your First Project
+
+```bash
+# Start the interactive wizard (recommended for beginners)
 nsgm init
-# Follow the prompts to set up your project
+
+# Or specify project name directly
+nsgm init my-awesome-app
 ```
 
-### 2. Create Your First Controller
+The wizard will guide you through:
+- ✅ Project name and directory
+- ✅ Database configuration
+- ✅ Security settings
+- ✅ Initial controller setup
+
+### 2. Environment Setup
 
 ```bash
-# Enter interactive controller creation
-nsgm create
-# The wizard will guide you through:
-# - Controller name
-# - Description
-# - Project directory
-# - Database table creation
+cd your-project-name
+
+# Copy environment template
+cp .env.example .env
+
+# Generate secure password hash
+npm run generate-password your-secure-password
+
+# Edit .env file with generated hash
+nano .env
 ```
 
 ### 3. Start Development
 
 ```bash
-cd your-project-name
-cp .env.example .env
-npm run generate-password yourPassword
-# Add the generated hash to .env as LOGIN_PASSWORD_HASH
+# Install dependencies
+npm install
+
+# Start development server
 npm run dev
 ```
 
 Your application will be available at `http://localhost:3000` with:
+- 🎛️ Admin dashboard with CRUD interface
+- 📊 Data import/export functionality
+- 🗑️ Batch operations support
+- 🔐 Secure login system
 
-- Complete CRUD interface
-- Import/Export functionality
-- Batch delete operations
-- Secure admin login
+## 🛠️ CLI Commands
 
-## Command Line Tools
+### Core Commands
 
-### Basic Commands
+| Command | Description | Mode | Example |
+|---------|-------------|------|---------|
+| `nsgm init` | Initialize new project | Interactive/CLI | `nsgm init blog-app` |
+| `nsgm create` | Generate controller with CRUD | Interactive/CLI | `nsgm create user` |
+| `nsgm delete` | Remove controller and files | Interactive/CLI | `nsgm delete product` |
+| `nsgm dev` | Start development server | CLI | `nsgm dev` |
+| `nsgm build` | Build for production | CLI | `nsgm build` |
+| `nsgm start` | Start production server | CLI | `nsgm start` |
 
-| Command         | Description                            | Interactive Mode |
-| --------------- | -------------------------------------- | ---------------- |
-| `nsgm init`     | Initialize project                     | ✅ Default       |
-| `nsgm create`   | Create controller with CRUD operations | ✅ Default       |
-| `nsgm delete`   | Delete controller and related files    | ✅ Default       |
-| `nsgm deletedb` | Delete controller and database table   | ❌ Command only  |
-| `nsgm upgrade`  | Upgrade project base files             | ❌ Command only  |
-| `nsgm dev`      | Development mode                       | ❌ Command only  |
-| `nsgm start`    | Production mode                        | ❌ Command only  |
-| `nsgm build`    | Build project                          | ❌ Command only  |
-| `nsgm export`   | Export static pages                    | ❌ Command only  |
-
-### Interactive Mode (Recommended)
-
-NSGM CLI features intelligent mode detection. Commands automatically switch between interactive and command-line modes based on provided parameters.
-
-#### Project Initialization
+### Advanced Commands
 
 ```bash
-# Interactive mode (recommended for beginners)
-nsgm init
+# Database operations
+nsgm deletedb user           # Delete controller + database table
 
-# Command-line mode (for automation)
-nsgm init myproject
+# Project maintenance
+nsgm upgrade                 # Upgrade project base files
+nsgm export                  # Export static pages
+
+# Development tools
+npm run lint                 # Code linting
+npm run test                 # Run tests
+npm run test:coverage        # Test coverage report
 ```
 
-#### Controller Creation
+## 🎨 Generated Controller Features
+
+Each controller created with `nsgm create` includes:
+
+### 🔧 **Backend Components**
+- **GraphQL Schema**: Typed queries and mutations
+- **GraphQL Resolvers**: Business logic implementation
+- **REST API Endpoints**: RESTful service layer
+- **Database Models**: MySQL schema definitions
+- **Data Validation**: Input sanitization and validation
+
+### 🎯 **Frontend Components**
+- **React Components**: Modern functional components with hooks
+- **Styled Components**: CSS-in-JS styling
+- **Redux Integration**: State management
+- **Form Handling**: Create, edit, and validation forms
+- **Data Tables**: Sortable, filterable data grids
+
+### 📊 **CRUD Operations**
+- **Create**: Add new records with validation
+- **Read**: List, search, and pagination
+- **Update**: Edit existing records
+- **Delete**: Single and batch deletion
+- **Import/Export**: CSV and JSON data handling
+
+## 🏗️ Project Structure
+
+```
+your-project/
+├── client/                 # Frontend code
+│   ├── components/         # React components
+│   ├── layout/            # Layout components
+│   ├── redux/             # State management
+│   ├── service/           # API services
+│   ├── styled/            # Styled components
+│   └── utils/             # Utility functions
+├── server/                # Backend code
+│   ├── apis/              # REST API routes
+│   ├── modules/           # GraphQL modules
+│   ├── sql/               # Database scripts
+│   └── utils/             # Server utilities
+├── pages/                 # Next.js pages
+├── public/                # Static assets
+├── scripts/               # Build and deployment scripts
+├── __tests__/             # Test files
+├── .env.example           # Environment template
+├── next.config.js         # Next.js configuration
+├── mysql.config.js        # Database configuration
+└── package.json           # Dependencies
+```
+
+## ⚙️ Configuration
+
+### Environment Variables
 
 ```bash
-# Interactive mode - guided wizard
-nsgm create
+# .env file
+NODE_ENV=development
+LOGIN_USERNAME=admin
+LOGIN_PASSWORD_HASH=your_generated_hash
+DATABASE_URL=mysql://user:password@localhost:3306/dbname
 
-# Command-line mode - direct creation
+# Optional
+PORT=3000
+NEXT_PUBLIC_API_URL=http://localhost:3000
+```
+
+### Database Configuration
+
+```javascript
+// mysql.config.js
+module.exports = {
+  mysqlOptions: {
+    host: process.env.DB_HOST || 'localhost',
+    port: process.env.DB_PORT || 3306,
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || 'nsgm_db'
+  }
+}
+```
+
+## 🔒 Security Setup
+
+### Password Generation
+
+```bash
+# Generate secure hash
+npm run generate-password your-secure-password
+
+# Add to .env file
+LOGIN_PASSWORD_HASH=your_generated_hash_here
+```
+
+### CSRF Protection
+
+NSGM CLI includes built-in CSRF protection:
+
+```javascript
+// Automatic CSRF token generation
+app.use(csrfProtection)
+
+// Custom CSP headers
+app.use(createCSPMiddleware({
+  directives: {
+    defaultSrc: ["'self'"],
+    styleSrc: ["'self'", "'unsafe-inline'"],
+    scriptSrc: ["'self'"]
+  }
+}))
+```
+
+## 🧪 Testing
+
+```bash
+# Run all tests
+npm test
+
+# Watch mode
+npm run test:watch
+
+# Coverage report
+npm run test:coverage
+
+# Lint code
+npm run lint
+
+# Format code
+npm run format
+```
+
+## 📚 Examples
+
+### Creating a Blog System
+
+```bash
+# 1. Initialize project
+nsgm init my-blog
+
+# 2. Create controllers
+cd my-blog
+nsgm create post
+nsgm create category
 nsgm create user
-nsgm create user manage myproject
+
+# 3. Start development
+npm run dev
 ```
 
-#### Controller Deletion
+### Adding Custom API Endpoint
+
+```javascript
+// server/apis/custom.js
+const express = require('express')
+const router = express.Router()
+
+router.get('/stats', (req, res) => {
+  res.json({
+    totalPosts: 42,
+    totalUsers: 15,
+    lastUpdate: new Date()
+  })
+})
+
+module.exports = router
+```
+
+### Custom GraphQL Schema
+
+```javascript
+// server/modules/blog/schema.js
+module.exports = {
+  query: `
+    posts(limit: Int, offset: Int): [Post]
+    post(id: ID!): Post
+  `,
+  mutation: `
+    createPost(title: String!, content: String!): Post
+    updatePost(id: ID!, title: String, content: String): Post
+    deletePost(id: ID!): Boolean
+  `,
+  type: `
+    type Post {
+      id: ID!
+      title: String!
+      content: String!
+      createdAt: Date!
+      updatedAt: Date!
+    }
+  `
+}
+```
+
+## 🚀 Performance & Production
+
+### Build Optimization
 
 ```bash
-# Interactive mode - safe guided deletion
-nsgm delete
+# Production build
+npm run build
 
-# Command-line mode - direct deletion
-nsgm delete user
-nsgm delete user all myproject
+# Analyze bundle size
+npm run analyze
+
+# Export static site
+npm run export
 ```
 
-### Generated Controller Features
+### Production Deployment
 
-Each created controller includes:
+```bash
+# Start production server
+npm start
 
-- **Complete CRUD operations** (Create, Read, Update, Delete)
-- **Data import/export** functionality
-- **Batch delete** operations
-- **Database table** with standard fields (id, name, create_date, update_date)
-- **GraphQL API** integration
-- **REST API** endpoints
+# Or use PM2
+pm2 start npm --name "nsgm-app" -- start
+```
 
-### Command-Line Parameters (Advanced Usage)
+## 🤝 Contributing
 
-For automation and scripting, you can bypass interactive mode by providing parameters:
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
-- **dictionary**: Project directory name
+### Development Setup
 
-  ```bash
-  nsgm init myproject          # Creates project in 'myproject' folder
-  nsgm init ../my-new-app      # Supports relative paths
-  ```
+```bash
+# Clone repository
+git clone https://github.com/erishen/nsgm.git
+cd nsgm
 
-- **controller**: Controller name (auto-switches to command-line mode)
+# Install dependencies
+npm install
 
-  ```bash
-  nsgm create user             # Creates user controller with default settings
-  nsgm delete product          # Deletes product controller
-  ```
+# Run tests
+npm test
 
-- **action**: Operation type (used with controller parameter)
-  ```bash
-  nsgm create math manage      # Creates math controller with manage action
-  nsgm delete user all         # Deletes all files related to user controller
-  ```
+# Build CLI
+npm run tsbuild
+```
 
-### Legacy Commands
+## 📖 Documentation
 
-- **deletedb**: Delete controller and database table (command-line only)
-  ```bash
-  nsgm deletedb user           # Deletes user controller + database table
-  ```
+- [Security Guide](SECURITY.md) - Security best practices
+- [API Reference](docs/api.md) - Complete API documentation
+- [Migration Guide](docs/migration.md) - Upgrade instructions
+- [Troubleshooting](docs/troubleshooting.md) - Common issues and solutions
 
-## Security Configuration
-
-For security setup and login configuration, please refer to [SECURITY.md](./SECURITY.md).
-
-### Quick Setup
-
-1. Generate password hash:
-
-   ```bash
-   # Using npm script
-   npm run generate-password yourSecurePassword
-   ```
-
-2. Create `.env` file:
-
-   ```bash
-   LOGIN_USERNAME=admin
-   LOGIN_PASSWORD_HASH=your_generated_hash_here
-   ```
-
-3. Make sure `.env` is in your `.gitignore` file.
-
-**⚠️ Important:** Never commit passwords or `.env` files to version control.
-
-## Tips & Troubleshooting
-
-### Using Interactive Mode
-
-- **First time users**: Always use `nsgm init`, `nsgm create`, `nsgm delete` without parameters
-- **Experienced users**: Provide parameters to skip interactive prompts
-- **Path support**: Project names support relative paths like `../my-project`
-
-### Controller Naming
-
-- Use **camelCase** or **lowercase** for controller names (e.g., `user`, `productOrder`)
-- Controller names must start with a letter
-- Generated files will follow standard naming conventions
-
-### Smart Mode Detection
-
-- No parameters = Interactive mode
-- With parameters = Command-line mode
-- Mix and match based on your workflow preferences
+## 🐛 Troubleshooting
 
 ### Common Issues
 
-- **Permission errors**: Make sure you have write permissions in the target directory
-- **Database connection**: Verify MySQL configuration in `mysql.config.js`
-- **Port conflicts**: Check if port 3000 is available or configure a different port
+**Port already in use**
+```bash
+# Kill process on port 3000
+lsof -ti:3000 | xargs kill -9
 
-## Project Configuration
-
-### next.config.js
-
-```javascript
-const { nextConfig } = require('nsgm-cli')
-const projectConfig = require('./project.config')
-
-const { version, prefix, protocol, host } = projectConfig
-
-module.exports = (phase, defaultConfig) => {
-  let configObj = nextConfig(phase, defaultConfig, {
-    version,
-    prefix,
-    protocol,
-    host
-  })
-
-  return configObj
-}
+# Or use different port
+PORT=3001 npm run dev
 ```
 
-### mysql.config.js
+**Database connection failed**
+```bash
+# Check MySQL service
+sudo systemctl status mysql
 
-```javascript
-const { mysqlConfig } = require('nsgm-cli')
-const { mysqlOptions } = mysqlConfig
-const { user, password, host, port, database } = mysqlOptions
-
-module.exports = {
-  mysqlOptions: {
-    user,
-    password,
-    host,
-    port,
-    database
-  }
-}
+# Verify credentials in .env
+cat .env | grep DB_
 ```
 
-### project.config.js
+**Permission denied**
+```bash
+# Fix npm permissions
+sudo chown -R $(whoami) ~/.npm
 
-```javascript
-const { projectConfig } = require('nsgm-cli')
-const pkg = require('./package.json')
-
-const { prefix, protocol, host, port } = projectConfig
-const { version } = pkg
-
-module.exports = {
-  version,
-  prefix,
-  protocol,
-  host,
-  port
-}
+# Or use different install location
+npm config set prefix '~/.local'
 ```
 
-## Server Directory Structure
+## 📄 License
 
-The `server` folder in the project root contains the following:
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-### Directory Description
+## 🙏 Acknowledgments
 
-- `apis/` - Stores REST API interfaces
-- `modules/` - Stores GraphQL resolvers and schemas
-- `plugins/` - Stores GraphQL plugins
-- `*.js` - Route files
+- [Next.js](https://nextjs.org/) - React framework
+- [GraphQL](https://graphql.org/) - Query language
+- [Styled Components](https://styled-components.com/) - CSS-in-JS
+- [MySQL](https://www.mysql.com/) - Relational database
 
-### Example Code
+---
 
-#### Route File Example (server/csrf-test.js)
+<div align="center">
 
-```javascript
-const express = require('express')
-const moment = require('moment')
+**Made with ❤️ by the NSGM Team**
 
-const router = express.Router()
+[GitHub](https://github.com/erishen/nsgm) • [npm](https://www.npmjs.com/package/nsgm-cli) • [Issues](https://github.com/erishen/nsgm/issues)
 
-router.use((req, res, next) => {
-  const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl
-  next()
-})
+</div>
 
-router.get('/*', (req, res) => {
-  res.statusCode = 200
-  res.json({ name: 'TEST' })
-})
-
-module.exports = router
-```
-
-#### REST API Example (server/apis/hello.js)
-
-```javascript
-const express = require('express')
-const router = express.Router()
-
-router.get('/*', (req, res) => {
-  res.statusCode = 200
-  res.json({ name: 'Hello' })
-})
-
-module.exports = router
-```
-
-#### GraphQL Schema Example (server/modules/link/schema.js)
-
-```javascript
-module.exports = {
-  query: `
-        link: String
-    `,
-  mutation: `
-        linkUpdate(link: Date): String
-    `,
-  subscription: ``,
-  type: ``
-}
-```
-
-#### GraphQL Resolver Example (server/modules/link/resolver.js)
-
-```javascript
-let localLink = ''
-
-module.exports = {
-  link: () => {
-    return localLink
-  },
-  linkUpdate: ({ link }) => {
-    localLink = link
-    return localLink
-  }
-}
-```
-
-#### GraphQL Plugin Example (server/plugins/date.js)
-
-```javascript
-const moment = require('moment')
-const { Kind } = require('graphql/language')
-const { GraphQLScalarType } = require('graphql')
-
-const customScalarDate = new GraphQLScalarType({
-  name: 'Date',
-  description: 'Date custom scalar type',
-  parseValue: (value) => moment(value).valueOf(),
-  serialize: (value) => moment(value).format('YYYY-MM-DD HH:mm:ss:SSS'),
-  parseLiteral: (ast) => (ast.kind === Kind.INT ? parseInt(ast.value, 10) : null)
-})
-
-module.exports = { Date: customScalarDate }
-```

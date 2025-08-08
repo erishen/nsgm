@@ -6,7 +6,7 @@ export const getProcessArgvs = (removeItems = 2) => {
     command: '', // dev, start, build, export, create, delete, init, help
     dictionary: '', // export/init dictionary=${dictionary}
     controller: '',
-    action: '' // create/delete controller=${controller} action=${action}
+    action: '', // create/delete controller=${controller} action=${action}
   }
 
   _.each(args, (item, index) => {

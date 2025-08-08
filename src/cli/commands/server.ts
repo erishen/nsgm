@@ -10,7 +10,7 @@ export const devCommand: Command = {
   execute: async (_options: CommandOptions) => {
     console.log('🚀 启动开发服务器...')
     startExpress({ dev: true }, undefined, 'dev')
-  }
+  },
 }
 
 export const startCommand: Command = {
@@ -22,5 +22,5 @@ export const startCommand: Command = {
   execute: async (_options: CommandOptions) => {
     console.log('🌟 启动生产服务器...')
     startExpress({ dev: false }, undefined, 'start')
-  }
+  },
 }

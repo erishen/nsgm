@@ -9,7 +9,7 @@ export default [
     text: '介绍',
     url: '/',
     icon: <BookOutlined rev={undefined} />,
-    subMenus: null
+    subMenus: null,
   },
   {
     key: (++key).toString(),
@@ -20,9 +20,9 @@ export default [
       {
         key: `${key}_1`,
         text: '模板1',
-        url: '/template/manage'
-      }
-    ]
+        url: '/template/manage',
+      },
+    ],
   },
   /*{
     key: (++key).toString(),
@@ -36,5 +36,5 @@ export default [
         url: '/template/manage'
       }
     ]
-  },*/
+  }*/
 ]

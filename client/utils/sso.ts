@@ -113,7 +113,7 @@ const storeLoginUser = (userAttr: any, callback: any) => {
       'employee',
       'mail',
       'name',
-      'sn'
+      'sn',
     ])
     setCookie(LOGIN_COOKIE_USER, user, null)
     callback?.(JSON.parse(user))

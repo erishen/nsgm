@@ -22,7 +22,7 @@ import {
   mysqlUser,
   mysqlPassword,
   mysqlHost,
-  mysqlPort
+  mysqlPort,
 } from './constants'
 import { firstUpperCase, mkdirSync, copyFileSync, handleReplace, replaceInFileAll } from './utils'
 import { FieldDefinition } from './cli/utils/prompt'
@@ -57,7 +57,7 @@ const TEMPLATE_FILES = {
   reduxReducers: 'redux/template/manage/reducers.ts',
   reduxTypes: 'redux/template/manage/types.ts',
   styled: 'styled/template/manage.ts',
-  serverApi: 'apis/template.js'
+  serverApi: 'apis/template.js',
 } as const
 
 const MYSQL_TIMEOUT = 1000
@@ -122,7 +122,7 @@ const generateFilePaths = (controller: string, action: string, dictionary = '.')
     destClientUtilsMenuPath:
       !dictionary || dictionary === '.'
         ? destClientUtilsMenuPath
-        : resolve(`${getDestPath(destClientPath)}/utils/menu.tsx`)
+        : resolve(`${getDestPath(destClientPath)}/utils/menu.tsx`),
   }
 
   return paths
@@ -144,8 +144,8 @@ const performBasicReplacements = (
         paths.destClientReduxReducers,
         paths.destServerModulesResolver,
         paths.destServerModulesSchema,
-        paths.destServerApisController
-      ]
+        paths.destServerApisController,
+      ],
     },
     {
       regex: 'Template',
@@ -155,24 +155,24 @@ const performBasicReplacements = (
         paths.destClientAction,
         paths.destClientReduxActions,
         paths.destServerModulesSchema,
-        paths.destServerApisController
-      ]
+        paths.destServerApisController,
+      ],
     },
     {
       regex: 'TEMPLATE',
       replacement: controller.toUpperCase(),
-      paths: [paths.destClientReduxActions, paths.destClientReduxReducers, paths.destClientReduxTypes]
+      paths: [paths.destClientReduxActions, paths.destClientReduxReducers, paths.destClientReduxTypes],
     },
     {
       regex: 'manage',
       replacement: action,
-      paths: [paths.destPagesAction, paths.destClientReduxActions]
+      paths: [paths.destPagesAction, paths.destClientReduxActions],
     },
     {
       regex: 'Manage',
       replacement: firstUpperCase(action),
-      paths: [paths.destPagesAction, paths.destClientReduxReducers]
-    }
+      paths: [paths.destPagesAction, paths.destClientReduxReducers],
+    },
   ]
 
   replacements.forEach((rule) => {
@@ -189,22 +189,22 @@ const performAdvancedReplacements = (
     {
       from: /\n\s*\n/,
       to: `\nimport { ${controller}${firstUpperCase(action)}Reducer } from './${controller}/${action}/reducers'\n\n`,
-      files: [paths.destClientReduxReducersAllPath]
+      files: [paths.destClientReduxReducersAllPath],
     },
     {
       from: /Reducer,?\s*\n/,
       to: `Reducer,\n  ${controller}${firstUpperCase(action)}: ${controller}${firstUpperCase(action)}Reducer\n`,
-      files: [paths.destClientReduxReducersAllPath]
+      files: [paths.destClientReduxReducersAllPath],
     },
     {
       from: /'(.\/apis\/template.*?)'\)\s*\n/,
       to: `'./apis/template')\nconst ${controller} = require('./apis/${controller}')\n`,
-      files: [paths.destServerRestPath]
+      files: [paths.destServerRestPath],
     },
     {
       from: /template\)\s*\n/,
       to: `template)\nrouter.use('/${controller}', ${controller})\n`,
-      files: [paths.destServerRestPath]
+      files: [paths.destServerRestPath],
     },
     {
       from: /\/\*\{\s*\n\s*key: \(\+\+key\)\.toString\(\),/,
@@ -215,15 +215,15 @@ const performAdvancedReplacements = (
         `subMenus: [\n      {\n        key: \`\${key}_1\`,\n        text: '${action}',\n        url: '/${controller}/${
           action
         }'\n      }\n    ]\n    // ${controller}_${action}_end\n  },\n  /*{\n    key: (++key).toString(),`,
-      files: [paths.destClientUtilsMenuPath]
-    }
+      files: [paths.destClientUtilsMenuPath],
+    },
   ]
 
   if (isLocal) {
     optionsArr.push({
       from: /'nsgm-cli'\)/,
       to: "'../../../index')",
-      files: [paths.destServerModulesResolver]
+      files: [paths.destServerModulesResolver],
     })
   }
 
@@ -275,7 +275,7 @@ const copyAndCustomizeTemplateFiles = (
     [paths.sourceClientReduxReducers, paths.destClientReduxReducers],
     [paths.sourceClientReduxTypes, paths.destClientReduxTypes],
     [paths.sourceClientStyledAction, paths.destClientStyledAction],
-    [paths.sourceServerApisController, paths.destServerApisController]
+    [paths.sourceServerApisController, paths.destServerApisController],
   ]
 
   fileMappings.forEach(([source, dest]) => {
@@ -324,10 +324,10 @@ export const createFiles = (controller: string, action: string, dictionary?: str
         comment: '名称',
         showInList: true,
         showInForm: true,
-        searchable: true
+        searchable: true,
       },
       { name: 'create_date', type: 'timestamp', required: true, comment: '创建时间', isSystemField: true },
-      { name: 'update_date', type: 'timestamp', required: true, comment: '更新时间', isSystemField: true }
+      { name: 'update_date', type: 'timestamp', required: true, comment: '更新时间', isSystemField: true },
     ]
 
     const finalFields = fields && fields.length > 0 ? fields : defaultFields
@@ -359,7 +359,7 @@ export const createFiles = (controller: string, action: string, dictionary?: str
       paths.destClientReduxControllerAction,
       paths.destClientServiceController,
       paths.destClientStyledController,
-      paths.destServerModulesController
+      paths.destServerModulesController,
     ]
 
     createDirectoryStructure(basePaths)

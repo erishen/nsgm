@@ -22,9 +22,9 @@ const tempStore = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE']
-      }
-    })
+        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
+      },
+    }),
 })
 
 export type AppDispatch = typeof tempStore.dispatch
@@ -37,9 +37,9 @@ function initStore(initialState?: any): EnhancedStore {
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
         serializableCheck: {
-          ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE']
-        }
-      })
+          ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
+        },
+      }),
   })
 }
 
@@ -49,7 +49,7 @@ export const initializeStore = (preloadedState?: any): EnhancedStore => {
   if (preloadedState && store) {
     _store = initStore({
       ...store.getState(),
-      ...preloadedState
+      ...preloadedState,
     })
     store = undefined
   }

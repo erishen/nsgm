@@ -21,7 +21,7 @@ const luscaConfig = {
     header: 'x-csrf-token', // 从 header 中读取 token
     cookie: '_csrf', // cookie 名称
     key: 'csrf', // session key
-    secret: process.env.CSRF_SECRET || 'your-csrf-secret-change-in-production'
+    secret: process.env.CSRF_SECRET || 'your-csrf-secret-change-in-production',
   },
 
   // 内容安全策略
@@ -32,15 +32,15 @@ const luscaConfig = {
       'style-src': "'self' 'unsafe-inline'",
       'img-src': "'self' data: https:",
       'font-src': "'self' https:",
-      'connect-src': "'self'"
-    }
+      'connect-src': "'self'",
+    },
   },
 
   // 其他安全设置
   xframe: 'SAMEORIGIN' as const,
   nosniff: true,
   xssProtection: true,
-  referrerPolicy: 'same-origin' as const
+  referrerPolicy: 'same-origin' as const,
 }
 
 // 条件性 CSRF 保护中间件
@@ -71,19 +71,19 @@ export const getCSRFToken = (req: Request, res: Response) => {
       lusca.csrf(luscaConfig.csrf)(req, res, () => {
         const newToken = req.session._csrf || req.session[luscaConfig.csrf.key] || req.csrfToken?.()
         res.json({
-          csrfToken: newToken
+          csrfToken: newToken,
         })
       })
     } else {
       res.json({
-        csrfToken: csrfToken
+        csrfToken: csrfToken,
       })
     }
   } catch (error) {
     console.error('获取 CSRF token 错误:', error)
     res.status(500).json({
       error: 'Failed to generate CSRF token',
-      message: '生成 CSRF 令牌失败'
+      message: '生成 CSRF 令牌失败',
     })
   }
 }
@@ -95,8 +95,8 @@ export const securityMiddleware = {
     xframe: luscaConfig.xframe,
     nosniff: luscaConfig.nosniff,
     xssProtection: luscaConfig.xssProtection,
-    referrerPolicy: luscaConfig.referrerPolicy
-  })
+    referrerPolicy: luscaConfig.referrerPolicy,
+  }),
 }
 
 // CSP 中间件

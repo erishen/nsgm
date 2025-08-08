@@ -5,8 +5,8 @@ const initialState = {
   firstLoadFlag: true,
   template: {
     totalCounts: 0,
-    items: []
-  }
+    items: [],
+  },
 }
 
 export const templateManageReducer = (state = initialState, { type, payload }) => {
@@ -19,19 +19,19 @@ export const templateManageReducer = (state = initialState, { type, payload }) =
       return {
         ...state,
         firstLoadFlag: true,
-        template: payload.template
+        template: payload.template,
       }
     case types.GET_TEMPLATE_SUCCEEDED:
       return {
         ...state,
         firstLoadFlag: false,
-        template: payload.template
+        template: payload.template,
       }
     case types.SEARCH_TEMPLATE_SUCCEEDED:
       return {
         ...state,
         firstLoadFlag: false,
-        template: payload.template
+        template: payload.template,
       }
     case types.ADD_TEMPLATE_SUCCEEDED:
       newItems = [...items]
@@ -41,8 +41,8 @@ export const templateManageReducer = (state = initialState, { type, payload }) =
         firstLoadFlag: false,
         template: {
           totalCounts: totalCounts + 1,
-          items: newItems
-        }
+          items: newItems,
+        },
       }
     case types.MOD_TEMPLATE_SUCCEEDED:
       const modItem = payload.template
@@ -59,8 +59,8 @@ export const templateManageReducer = (state = initialState, { type, payload }) =
         firstLoadFlag: false,
         template: {
           totalCounts: totalCounts,
-          items: newItems
-        }
+          items: newItems,
+        },
       }
     case types.DEL_TEMPLATE_SUCCEEDED:
       const delItemId = payload.id
@@ -76,8 +76,8 @@ export const templateManageReducer = (state = initialState, { type, payload }) =
         firstLoadFlag: false,
         template: {
           totalCounts: totalCounts - 1,
-          items: newItems
-        }
+          items: newItems,
+        },
       }
     case types.BATCH_DEL_TEMPLATE_SUCCEEDED:
       const delItemIds = payload.ids
@@ -97,8 +97,8 @@ export const templateManageReducer = (state = initialState, { type, payload }) =
         firstLoadFlag: false,
         template: {
           totalCounts: newTotalCounts,
-          items: newItems
-        }
+          items: newItems,
+        },
       }
     default:
       return state

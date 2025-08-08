@@ -104,8 +104,8 @@ export const startExpress = (options: any, callback?: () => void, command = 'dev
             httpOnly: true,
             maxAge: 24 * 60 * 60 * 1000, // 24小时
             sameSite: 'lax', // 设置 SameSite 策略
-            domain: undefined // 不设置 domain，使用默认
-          }
+            domain: undefined, // 不设置 domain，使用默认
+          },
         })
       )
 
@@ -114,7 +114,7 @@ export const startExpress = (options: any, callback?: () => void, command = 'dev
 
       server.use(
         bodyParser.urlencoded({
-          extended: false
+          extended: false,
         })
       )
 
@@ -122,7 +122,7 @@ export const startExpress = (options: any, callback?: () => void, command = 'dev
       server.use(
         cors({
           credentials: true, // 允许发送 cookies
-          origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000']
+          origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
         })
       )
 

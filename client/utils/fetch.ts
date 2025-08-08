@@ -15,34 +15,34 @@ export const GRAPHQL_CONFIG = {
   // 默认请求头
   defaultHeaders: {
     'Content-Type': 'application/json',
-    Accept: 'application/json'
+    Accept: 'application/json',
   },
 
   // 缓存配置
   cache: {
     defaultTTL: 5 * 60 * 1000, // 5分钟
     maxSize: 100,
-    enabled: true
+    enabled: true,
   },
 
   // CSRF 配置
   csrf: {
     enabled: true,
     tokenHeader: 'X-CSRF-Token',
-    cookieName: 'csrfToken'
+    cookieName: 'csrfToken',
   },
 
   // 开发模式配置
   development: {
-    enableDebugLogs: process.env.NODE_ENV === 'development'
-  }
+    enableDebugLogs: process.env.NODE_ENV === 'development',
+  },
 }
 
 // GraphQL 操作类型
 export enum GraphQLOperationType {
   QUERY = 'query',
   MUTATION = 'mutation',
-  SUBSCRIPTION = 'subscription'
+  SUBSCRIPTION = 'subscription',
 }
 
 // GraphQL 工具函数
@@ -81,7 +81,7 @@ export const GraphQLUtils = {
     } catch {
       return false
     }
-  }
+  },
 }
 
 // ==================== CSRF 工具 ====================
@@ -93,7 +93,7 @@ export const GraphQLUtils = {
 export const getCSRFToken = async (): Promise<string> => {
   try {
     const response = await axios.get(`${getLocalApiPrefix()}/csrf-token`, {
-      withCredentials: true
+      withCredentials: true,
     })
 
     if (!response.data?.csrfToken) {
@@ -124,7 +124,7 @@ export const getLocalGraphql = async (query: string, variables: any = {}) => {
     const isMutation = operationType === GraphQLOperationType.MUTATION
 
     const headers: Record<string, string> = {
-      ...GRAPHQL_CONFIG.defaultHeaders
+      ...GRAPHQL_CONFIG.defaultHeaders,
     }
 
     let response
@@ -144,11 +144,11 @@ export const getLocalGraphql = async (query: string, variables: any = {}) => {
         `${getLocalApiPrefix()}/graphql`,
         {
           query,
-          variables
+          variables,
         },
         {
           headers,
-          withCredentials: true
+          withCredentials: true,
         }
       )
     } else {
@@ -161,9 +161,9 @@ export const getLocalGraphql = async (query: string, variables: any = {}) => {
 
       response = await axios.get(`${getLocalApiPrefix()}/graphql?${params.toString()}`, {
         headers: {
-          Accept: 'application/json'
+          Accept: 'application/json',
         },
-        withCredentials: true
+        withCredentials: true,
       })
     }
 
@@ -184,7 +184,7 @@ export const getLocalGraphql = async (query: string, variables: any = {}) => {
           const newCsrfToken = await getCSRFToken()
           const retryHeaders = {
             ...GRAPHQL_CONFIG.defaultHeaders,
-            [GRAPHQL_CONFIG.csrf.tokenHeader]: newCsrfToken
+            [GRAPHQL_CONFIG.csrf.tokenHeader]: newCsrfToken,
           }
 
           const retryResponse = await axios.post(
@@ -246,9 +246,9 @@ export const createCSRFUploadProps = (
         const uploadUrl = action.startsWith('http') ? action : getLocalApiPrefix() + action
         const response = await axios.post(uploadUrl, formData, {
           headers: {
-            [GRAPHQL_CONFIG.csrf.tokenHeader]: csrfToken
+            [GRAPHQL_CONFIG.csrf.tokenHeader]: csrfToken,
           },
-          withCredentials: true
+          withCredentials: true,
         })
 
         if (response.status >= 200 && response.status < 300) {
@@ -292,7 +292,7 @@ export const createCSRFUploadProps = (
           onError(fileName)
         }
       }
-    }
+    },
   }
 
   // 只有当 accept 有值时才添加该属性
@@ -312,17 +312,17 @@ export const validateCSRFForUpload = async (): Promise<{ valid: boolean; token?:
     if (!csrfToken) {
       return {
         valid: false,
-        error: 'CSRF Token 获取失败，请刷新页面重试'
+        error: 'CSRF Token 获取失败，请刷新页面重试',
       }
     }
     return {
       valid: true,
-      token: csrfToken
+      token: csrfToken,
     }
   } catch (error) {
     return {
       valid: false,
-      error: error instanceof Error ? error.message : '获取 CSRF Token 时发生未知错误'
+      error: error instanceof Error ? error.message : '获取 CSRF Token 时发生未知错误',
     }
   }
 }

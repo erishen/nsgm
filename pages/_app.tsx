@@ -10,8 +10,8 @@ import 'antd/dist/reset.css'
 
 const theme = {
   colors: {
-    primary: '#0070f3'
-  }
+    primary: '#0070f3',
+  },
 }
 
 const App = ({ Component, pageProps }) => {
@@ -83,7 +83,7 @@ const App = ({ Component, pageProps }) => {
 
 App.getInitialProps = async ({ Component, ctx }) => {
   return {
-    pageProps: await Component?.getInitialProps(ctx)
+    pageProps: await Component?.getInitialProps(ctx),
   }
 }
 

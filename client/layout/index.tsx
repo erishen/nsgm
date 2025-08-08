@@ -116,7 +116,7 @@ const StyledContent = styled(Content)`
 const getLocationKey = () => {
   const result = {
     topMenu: '1',
-    slideMenu: '0'
+    slideMenu: '0',
   }
 
   if (typeof window !== 'undefined') {
@@ -208,7 +208,7 @@ const LayoutComponent = ({ user, children }) => {
           } else {
             setSliderMenuKey('0')
           }
-        }
+        },
       }
 
       menuItems.push(menuObj)
@@ -232,7 +232,7 @@ const LayoutComponent = ({ user, children }) => {
 
               if (subKeyArrLen >= 1) setTopMenuKey(subKeyArr[0])
               if (subKeyArrLen >= 2) setSliderMenuKey(subKeyArr[1])
-            }
+            },
           }
 
           subMenusChildren.push(subMenusChildrenObj)
@@ -248,7 +248,7 @@ const LayoutComponent = ({ user, children }) => {
             setTopMenuKey(key)
             setSliderMenuKey('1')
           },
-          children: subMenusChildren
+          children: subMenusChildren,
         }
 
         menuItemsVertical.push(subMenuObjVertical)
@@ -263,7 +263,7 @@ const LayoutComponent = ({ user, children }) => {
             routerPush(router, url)
             setTopMenuKey(key)
             setSliderMenuKey('0')
-          }
+          },
         }
 
         menuItemsVertical.push(menuObjVertical)
@@ -300,23 +300,23 @@ const LayoutComponent = ({ user, children }) => {
                     {
                       key: '1',
                       icon: <UserOutlined />,
-                      label: '个人中心'
+                      label: '个人中心',
                     },
                     {
                       key: '2',
                       icon: <SettingOutlined />,
-                      label: '账户设置'
+                      label: '账户设置',
                     },
                     {
-                      type: 'divider'
+                      type: 'divider',
                     },
                     {
                       key: '3',
                       icon: <LogoutOutlined />,
                       label: '退出登录',
-                      onClick: () => logout()
-                    }
-                  ]
+                      onClick: () => logout(),
+                    },
+                  ],
                 }}
               >
                 <Space className="user-dropdown">

@@ -9,7 +9,7 @@ import {
   delTemplate,
   updateSSRTemplate,
   searchTemplate,
-  batchDelTemplate
+  batchDelTemplate,
 } from '@/redux/template/manage/actions'
 import { getTemplateService } from '@/service/template/manage'
 import { RootState, AppDispatch } from '@/redux/store'
@@ -24,7 +24,7 @@ import { createCSRFUploadProps } from '@/utils/fetch'
 const pageSize = 100
 
 const keyTitles = {
-  name: '名称'
+  name: '名称',
 }
 
 // styled-components
@@ -129,7 +129,7 @@ const Page = ({ template }) => {
       sortDirections: ['descend', 'ascend'],
       showSorterTooltip: false,
       width: '15%',
-      align: 'center'
+      align: 'center',
     },
     {
       title: keyTitles.name,
@@ -139,7 +139,7 @@ const Page = ({ template }) => {
       sortDirections: ['descend', 'ascend'],
       showSorterTooltip: false,
       width: '60%',
-      ellipsis: true
+      ellipsis: true,
     },
     {
       title: '操作',
@@ -170,15 +170,15 @@ const Page = ({ template }) => {
             </RoundedButton>
           </Space>
         )
-      }
-    }
+      },
+    },
   ]
 
   const rowSelection = {
     onChange: (selectedRowKeys: any) => {
       //
       setBatchDelIds(selectedRowKeys)
-    }
+    },
   }
 
   const createTemplate = () => {
@@ -204,7 +204,7 @@ const Page = ({ template }) => {
       onOk: () => {
         dispatch(delTemplate(id))
         Modal.destroyAll()
-      }
+      },
     })
   }
 
@@ -220,7 +220,7 @@ const Page = ({ template }) => {
 
   const handleOk = () => {
     const modalObj = {
-      name: handleXSS(modalName)
+      name: handleXSS(modalName),
     }
     //
 
@@ -271,7 +271,7 @@ const Page = ({ template }) => {
       // 设置列宽
       ws.columns = [
         { header: 'ID', key: 'header1', width: 20 },
-        { header: 'NAME', key: 'header2', width: 30 }
+        { header: 'NAME', key: 'header2', width: 30 },
       ]
 
       wb.xlsx
@@ -312,7 +312,7 @@ const Page = ({ template }) => {
         return false
       }
       return true
-    }
+    },
   })
 
   const batchDeleteTemplate = () => {
@@ -325,7 +325,7 @@ const Page = ({ template }) => {
         onOk: () => {
           dispatch(batchDelTemplate(batchDelIds))
           Modal.destroyAll()
-        }
+        },
       })
     } else {
       message.info('没有数据不能批量删除')
@@ -374,7 +374,7 @@ const Page = ({ template }) => {
         <StyledTable
           rowSelection={{
             type: 'checkbox',
-            ...rowSelection
+            ...rowSelection,
           }}
           dataSource={dataSource}
           columns={columns}
@@ -389,7 +389,7 @@ const Page = ({ template }) => {
             onChange: (page, pageSize) => {
               dispatch(searchTemplate(page - 1, pageSize, { name: handleXSS(searchName) }))
             },
-            className: 'styled-pagination'
+            className: 'styled-pagination',
           }}
         />
         <Modal
@@ -432,7 +432,7 @@ Page.getInitialProps = async () => {
   })
 
   return {
-    template
+    template,
   }
 }
 

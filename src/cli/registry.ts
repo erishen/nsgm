@@ -35,7 +35,7 @@ export class CommandRegistry {
       devCommand,
       startCommand,
       upgradeCommand,
-      versionCommand
+      versionCommand,
     ]
 
     for (const command of commands) {

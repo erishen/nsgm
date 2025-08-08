@@ -14,14 +14,14 @@ export const initCommand: Command = {
       name: 'dictionary',
       description: '项目目录名称',
       default: '.',
-      type: 'string'
+      type: 'string',
     },
     {
       name: 'interactive',
       description: '使用交互式向导',
       default: true,
-      type: 'boolean'
-    }
+      type: 'boolean',
+    },
   ],
   execute: async (options: CommandOptions) => {
     try {
@@ -56,7 +56,7 @@ export const initCommand: Command = {
       }
 
       const finalOptions = ArgumentParser.applyDefaults(options, {
-        dictionary: '.'
+        dictionary: '.',
       })
 
       // 检查是否需要跳过初始化（保持原有逻辑）
@@ -125,5 +125,5 @@ export const initCommand: Command = {
       Console.error(`初始化失败: ${error}`)
       process.exit(1)
     }
-  }
+  },
 }

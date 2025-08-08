@@ -12,7 +12,7 @@ import {
   initPublicFiles,
   initScriptsFiles,
   initRootFiles,
-  initTestFiles
+  initTestFiles,
 } from './generate_init'
 import { createFiles as generateCreateFiles } from './generate_create'
 import { deleteFiles as generateDeleteFiles } from './generate_delete'
