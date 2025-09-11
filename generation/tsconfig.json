@@ -5,25 +5,20 @@
     "module": "commonjs",
     "declaration": true,
     "strict": true,
-    "lib": [
-      "dom",
-      "ES2022"
-    ],
+    "lib": ["dom", "ES2022"],
     "esModuleInterop": true,
     "allowJs": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": false,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noImplicitAny": false,
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "client/*"
-      ]
+      "@/*": ["client/*"]
     },
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -31,14 +26,6 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": [
-    "client/**/*",
-    "pages/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "**/__tests__/*",
-    ".next",
-    "lib"
-  ]
+  "include": ["client/**/*", "pages/**/*"],
+  "exclude": ["node_modules", "**/__tests__/*", ".next", "lib"]
 }

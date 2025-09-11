@@ -1,7 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import { ConfigProvider, Table, Modal, Button, Input, Space, Upload, message } from 'antd'
-import { Container, SearchRow, ModalContainer } from '@/styled/template/manage'
-import styled from 'styled-components'
+import { ConfigProvider, Modal, Space, Upload, message } from 'antd'
+import {
+  Container,
+  SearchRow,
+  ModalContainer,
+  StyledButton,
+  StyledInput,
+  StyledTable,
+  ModalTitle,
+  ModalInput,
+  IconWrapper,
+  RoundedButton,
+  GlobalStyle,
+} from '@/styled/template/manage'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   addTemplate,
@@ -14,7 +25,9 @@ import {
 import { getTemplateService } from '@/service/template/manage'
 import { RootState, AppDispatch } from '@/redux/store'
 import _ from 'lodash'
-import locale from 'antd/lib/locale/zh_CN'
+import { useTranslation } from 'next-i18next'
+import { getAntdLocale } from '@/utils/i18n'
+import { useRouter } from 'next/router'
 import { handleXSS, checkModalObj } from '@/utils/common'
 import { UploadOutlined } from '@ant-design/icons'
 import ExcelJS from 'exceljs'
@@ -23,78 +36,10 @@ import { createCSRFUploadProps } from '@/utils/fetch'
 
 const pageSize = 100
 
-const keyTitles = {
-  name: '名称',
-}
-
-// styled-components
-const StyledButton = styled(Button)<{ $primary?: boolean; $export?: boolean; $import?: boolean; $danger?: boolean }>`
-  display: flex;
-  align-items: center;
-  border-radius: 6px;
-  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
-  ${(props) =>
-    props.$export &&
-    `
-      background-color: #f6ffed;
-      color: #52c41a;
-      border-color: #b7eb8f;
-      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
-      transition: all 0.3s ease;
-    `}
-  ${(props) =>
-    props.$import &&
-    `
-      background-color: #e6f7ff;
-      color: #1890ff;
-      border-color: #91d5ff;
-      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
-      transition: all 0.3s ease;
-    `}
-    ${(props) =>
-    props.$danger &&
-    `
-      background-color: #fff1f0;
-      border-color: #ffa39e;
-      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
-      transition: all 0.3s ease;
-    `}
-`
-const StyledInput = styled(Input)`
-  width: 200px;
-  border-radius: 6px;
-  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
-`
-const StyledTable = styled(Table)`
-  margin-top: 16px;
-  border-radius: 8px;
-  overflow: hidden;
-
-  .styled-pagination {
-    margin-top: 16px;
-    margin-bottom: 16px;
-  }
-`
-const ModalTitle = styled.div`
-  color: #1890ff;
-  font-weight: 500;
-`
-const ModalInput = styled(Input)`
-  border-radius: 4px;
-`
-const IconWrapper = styled.i`
-  margin-right: 5px;
-`
-const RoundedButton = styled(Button)`
-  border-radius: 4px;
-`
-const GlobalStyle = styled.div`
-  .rounded-button {
-    border-radius: 4px;
-  }
-`
-
 const Page = ({ template }) => {
+  const { t } = useTranslation(['common', 'template'])
+  const router = useRouter()
+  const antdLocale = getAntdLocale(router.locale || 'zh-CN')
   const dispatch = useDispatch<AppDispatch>()
   const [isModalVisiable, setIsModalVisible] = useState(false)
   const [modalId, setModalId] = useState(0)
@@ -102,9 +47,38 @@ const Page = ({ template }) => {
   const [searchName, setSearchName] = useState('')
   const [batchDelIds, setBatchDelIds] = useState([])
 
+  const keyTitles = {
+    name: t('template:template.fields.name'),
+  }
+
   useEffect(() => {
     dispatch(updateSSRTemplate(template))
   }, [dispatch])
+
+  useEffect(() => {
+    // 管理弹窗打开时的滚动条显示
+    if (isModalVisiable) {
+      // 记录原始样式
+      const originalStyle = window.getComputedStyle(document.body).overflow
+      const originalPaddingRight = window.getComputedStyle(document.body).paddingRight
+
+      // 设置定时器，在 Modal 设置样式后覆盖
+      const timer = setTimeout(() => {
+        document.body.style.overflow = 'auto'
+        document.body.style.paddingRight = '0px'
+      }, 0)
+
+      return () => {
+        clearTimeout(timer)
+        // 清理时恢复原始样式
+        document.body.style.overflow = originalStyle
+        document.body.style.paddingRight = originalPaddingRight
+      }
+    }
+
+    // 当弹窗关闭时，不需要清理函数
+    return undefined
+  }, [isModalVisiable])
 
   const templateManage = useSelector((state: RootState) => state.templateManage)
 
@@ -122,7 +96,7 @@ const Page = ({ template }) => {
   const dataSource = templateItems
   const columns: any = [
     {
-      title: 'ID',
+      title: t('template:template.fields.id'),
       dataIndex: 'id',
       key: 'id',
       sorter: (a: any, b: any) => a.id - b.id,
@@ -132,7 +106,7 @@ const Page = ({ template }) => {
       align: 'center',
     },
     {
-      title: keyTitles.name,
+      title: t('template:template.fields.name'),
       dataIndex: 'name',
       key: 'name',
       sorter: (a: any, b: any) => a.name.length - b.name.length,
@@ -142,7 +116,7 @@ const Page = ({ template }) => {
       ellipsis: true,
     },
     {
-      title: '操作',
+      title: t('template:template.fields.actions'),
       dataIndex: '',
       width: '25%',
       align: 'center',
@@ -156,7 +130,7 @@ const Page = ({ template }) => {
                 updateTemplate(record)
               }}
             >
-              修改
+              {t('template:template.buttons.edit')}
             </RoundedButton>
             <RoundedButton
               danger
@@ -166,7 +140,7 @@ const Page = ({ template }) => {
                 deleteTemplate(id)
               }}
             >
-              删除
+              {t('template:template.buttons.delete')}
             </RoundedButton>
           </Space>
         )
@@ -197,10 +171,10 @@ const Page = ({ template }) => {
 
   const deleteTemplate = (id: number) => {
     Modal.confirm({
-      title: '提示',
-      content: '确认删除吗',
-      okText: '确认',
-      cancelText: '取消',
+      title: t('common:common.warning'),
+      content: t('template:template.messages.confirmDelete'),
+      okText: t('template:template.buttons.confirm'),
+      cancelText: t('template:template.buttons.cancel'),
       onOk: () => {
         dispatch(delTemplate(id))
         Modal.destroyAll()
@@ -284,18 +258,18 @@ const Page = ({ template }) => {
           // 导出失败
         })
     } else {
-      message.info('没有数据无需导出')
+      message.info(t('template:template.messages.noData'))
     }
   }
 
   const uploadProps = createCSRFUploadProps('/rest/template/import', {
     name: 'file',
     onSuccess: (fileName) => {
-      message.success(`${fileName} 文件上传成功`)
+      message.success(`${fileName} ${t('template:template.messages.uploadSuccess')}`)
       window.location.reload()
     },
     onError: (fileName) => {
-      message.error(`${fileName} 文件上传失败`)
+      message.error(`${fileName} ${t('template:template.messages.uploadFailed')}`)
     },
     beforeUpload: (file) => {
       // 可以在这里添加文件类型、大小等验证
@@ -303,12 +277,12 @@ const Page = ({ template }) => {
         file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
         file.type === 'application/vnd.ms-excel'
       if (!isExcel) {
-        message.error('只能上传 Excel 文件!')
+        message.error(t('template:template.messages.onlyExcel'))
         return false
       }
       const isLt2M = file.size / 1024 / 1024 < 2
       if (!isLt2M) {
-        message.error('文件大小不能超过 2MB!')
+        message.error(t('template:template.messages.fileSizeLimit'))
         return false
       }
       return true
@@ -318,55 +292,55 @@ const Page = ({ template }) => {
   const batchDeleteTemplate = () => {
     if (batchDelIds.length > 0) {
       Modal.confirm({
-        title: '提示',
-        content: '确认批量删除吗',
-        okText: '确认',
-        cancelText: '取消',
+        title: t('common:common.warning'),
+        content: t('template:template.messages.confirmBatchDelete'),
+        okText: t('template:template.buttons.confirm'),
+        cancelText: t('template:template.buttons.cancel'),
         onOk: () => {
           dispatch(batchDelTemplate(batchDelIds))
           Modal.destroyAll()
         },
       })
     } else {
-      message.info('没有数据不能批量删除')
+      message.info(t('template:template.messages.noDataBatchDelete'))
     }
   }
 
   return (
     <Container>
       <GlobalStyle />
-      <div className="page-title">Template 管理</div>
-      <ConfigProvider locale={locale}>
+      <div className="page-title">{t('template:template.title')}</div>
+      <ConfigProvider locale={antdLocale}>
         <SearchRow>
           <Space size="middle" wrap>
             <Space size="small">
               <StyledButton type="primary" onClick={createTemplate} $primary>
                 <IconWrapper className="fa fa-plus"></IconWrapper>
-                新增
+                {t('template:template.buttons.add')}
               </StyledButton>
               <StyledInput
                 value={searchName}
-                placeholder="请输入名称搜索"
+                placeholder={t('template:template.placeholders.enterName')}
                 allowClear
                 onChange={(e) => setSearchName(e.target.value)}
                 onPressEnter={doSearch}
               />
               <StyledButton type="primary" onClick={doSearch} $primary>
                 <IconWrapper className="fa fa-search"></IconWrapper>
-                搜索
+                {t('template:template.buttons.search')}
               </StyledButton>
             </Space>
             <Space size="small">
               <StyledButton onClick={exportTemplate} icon={<UploadOutlined rotate={180} />} $export>
-                导出
+                {t('template:template.buttons.export')}
               </StyledButton>
               <Upload {...uploadProps}>
                 <StyledButton icon={<UploadOutlined />} $import>
-                  导入
+                  {t('template:template.buttons.import')}
                 </StyledButton>
               </Upload>
               <StyledButton danger onClick={batchDeleteTemplate} $danger>
-                批量删除
+                {t('template:template.buttons.batchDelete')}
               </StyledButton>
             </Space>
           </Space>
@@ -385,7 +359,7 @@ const Page = ({ template }) => {
             pageSize: pageSize,
             showSizeChanger: false,
             showQuickJumper: true,
-            showTotal: (total) => `共 ${total} 条记录`,
+            showTotal: (total) => t('template:template.pagination.total', { total }),
             onChange: (page, pageSize) => {
               dispatch(searchTemplate(page - 1, pageSize, { name: handleXSS(searchName) }))
             },
@@ -393,12 +367,16 @@ const Page = ({ template }) => {
           }}
         />
         <Modal
-          title={<ModalTitle>{`${modalId == 0 ? '新增' : '修改'} Template`}</ModalTitle>}
+          title={
+            <ModalTitle>
+              {modalId == 0 ? t('template:template.modal.addTitle') : t('template:template.modal.editTitle')}
+            </ModalTitle>
+          }
           open={isModalVisiable}
           onOk={handleOk}
           onCancel={handleCancel}
-          okText="确认"
-          cancelText="取消"
+          okText={t('template:template.buttons.confirm')}
+          cancelText={t('template:template.buttons.cancel')}
           centered
           maskClosable={false}
           destroyOnHidden
@@ -410,7 +388,7 @@ const Page = ({ template }) => {
               <label>{keyTitles.name}：</label>
               <ModalInput
                 value={modalName}
-                placeholder="请输入名称"
+                placeholder={t('template:template.placeholders.inputName')}
                 allowClear
                 autoFocus
                 onChange={(e) => setModalName(e.target.value)}
@@ -423,7 +401,9 @@ const Page = ({ template }) => {
   )
 }
 
-Page.getInitialProps = async () => {
+export async function getServerSideProps(context) {
+  const { serverSideTranslations } = await import('next-i18next/serverSideTranslations')
+
   let template = null
 
   await getTemplateService(0, pageSize).then((res: any) => {
@@ -431,8 +411,14 @@ Page.getInitialProps = async () => {
     template = data.template
   })
 
+  const { locale } = context
+  const translations = await serverSideTranslations(locale || 'zh-CN', ['common', 'template', 'layout', 'login'])
+
   return {
-    template,
+    props: {
+      template,
+      ...translations,
+    },
   }
 }
 

@@ -48,10 +48,10 @@ export const createCommand: Command = {
 
         Console.separator()
         Console.title('📋 控制器配置确认')
+        Console.info(`项目目录: ${wizardResult.dictionary}`)
         Console.info(`控制器名称: ${wizardResult.controller}`)
         Console.info(`功能模块: 完整CRUD + 导入导出 + 批量删除`)
         Console.info(`描述: ${wizardResult.description}`)
-        Console.info(`项目目录: ${wizardResult.dictionary}`)
         Console.info(`数据库表: ${wizardResult.includeDatabase ? '是' : '否'}`)
         if (wizardResult.includeDatabase && wizardResult.fields.length > 0) {
           const fieldNames = wizardResult.fields.map((field) => field.name).join(', ')

@@ -1,7 +1,7 @@
-const js = require('@eslint/js');
-const typescript = require('@typescript-eslint/eslint-plugin');
-const typescriptParser = require('@typescript-eslint/parser');
-const prettier = require('eslint-plugin-prettier');
+const js = require('@eslint/js')
+const typescript = require('@typescript-eslint/eslint-plugin')
+const typescriptParser = require('@typescript-eslint/parser')
+const prettier = require('eslint-plugin-prettier')
 
 module.exports = [
   js.configs.recommended,
@@ -29,7 +29,7 @@ module.exports = [
     },
     plugins: {
       '@typescript-eslint': typescript,
-      'prettier': prettier
+      prettier: prettier
     },
     rules: {
       'no-console': 'off', // 允许 console 语句用于调试
@@ -46,14 +46,17 @@ module.exports = [
       'prefer-arrow-callback': 'warn',
       '@typescript-eslint/no-var-requires': 'off', // 允许 require
       '@typescript-eslint/no-explicit-any': 'warn', // 警告但不报错
-      '@typescript-eslint/no-unused-vars': ['warn', { 
-        argsIgnorePattern: '^_',
-        varsIgnorePattern: '^_'
-      }],
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_'
+        }
+      ],
       '@typescript-eslint/no-inferrable-types': 'warn',
       '@typescript-eslint/prefer-optional-chain': 'warn',
       '@typescript-eslint/no-explicit-any': 'off',
-      'prettier/prettier': 'error'
+      'prettier/prettier': 'off'
     }
   },
   {
@@ -82,14 +85,14 @@ module.exports = [
     },
     plugins: {
       '@typescript-eslint': typescript,
-      'prettier': prettier
+      prettier: prettier
     },
     rules: {
       'no-console': 'off',
       'no-undef': 'off',
       'no-unused-vars': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
-      'prettier/prettier': 'error'
+      'prettier/prettier': 'off'
     }
   },
   {
@@ -113,12 +116,6 @@ module.exports = [
     }
   },
   {
-    ignores: [
-      'node_modules/**',
-      'lib/**',
-      '.next/**',
-      'coverage/**',
-      '*.config.js'
-    ]
+    ignores: ['node_modules/**', 'lib/**', '.next/**', 'coverage/**', '*.config.js']
   }
-];
+]

@@ -13,6 +13,7 @@ import {
   initScriptsFiles,
   initRootFiles,
   initTestFiles,
+  initTypesFiles,
 } from './generate_init'
 import { createFiles as generateCreateFiles } from './generate_create'
 import { deleteFiles as generateDeleteFiles } from './generate_delete'
@@ -98,6 +99,8 @@ export const initFiles = (dictionary: string, upgradeFlag = false, projectConfig
   const { destPackagePath } = initRootFiles(normalizedDictionary, newDestFolder)
 
   initTestFiles(normalizedDictionary, newDestFolder)
+
+  initTypesFiles(normalizedDictionary, newDestFolder)
 
   // 如果提供了项目配置，应用到生成的文件中
   if (projectConfig) {

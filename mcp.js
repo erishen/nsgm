@@ -164,7 +164,7 @@ async function main() {
         let result = '';
         switch (target) {
           case 'project': {
-            result = `项目名称: ${packageJson.name}
+            result = `项目目录: ${packageJson.name}
 版本: ${packageJson.version}
 描述: ${packageJson.description || '无描述'}`;
             break;

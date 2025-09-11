@@ -42,6 +42,12 @@ export declare const initScriptsFiles: (dictionary: string, newDestFolder: strin
  */
 export declare const initRootFiles: (dictionary: string, newDestFolder: string) => InitResult;
 /**
+ * 初始化类型定义文件
+ * @param dictionary 目标目录名称
+ * @param newDestFolder 新的目标文件夹路径
+ */
+export declare const initTypesFiles: (dictionary: string, newDestFolder: string) => void;
+/**
  * 初始化测试文件和目录
  * @param dictionary 目标目录名称
  * @param newDestFolder 新的目标文件夹路径

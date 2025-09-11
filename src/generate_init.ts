@@ -7,11 +7,13 @@ import {
   pagesPath,
   publicPath,
   scriptsPath,
+  typesPath,
   reduxPath,
   styledPath,
   styledLayoutPath,
   utilsPath,
   layoutPath,
+  componentsPath,
   apisPath,
   utilsMenuPath,
   reduxReducersPath,
@@ -26,13 +28,17 @@ import {
   sourcePagesPath,
   sourcePublicPath,
   sourceScriptsPath,
+  projectClientPath,
+  projectPublicPath,
   destClientPath,
   destServerPath,
   destPagesPath,
   destPublicPath,
   destScriptsPath,
+  destTypesPath,
 } from './constants'
 import { mkdirSync, copyFileSync } from './utils'
+import { existsSync, readdirSync } from 'fs'
 
 // 类型定义
 interface FileMapping {
@@ -54,7 +60,14 @@ const CLIENT_FILES = {
   utilsFetch: '/fetch.ts',
   utilsCookie: '/cookie.ts',
   utilsSso: '/sso.ts',
+  utilsI18n: '/i18n.ts',
+  utilsNavigation: '/navigation.ts',
+  utilsSuppressWarnings: '/suppressWarnings.ts',
   layoutIndex: '/index.tsx',
+  languageSwitcher: '/LanguageSwitcher.tsx',
+  clientProviders: '/ClientProviders.tsx',
+  ssrSafeAntdProvider: '/SSRSafeAntdProvider.tsx',
+  suppressHydrationWarnings: '/SuppressHydrationWarnings.tsx',
 } as const
 
 const PAGES_FILES = {
@@ -68,11 +81,14 @@ const SERVER_FILES = {
   apisSso: '/sso.js',
   utilsCommon: '/common.js',
   utilsDBPoolManager: '/db-pool-manager.js',
+  utilsValidation: '/validation.js',
 } as const
 
 const PUBLIC_FILES = {
   images: '/images',
-  zhizuotuImage: '/zhizuotu_1.png',
+  fonts: '/fonts',
+  favicon: '/favicon.ico',
+  locales: '/locales',
 } as const
 
 const SCRIPTS_FILES = {
@@ -83,6 +99,7 @@ const SCRIPTS_FILES = {
 
 const ROOT_FILES = {
   nextConfig: '/next.config.js',
+  nextI18nConfig: '/next-i18next.config.js',
   mysqlConfig: '/mysql.config.js',
   projectConfig: '/project.config.js',
   tsconfig: '/tsconfig.json',
@@ -97,6 +114,8 @@ const ROOT_FILES = {
   app: '/app.js',
   envExampleSource: '/env.example',
   envExample: '/.env.example',
+  envSource: '/env',
+  env: '/.env',
   jestConfig: '/jest.config.js',
   jestSetup: '/jest.setup.js',
   jestSetupGlobals: '/jest.setup-globals.js',
@@ -143,6 +162,7 @@ export const initClientFiles = (dictionary: string, newDestFolder: string, upgra
       destPaths.styledLayout,
       destPaths.utils,
       destPaths.layout,
+      resolve(baseDestPath + componentsPath),
     ]
 
     createDirectoryStructure(directoriesToCreate)
@@ -187,6 +207,41 @@ export const initClientFiles = (dictionary: string, newDestFolder: string, upgra
       {
         source: resolve(sourceClientPath + layoutPath + CLIENT_FILES.layoutIndex),
         dest: resolve(destPaths.layout + CLIENT_FILES.layoutIndex),
+        upgradeFlag,
+      },
+      {
+        source: resolve(projectClientPath + utilsPath + CLIENT_FILES.utilsI18n),
+        dest: resolve(destPaths.utils + CLIENT_FILES.utilsI18n),
+        upgradeFlag,
+      },
+      {
+        source: resolve(projectClientPath + utilsPath + CLIENT_FILES.utilsNavigation),
+        dest: resolve(destPaths.utils + CLIENT_FILES.utilsNavigation),
+        upgradeFlag,
+      },
+      {
+        source: resolve(projectClientPath + componentsPath + CLIENT_FILES.languageSwitcher),
+        dest: resolve(baseDestPath + componentsPath + CLIENT_FILES.languageSwitcher),
+        upgradeFlag,
+      },
+      {
+        source: resolve(sourceClientPath + componentsPath + CLIENT_FILES.clientProviders),
+        dest: resolve(baseDestPath + componentsPath + CLIENT_FILES.clientProviders),
+        upgradeFlag,
+      },
+      {
+        source: resolve(sourceClientPath + componentsPath + CLIENT_FILES.ssrSafeAntdProvider),
+        dest: resolve(baseDestPath + componentsPath + CLIENT_FILES.ssrSafeAntdProvider),
+        upgradeFlag,
+      },
+      {
+        source: resolve(sourceClientPath + componentsPath + CLIENT_FILES.suppressHydrationWarnings),
+        dest: resolve(baseDestPath + componentsPath + CLIENT_FILES.suppressHydrationWarnings),
+        upgradeFlag,
+      },
+      {
+        source: resolve(sourceClientPath + utilsPath + CLIENT_FILES.utilsSuppressWarnings),
+        dest: resolve(baseDestPath + utilsPath + CLIENT_FILES.utilsSuppressWarnings),
         upgradeFlag,
       },
       // 这些文件不使用 upgradeFlag
@@ -306,6 +361,11 @@ export const initServerFiles = (dictionary: string, newDestFolder: string, upgra
         dest: resolve(destPaths.utils + SERVER_FILES.utilsDBPoolManager),
         upgradeFlag,
       },
+      {
+        source: resolve(sourceServerPath + utilsPath + SERVER_FILES.utilsValidation),
+        dest: resolve(destPaths.utils + SERVER_FILES.utilsValidation),
+        upgradeFlag,
+      },
       // REST 文件不使用 upgradeFlag
       {
         source: resolve(sourceServerPathGeneration + restPath),
@@ -343,10 +403,12 @@ export const initPublicFiles = (dictionary: string, newDestFolder: string, upgra
     const destPaths = {
       public: baseDestPath,
       images: resolve(baseDestPath + PUBLIC_FILES.images),
+      fonts: resolve(baseDestPath + PUBLIC_FILES.fonts),
+      locales: resolve(baseDestPath + PUBLIC_FILES.locales),
     }
 
     // 2. 创建目录结构
-    const directoriesToCreate = [destPaths.public, destPaths.images]
+    const directoriesToCreate = [destPaths.public, destPaths.images, destPaths.fonts, destPaths.locales]
 
     createDirectoryStructure(directoriesToCreate)
 
@@ -358,14 +420,46 @@ export const initPublicFiles = (dictionary: string, newDestFolder: string, upgra
         upgradeFlag,
       },
       {
-        source: resolve(sourcePublicPath + PUBLIC_FILES.images + PUBLIC_FILES.zhizuotuImage),
-        dest: resolve(destPaths.images + PUBLIC_FILES.zhizuotuImage),
+        source: resolve(sourcePublicPath + PUBLIC_FILES.favicon),
+        dest: resolve(destPaths.public + PUBLIC_FILES.favicon),
         upgradeFlag,
       },
     ]
 
     // 4. 复制文件
     copyMultipleFiles(fileMappings)
+
+    // 5. 复制 fonts 目录下的所有文件
+    const sourceFontsDir = resolve(sourcePublicPath + PUBLIC_FILES.fonts)
+    if (existsSync(sourceFontsDir)) {
+      const fontFiles = readdirSync(sourceFontsDir)
+      fontFiles.forEach((file) => {
+        const sourceFile = resolve(sourceFontsDir, file)
+        const destFile = resolve(destPaths.fonts, file)
+        copyFileSync(sourceFile, destFile, upgradeFlag)
+      })
+    }
+
+    // 6. 复制 locales 目录下的所有文件（递归复制）
+    const sourceLocalesDir = resolve(projectPublicPath + PUBLIC_FILES.locales)
+    if (existsSync(sourceLocalesDir)) {
+      const copyLocalesRecursive = (sourceDir: string, destDir: string) => {
+        const items = readdirSync(sourceDir, { withFileTypes: true })
+        items.forEach((item) => {
+          const sourcePath = resolve(sourceDir, item.name)
+          const destPath = resolve(destDir, item.name)
+
+          if (item.isDirectory()) {
+            mkdirSync(destPath)
+            copyLocalesRecursive(sourcePath, destPath)
+          } else {
+            copyFileSync(sourcePath, destPath, upgradeFlag)
+          }
+        })
+      }
+
+      copyLocalesRecursive(sourceLocalesDir, destPaths.locales)
+    }
 
     console.log('Public files initialization completed')
 
@@ -438,6 +532,10 @@ export const initRootFiles = (dictionary: string, newDestFolder: string): InitRe
         dest: resolve(baseDestPath + ROOT_FILES.nextConfig),
       },
       {
+        source: resolve(destFolder + ROOT_FILES.nextI18nConfig),
+        dest: resolve(baseDestPath + ROOT_FILES.nextI18nConfig),
+      },
+      {
         source: resolve(sourceGenerationPath + ROOT_FILES.mysqlConfig),
         dest: resolve(baseDestPath + ROOT_FILES.mysqlConfig),
       },
@@ -482,6 +580,10 @@ export const initRootFiles = (dictionary: string, newDestFolder: string): InitRe
         dest: resolve(baseDestPath + ROOT_FILES.envExample),
       },
       {
+        source: resolve(sourceGenerationPath + ROOT_FILES.envSource),
+        dest: resolve(baseDestPath + ROOT_FILES.env),
+      },
+      {
         source: resolve(sourceGenerationPath + ROOT_FILES.jestConfig),
         dest: resolve(baseDestPath + ROOT_FILES.jestConfig),
       },
@@ -505,6 +607,36 @@ export const initRootFiles = (dictionary: string, newDestFolder: string): InitRe
     }
   } catch (error) {
     console.error('Failed to initialize root files:', error)
+    throw error
+  }
+}
+
+/**
+ * 初始化类型定义文件
+ * @param dictionary 目标目录名称
+ * @param newDestFolder 新的目标文件夹路径
+ */
+export const initTypesFiles = (dictionary: string, newDestFolder: string): void => {
+  console.log('Initializing types files...')
+
+  try {
+    // 1. 确定目标路径
+    const baseDestPath = dictionary === '' ? destTypesPath : path.join(newDestFolder, typesPath)
+
+    // 2. 创建目录
+    createDirectoryStructure([baseDestPath])
+
+    // 3. 复制 i18next.d.ts 文件
+    const sourceI18nextFile = resolve(destFolder, 'types', 'i18next.d.ts')
+    const destI18nextFile = resolve(baseDestPath, 'i18next.d.ts')
+
+    if (existsSync(sourceI18nextFile)) {
+      copyFileSync(sourceI18nextFile, destI18nextFile)
+    }
+
+    console.log('Types files initialization completed')
+  } catch (error) {
+    console.error('Failed to initialize types files:', error)
     throw error
   }
 }

@@ -6,9 +6,9 @@ import { BaseGenerator } from './base-generator';
 export declare class PageGenerator extends BaseGenerator {
     generate(): string;
     /**
-     * 生成键值标题映射
+     * 生成翻译键值标题映射
      */
-    private generateKeyTitles;
+    private generateTranslationKeyTitles;
     /**
      * 生成模态框状态变量
      */
@@ -38,4 +38,8 @@ export declare class PageGenerator extends BaseGenerator {
      */
     private generateExcelColumns;
     private generateTableColumns;
+    /**
+     * 生成客户端验证逻辑
+     */
+    private generateClientValidation;
 }

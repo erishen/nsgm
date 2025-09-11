@@ -1,13 +1,23 @@
 import React, { useEffect, useState } from 'react'
-import { Layout, Menu, Breadcrumb, Image, Dropdown, Space, Tooltip } from 'antd'
-import { Container } from '@/styled/layout'
-import styled from 'styled-components'
+import { Layout, Menu, Dropdown, Space } from 'antd'
+import {
+  Container,
+  FlexLayout,
+  StyledSider,
+  SideMenu,
+  ContentLayout,
+  StyledHeader,
+  StyledBreadcrumb,
+  StyledContent,
+} from '@/styled/layout'
 import { useRouter } from 'next/router'
 import _ from 'lodash'
-import menuConfig from '@/utils/menu'
-import { logout } from '@/utils/sso'
+import menuConfig, { getMenuConfig } from '@/utils/menu'
 import getConfig from 'next/config'
-import { LogoutOutlined, SettingOutlined, BellOutlined, UserOutlined } from '@ant-design/icons'
+import { LogoutOutlined } from '@ant-design/icons'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
+import { useTranslation } from 'next-i18next'
+import { navigateToLogin } from '@/utils/navigation'
 
 interface SubMenuItem {
   key: string
@@ -23,95 +33,9 @@ interface MenuItem {
   subMenus?: SubMenuItem[]
 }
 
-const { Header, Content, Sider } = Layout
-
 const nextConfig = getConfig()
 const { publicRuntimeConfig } = nextConfig
 const { prefix } = publicRuntimeConfig
-
-// styled-components
-const FlexLayout = styled(Layout)`
-  display: flex;
-  flex: 1;
-`
-const StyledSider = styled(Sider)`
-  display: flex;
-  flex-direction: column;
-  box-shadow: 2px 0 8px -4px rgba(0, 0, 0, 0.1);
-  z-index: 5;
-  position: relative;
-`
-
-const SideMenu = styled(Menu)`
-  height: 100%;
-  border-right: 0;
-  padding: 8px 0;
-`
-
-const ContentLayout = styled(Layout)`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  background: #f5f7fa;
-  position: relative;
-  z-index: 1;
-`
-const StyledHeader = styled(Header)`
-  display: flex;
-  align-items: center;
-  padding: 0 24px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
-  z-index: 11;
-
-  .logo {
-    margin-right: 24px;
-  }
-
-  .main-menu {
-    flex: 1;
-  }
-
-  .user-actions {
-    display: flex;
-    align-items: center;
-
-    .action-icon {
-      font-size: 18px;
-      color: rgba(255, 255, 255, 0.85);
-      cursor: pointer;
-      padding: 0 8px;
-      transition: color 0.3s;
-
-      &:hover {
-        color: #fff;
-      }
-    }
-
-    .user-dropdown {
-      cursor: pointer;
-      padding: 0 8px;
-
-      .username {
-        color: rgba(255, 255, 255, 0.85);
-        margin-left: 8px;
-      }
-    }
-  }
-`
-const StyledBreadcrumb = styled(Breadcrumb)`
-  margin: 16px 24px;
-  font-size: 14px;
-`
-const StyledContent = styled(Content)`
-  margin: 0 24px 24px;
-  padding: 24px;
-  background: #fff;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  min-height: calc(100vh - 180px);
-  position: relative;
-  z-index: 1;
-`
 
 const getLocationKey = () => {
   const result = {
@@ -169,7 +93,7 @@ const getLocationKey = () => {
 }
 
 const routerPush = (router: any, url: string) => {
-  if (router && url) {
+  if (router && url && typeof window !== 'undefined') {
     if (prefix && url.indexOf(prefix) === -1) {
       url = prefix + url
     }
@@ -178,10 +102,35 @@ const routerPush = (router: any, url: string) => {
 }
 
 const LayoutComponent = ({ user, children }) => {
+  const { t } = useTranslation(['layout', 'common'])
   const router = useRouter()
   const [topMenuKey, setTopMenuKey] = useState('1')
   const [sliderMenuKey, setSliderMenuKey] = useState('1')
   const [collapsed, setCollapsed] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // 使用翻译后的菜单配置
+  const translatedMenuConfig = getMenuConfig(t)
+
+  // 自定义退出登录函数，保持语言设置
+  const handleLogout = () => {
+    if (!mounted || typeof window === 'undefined') return
+
+    // 删除登录相关的 cookie
+    const deleteCookie = (name: string) => {
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
+    }
+
+    deleteCookie('_cas_nsgm')
+    deleteCookie('_cas_nsgm_user')
+
+    // 跳转到登录页面，保持当前语言
+    navigateToLogin(router)
+  }
 
   useEffect(() => {
     const { topMenu, slideMenu } = getLocationKey()
@@ -192,7 +141,7 @@ const LayoutComponent = ({ user, children }) => {
   const menuItems: any = []
   const menuItemsVertical: any = []
 
-  _.each(menuConfig, (item) => {
+  _.each(translatedMenuConfig, (item) => {
     const { key, text, url, icon, subMenus } = item
 
     if (key && text && url) {
@@ -200,13 +149,15 @@ const LayoutComponent = ({ user, children }) => {
         label: text,
         key,
         onClick: () => {
-          routerPush(router, url)
-          setTopMenuKey(key)
+          if (mounted) {
+            routerPush(router, url)
+            setTopMenuKey(key)
 
-          if (subMenus) {
-            setSliderMenuKey('1')
-          } else {
-            setSliderMenuKey('0')
+            if (subMenus) {
+              setSliderMenuKey('1')
+            } else {
+              setSliderMenuKey('0')
+            }
           }
         },
       }
@@ -225,13 +176,15 @@ const LayoutComponent = ({ user, children }) => {
             key: `slider_${subKey}`,
             label: subText,
             onClick: () => {
-              routerPush(router, subUrl)
+              if (mounted) {
+                routerPush(router, subUrl)
 
-              const subKeyArr = subKey.split('_')
-              const subKeyArrLen = subKeyArr.length
+                const subKeyArr = subKey.split('_')
+                const subKeyArrLen = subKeyArr.length
 
-              if (subKeyArrLen >= 1) setTopMenuKey(subKeyArr[0])
-              if (subKeyArrLen >= 2) setSliderMenuKey(subKeyArr[1])
+                if (subKeyArrLen >= 1) setTopMenuKey(subKeyArr[0])
+                if (subKeyArrLen >= 2) setSliderMenuKey(subKeyArr[1])
+              }
             },
           }
 
@@ -260,9 +213,11 @@ const LayoutComponent = ({ user, children }) => {
           icon,
           key: `slider_${key}_0`,
           onClick: () => {
-            routerPush(router, url)
-            setTopMenuKey(key)
-            setSliderMenuKey('0')
+            if (mounted) {
+              routerPush(router, url)
+              setTopMenuKey(key)
+              setSliderMenuKey('0')
+            }
           },
         }
 
@@ -276,7 +231,7 @@ const LayoutComponent = ({ user, children }) => {
       <Container>
         <StyledHeader>
           <div className="logo">
-            <Image width={120} src={`${prefix}/images/zhizuotu_1.png`} preview={false} />
+            <span className="logo-text">NSGM</span>
           </div>
           <Menu
             theme="dark"
@@ -288,39 +243,40 @@ const LayoutComponent = ({ user, children }) => {
           />
           <div className="user-actions">
             <Space size={20} align="center">
-              <Tooltip title="通知">
+              <LanguageSwitcher size="small" />
+              {/* <Tooltip title="通知">
                 <BellOutlined className="action-icon" />
               </Tooltip>
               <Tooltip title="设置">
                 <SettingOutlined className="action-icon" />
-              </Tooltip>
+              </Tooltip> */}
               <Dropdown
                 menu={{
                   items: [
-                    {
-                      key: '1',
-                      icon: <UserOutlined />,
-                      label: '个人中心',
-                    },
-                    {
-                      key: '2',
-                      icon: <SettingOutlined />,
-                      label: '账户设置',
-                    },
+                    // {
+                    //   key: '1',
+                    //   icon: <UserOutlined />,
+                    //   label: t('layout:layout.userActions.profile'),
+                    // },
+                    // {
+                    //   key: '2',
+                    //   icon: <SettingOutlined />,
+                    //   label: t('layout:layout.userActions.settings'),
+                    // },
                     {
                       type: 'divider',
                     },
                     {
                       key: '3',
                       icon: <LogoutOutlined />,
-                      label: '退出登录',
-                      onClick: () => logout(),
+                      label: t('layout:layout.userActions.logout'),
+                      onClick: () => handleLogout(),
                     },
                   ],
                 }}
               >
                 <Space className="user-dropdown">
-                  <span className="username">{user?.displayName || '用户'}</span>
+                  <span className="username">{user?.displayName || t('layout:layout.userActions.user')}</span>
                 </Space>
               </Dropdown>
             </Space>
@@ -346,10 +302,10 @@ const LayoutComponent = ({ user, children }) => {
               />
             </div>
           </StyledSider>
-          <ContentLayout className="content-layout">
+          <ContentLayout collapsed={collapsed} className="content-layout">
             <StyledBreadcrumb
               items={_.compact(
-                _.flatMap(menuConfig, (item, index) => {
+                _.flatMap(translatedMenuConfig, (item, index) => {
                   const { key, text, subMenus } = item
 
                   if (subMenus) {

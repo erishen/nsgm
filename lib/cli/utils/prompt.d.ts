@@ -68,7 +68,7 @@ export declare class Prompt {
         fields: FieldDefinition[];
     }>;
     /**
-     * 收集字段定义
+     * 收集字段定义 (简化版本)
      */
     static collectFieldDefinitions(): Promise<FieldDefinition[]>;
     /**

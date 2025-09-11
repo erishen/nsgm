@@ -50,9 +50,9 @@ export const deleteCommand: Command = {
 
         Console.separator()
         Console.title('📋 删除确认')
+        Console.info(`项目目录: ${wizardResult.dictionary}`)
         Console.info(`控制器名称: ${wizardResult.controller}`)
         Console.info(`删除范围: ${wizardResult.action === 'all' ? '所有相关文件' : '指定操作'}`)
-        Console.info(`项目目录: ${wizardResult.dictionary}`)
         Console.info(`删除数据库: ${wizardResult.deleteDatabase ? '是' : '否'}`)
         Console.separator()
 

@@ -11,43 +11,31 @@ export class ResolverGenerator extends BaseGenerator {
 
     const insertFieldNames = insertFields.map((f) => f.name).join(', ')
     const insertPlaceholders = insertFields.map(() => '?').join(', ')
-    const insertValues = insertFields.map((f) => `data.${f.name}`).join(', ')
+    const insertValues = insertFields
+      .map((f) => {
+        if (f.type === 'integer') {
+          return `valid${f.name.charAt(0).toUpperCase() + f.name.slice(1)}`
+        }
+        return `data.${f.name}`
+      })
+      .join(', ')
 
     const searchConditions = this.generateSearchConditions(searchableFields)
-    const validateFunctions = this.generateValidateFunctions(insertFields)
 
     const updateFields = insertFields.map((f) => `${f.name} = ?`).join(', ')
-    const updateValues = insertFields.map((f) => `data.${f.name}`).join(', ')
 
     return `const { executeQuery, executePaginatedQuery } = require('../../utils/common')
-
-// 输入验证函数
-const validatePagination = (page, pageSize) => {
-    if (page < 0 || pageSize <= 0 || pageSize > 100) {
-        throw new Error('分页参数无效');
-    }
-};
-
-const validateId = (id) => {
-    if (!id || !Number.isInteger(Number(id)) || Number(id) <= 0) {
-        throw new Error('ID参数无效');
-    }
-};
-
-${validateFunctions}
+const { validateInteger, validatePagination, validateId } = require('../../utils/validation')
 
 module.exports = {
     // 获取${this.controller}列表（分页）
     ${this.controller}: async ({ page = 0, pageSize = 10 }) => {
         try {
-            const pageNum = parseInt(page, 10) || 0;
-            const pageSizeNum = parseInt(pageSize, 10) || 10;
-            
-            validatePagination(pageNum, pageSizeNum);
+            const { page: validPage, pageSize: validPageSize } = validatePagination(page, pageSize);
             
             const sql = 'SELECT ${selectFields} FROM ${this.controller} LIMIT ? OFFSET ?';
             const countSql = 'SELECT COUNT(*) as counts FROM ${this.controller}';
-            const values = [pageSizeNum, pageNum * pageSizeNum];
+            const values = [validPageSize, validPage * validPageSize];
 
             console.log('执行分页查询:', { sql, values, countSql });
             
@@ -61,17 +49,17 @@ module.exports = {
     // 根据ID获取${this.controller}
     ${this.controller}Get: async ({ id }) => {
         try {
-            validateId(id);
+            const validId = validateId(id);
             
             const sql = 'SELECT ${selectFields} FROM ${this.controller} WHERE id = ?';
-            const values = [id];
+            const values = [validId];
 
             console.log('根据ID查询${this.controller}:', { sql, values });
             
             const results = await executeQuery(sql, values);
             
             if (results.length === 0) {
-                throw new Error(\`ID为 \${id} 的${this.controller}不存在\`);
+                throw new Error(\`ID为 \${validId} 的${this.controller}不存在\`);
             }
             
             return results[0];
@@ -84,7 +72,7 @@ module.exports = {
     // 搜索${this.controller}（分页）
     ${this.controller}Search: async ({ page = 0, pageSize = 10, data = {} }) => {
         try {
-            validatePagination(page, pageSize);
+            const { page: validPage, pageSize: validPageSize } = validatePagination(page, pageSize);
             
             const values = [];
             const countValues = [];
@@ -95,7 +83,7 @@ ${searchConditions}
             const sql = \`SELECT ${selectFields} FROM ${this.controller} WHERE 1=1\${whereSql} LIMIT ? OFFSET ?\`;
             const countSql = \`SELECT COUNT(*) as counts FROM ${this.controller} WHERE 1=1\${whereSql}\`;
             
-            values.push(pageSize, page * pageSize);
+            values.push(validPageSize, validPage * validPageSize);
             
             console.log('搜索${this.controller}:', { sql, values, countSql, countValues });
             
@@ -109,7 +97,7 @@ ${searchConditions}
     // 添加${this.controller}
     ${this.controller}Add: async ({ data }) => {
         try {
-${this.generateValidationCalls(insertFields)}
+${this.generateNewValidationCalls(insertFields)}
             
             const sql = 'INSERT INTO ${this.controller} (${insertFieldNames}) VALUES (${insertPlaceholders})';
             const values = [${insertValues}];
@@ -131,14 +119,19 @@ ${this.generateValidationCalls(insertFields)}
                 throw new Error('批量添加数据不能为空');
             }
             
-            // 验证所有数据
-            datas.forEach(data => {
-${this.generateBatchValidationCalls(insertFields)}
+            // 验证所有数据并转换
+            const validatedDatas = datas.map((data, index) => {
+                try {
+${this.generateBatchValidation(insertFields)}
+                    return { ${this.generateBatchReturnObject(insertFields)} };
+                } catch (error) {
+                    throw new Error(\`第 \${index + 1} 条数据验证失败: \${error.message}\`);
+                }
             });
             
-            const placeholders = datas.map(() => '(${insertPlaceholders})').join(',');
+            const placeholders = validatedDatas.map(() => '(${insertPlaceholders})').join(',');
             const sql = \`INSERT INTO ${this.controller} (${insertFieldNames}) VALUES \${placeholders}\`;
-            const values = datas.flatMap(data => [${insertValues}]);
+            const values = validatedDatas.flatMap(data => [${this.generateBatchInsertValues(insertFields)}]);
             
             console.log('批量添加${this.controller}:', { sql, values });
             
@@ -153,23 +146,23 @@ ${this.generateBatchValidationCalls(insertFields)}
     // 更新${this.controller}
     ${this.controller}Update: async ({ id, data }) => {
         try {
-            validateId(id);
+            const validId = validateId(id);
             
             if (!data) {
                 throw new Error('更新数据不能为空');
             }
             
-${this.generateUpdateValidationCalls(insertFields)}
+${this.generateUpdateValidation(insertFields)}
             
             const sql = 'UPDATE ${this.controller} SET ${updateFields} WHERE id = ?';
-            const values = [${updateValues}, id];
+            const values = [${this.generateUpdateValues(insertFields)}, validId];
             
             console.log('更新${this.controller}:', { sql, values });
             
             const results = await executeQuery(sql, values);
             
             if (results.affectedRows === 0) {
-                throw new Error(\`ID为 \${id} 的${this.controller}不存在\`);
+                throw new Error(\`ID为 \${validId} 的${this.controller}不存在\`);
             }
             
             return true;
@@ -182,17 +175,17 @@ ${this.generateUpdateValidationCalls(insertFields)}
     // 删除${this.controller}
     ${this.controller}Delete: async ({ id }) => {
         try {
-            validateId(id);
+            const validId = validateId(id);
             
             const sql = 'DELETE FROM ${this.controller} WHERE id = ?';
-            const values = [id];
+            const values = [validId];
             
             console.log('删除${this.controller}:', { sql, values });
             
             const results = await executeQuery(sql, values);
             
             if (results.affectedRows === 0) {
-                throw new Error(\`ID为 \${id} 的${this.controller}不存在\`);
+                throw new Error(\`ID为 \${validId} 的${this.controller}不存在\`);
             }
             
             return true;
@@ -209,14 +202,21 @@ ${this.generateUpdateValidationCalls(insertFields)}
                 throw new Error('批量删除的ID列表不能为空');
             }
             
-            ids.forEach(id => validateId(id));
+            // 验证所有ID
+            const validIds = ids.map((id, index) => {
+                try {
+                    return validateId(id, \`第\${index + 1}个ID\`);
+                } catch (error) {
+                    throw new Error(\`第 \${index + 1} 个ID验证失败: \${error.message}\`);
+                }
+            });
             
-            const placeholders = ids.map(() => '?').join(',');
+            const placeholders = validIds.map(() => '?').join(',');
             const sql = \`DELETE FROM ${this.controller} WHERE id IN (\${placeholders})\`;
             
-            console.log('批量删除${this.controller}:', { sql, values: ids });
+            console.log('批量删除${this.controller}:', { sql, values: validIds });
             
-            const results = await executeQuery(sql, ids);
+            const results = await executeQuery(sql, validIds);
             
             if (results.affectedRows === 0) {
                 throw new Error('没有找到要删除的${this.controller}');
@@ -242,6 +242,16 @@ ${this.generateUpdateValidationCalls(insertFields)}
                 values.push(${field.name}Pattern);
                 countValues.push(${field.name}Pattern);
             }`
+      } else if (field.type === 'integer') {
+        return `            if (data.${field.name} !== undefined && data.${field.name} !== null && data.${field.name} !== '') {
+                // 使用通用验证工具验证 ${field.name}
+                const valid${field.name.charAt(0).toUpperCase() + field.name.slice(1)} = validateInteger(data.${field.name}, '${field.name}', { min: 0, max: 150 });
+                if (valid${field.name.charAt(0).toUpperCase() + field.name.slice(1)} !== undefined) {
+                    whereSql += ' AND ${field.name} = ?';
+                    values.push(valid${field.name.charAt(0).toUpperCase() + field.name.slice(1)});
+                    countValues.push(valid${field.name.charAt(0).toUpperCase() + field.name.slice(1)});
+                }
+            }`
       } else {
         return `            if (data.${field.name} !== undefined && data.${field.name} !== null) {
                 whereSql += ' AND ${field.name} = ?';
@@ -254,55 +264,83 @@ ${this.generateUpdateValidationCalls(insertFields)}
     return conditions.join('\n\n')
   }
 
-  private generateValidateFunctions(insertFields: any[]): string {
+  private generateNewValidationCalls(insertFields: any[]): string {
     return insertFields
-      .filter((f) => f.required)
-      .map((field) => {
-        const capitalizedName = field.name.charAt(0).toUpperCase() + field.name.slice(1)
-        if (field.type === 'varchar' || field.type === 'text') {
-          return `const validate${capitalizedName} = (${field.name}) => {
-    if (!${field.name} || typeof ${field.name} !== 'string' || ${field.name}.trim().length === 0) {
-        throw new Error('${field.comment || field.name}参数无效');
-    }
-};`
-        } else {
-          return `const validate${capitalizedName} = (${field.name}) => {
-    if (${field.name} === undefined || ${field.name} === null) {
-        throw new Error('${field.comment || field.name}参数无效');
-    }
-};`
+      .map((f) => {
+        if (f.type === 'integer') {
+          const validationOptions = f.name === 'age' ? '{ min: 0, max: 150, required: true }' : '{ required: true }'
+          return `            const valid${f.name.charAt(0).toUpperCase() + f.name.slice(1)} = validateInteger(data.${f.name}, '${f.name}', ${validationOptions});`
+        } else if (f.required) {
+          return `            if (!data.${f.name}) {
+                throw new Error('${f.comment || f.name}是必填字段');
+            }`
         }
+        return ''
       })
-      .join('\n\n')
-  }
-
-  private generateValidationCalls(insertFields: any[]): string {
-    return insertFields
-      .filter((f) => f.required)
-      .map((f) => {
-        const capitalizedName = f.name.charAt(0).toUpperCase() + f.name.slice(1)
-        return `            validate${capitalizedName}(data.${f.name});`
-      })
+      .filter((call) => call.length > 0)
       .join('\n')
   }
 
-  private generateBatchValidationCalls(insertFields: any[]): string {
+  private generateBatchValidation(insertFields: any[]): string {
     return insertFields
-      .filter((f) => f.required)
       .map((f) => {
-        const capitalizedName = f.name.charAt(0).toUpperCase() + f.name.slice(1)
-        return `                validate${capitalizedName}(data.${f.name});`
+        if (f.type === 'integer') {
+          const validationOptions = f.name === 'age' ? '{ min: 0, max: 150, required: true }' : '{ required: true }'
+          return `                    const valid${f.name.charAt(0).toUpperCase() + f.name.slice(1)} = validateInteger(data.${f.name}, \`第\${index + 1}条数据的${f.name}\`, ${validationOptions});`
+        } else if (f.required) {
+          return `                    if (!data.${f.name}) {
+                        throw new Error('${f.comment || f.name}是必填字段');
+                    }`
+        }
+        return ''
       })
+      .filter((call) => call.length > 0)
       .join('\n')
   }
 
-  private generateUpdateValidationCalls(insertFields: any[]): string {
+  private generateUpdateValidation(insertFields: any[]): string {
     return insertFields
-      .filter((f) => f.required)
       .map((f) => {
-        const capitalizedName = f.name.charAt(0).toUpperCase() + f.name.slice(1)
-        return `            if (data.${f.name} !== undefined) validate${capitalizedName}(data.${f.name});`
+        if (f.type === 'integer') {
+          const validationOptions = f.name === 'age' ? '{ min: 0, max: 150, required: true }' : '{ required: true }'
+          return `            let valid${f.name.charAt(0).toUpperCase() + f.name.slice(1)} = data.${f.name};
+            if (data.${f.name} !== undefined) {
+                valid${f.name.charAt(0).toUpperCase() + f.name.slice(1)} = validateInteger(data.${f.name}, '${f.name}', ${validationOptions});
+            }`
+        } else if (f.required) {
+          return `            if (data.${f.name} !== undefined && !data.${f.name}) {
+                throw new Error('${f.comment || f.name}是必填字段');
+            }`
+        }
+        return ''
       })
+      .filter((call) => call.length > 0)
       .join('\n')
+  }
+
+  private generateUpdateValues(insertFields: any[]): string {
+    return insertFields
+      .map((f) => {
+        if (f.type === 'integer') {
+          return `valid${f.name.charAt(0).toUpperCase() + f.name.slice(1)}`
+        }
+        return `data.${f.name}`
+      })
+      .join(', ')
+  }
+
+  private generateBatchReturnObject(insertFields: any[]): string {
+    return insertFields
+      .map((f) => {
+        if (f.type === 'integer') {
+          return `${f.name}: valid${f.name.charAt(0).toUpperCase() + f.name.slice(1)}`
+        }
+        return `${f.name}: data.${f.name}`
+      })
+      .join(', ')
+  }
+
+  private generateBatchInsertValues(insertFields: any[]): string {
+    return insertFields.map((f) => `data.${f.name}`).join(', ')
   }
 }

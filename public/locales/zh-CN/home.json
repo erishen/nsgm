@@ -1,0 +1,57 @@
+{
+  "page": {
+    "title": "NSGM CLI",
+    "description": "全栈架构，代码模板生成，快速开发",
+    "sections": {
+      "database": {
+        "title": "数据库配置",
+        "description": "数据库采用 Mysql, 配置见 mysql.config.js"
+      },
+      "project": {
+        "title": "项目配置",
+        "description": "项目配置见 project.config.js"
+      },
+      "framework": {
+        "title": "框架配置",
+        "description": "Next 框架配置见 next.config.js"
+      }
+    },
+    "commands": {
+      "title": "命令",
+      "categories": {
+        "projectManagement": {
+          "title": "项目管理",
+          "items": {
+            "init": "初始化项目",
+            "upgrade": "升级项目基础文件"
+          }
+        },
+        "templateOperations": {
+          "title": "模板操作",
+          "items": {
+            "create": "创建模板页面",
+            "delete": "删除模板页面",
+            "deletedb": "删除模板页面及数据库表"
+          }
+        },
+        "runBuild": {
+          "title": "运行与构建",
+          "items": {
+            "dev": "开发模式",
+            "start": "生产模式",
+            "build": "编译",
+            "export": "导出静态页面"
+          }
+        }
+      }
+    },
+    "parameters": {
+      "title": "参数",
+      "items": {
+        "dictionary": "在 export/init 的时候使用, 默认 webapp",
+        "controller": "在 create/delete 的时候使用，必须有",
+        "action": "在 create/delete 的时候使用，默认 manage"
+      }
+    }
+  }
+}

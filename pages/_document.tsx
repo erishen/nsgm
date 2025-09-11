@@ -2,9 +2,12 @@ import Document, { Html, Head, Main, NextScript, DocumentContext } from 'next/do
 import React from 'react'
 import { ServerStyleSheet } from 'styled-components'
 
-const MyDocument = () => {
+const MyDocument = (props) => {
+  // 从 props 中获取语言信息，如果没有则默认为 zh-CN
+  const locale = props.locale || 'zh-CN'
+
   return (
-    <Html>
+    <Html lang={locale}>
       <title>NSGM CLI</title>
       <meta
         name="viewport"
@@ -44,6 +47,39 @@ const MyDocument = () => {
             -moz-osx-font-smoothing: grayscale;
           }
         `}</style>
+
+        {/* 抑制服务端渲染的 useLayoutEffect 警告 */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if (typeof window === 'undefined') {
+                global.window = {};
+              }
+              
+              // 在服务端抑制 useLayoutEffect 警告
+              if (typeof console !== 'undefined' && process.env.NODE_ENV === 'development') {
+                const originalError = console.error;
+                const originalWarn = console.warn;
+                
+                console.error = function(...args) {
+                  const message = args[0];
+                  if (typeof message === 'string' && message.includes('useLayoutEffect does nothing on the server')) {
+                    return;
+                  }
+                  originalError.apply(console, args);
+                };
+                
+                console.warn = function(...args) {
+                  const message = args[0];
+                  if (typeof message === 'string' && message.includes('useLayoutEffect does nothing on the server')) {
+                    return;
+                  }
+                  originalWarn.apply(console, args);
+                };
+              }
+            `,
+          }}
+        />
       </Head>
       <body>
         <Main />
@@ -69,6 +105,7 @@ MyDocument.getInitialProps = async (ctx: DocumentContext) => {
 
     return {
       ...initialProps,
+      locale: ctx.locale || 'zh-CN',
       styles: [initialProps.styles, sheet.getStyleElement()],
     }
   } finally {

@@ -1,0 +1,22 @@
+{
+  "layout": {
+    "userActions": {
+      "logout": "Logout",
+      "profile": "Profile",
+      "settings": "Account Settings",
+      "notifications": "Notifications",
+      "user": "User"
+    },
+    "navigation": {
+      "home": "Home",
+      "dashboard": "Dashboard",
+      "management": "Management",
+      "system": "System"
+    },
+    "menu": {
+      "introduction": "Introduction",
+      "template": "Template",
+      "template1": "Template 1"
+    }
+  }
+}

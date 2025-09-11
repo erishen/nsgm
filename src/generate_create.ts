@@ -31,6 +31,7 @@ import { SchemaGenerator } from './generators/schema-generator'
 import { ResolverGenerator } from './generators/resolver-generator'
 import { ServiceGenerator } from './generators/service-generator'
 import { PageGenerator } from './generators/page-generator'
+import { FileGenerator } from './generators/file-generator'
 
 /**
  * 文件生成器 - 重构后的清晰架构
@@ -193,7 +194,7 @@ const performAdvancedReplacements = (
     },
     {
       from: /Reducer,?\s*\n/,
-      to: `Reducer,\n  ${controller}${firstUpperCase(action)}: ${controller}${firstUpperCase(action)}Reducer\n`,
+      to: `Reducer,\n  ${controller}${firstUpperCase(action)}: ${controller}${firstUpperCase(action)}Reducer,\n`,
       files: [paths.destClientReduxReducersAllPath],
     },
     {
@@ -238,21 +239,23 @@ const performAdvancedReplacements = (
   }, MYSQL_TIMEOUT)
 }
 
-/**
- * 生成动态文件内容 - 使用专门的生成器
- */
 const generateDynamicFiles = (
   controller: string,
-  _action: string,
+  action: string,
   paths: ReturnType<typeof generateFilePaths>,
-  fields: FieldDefinition[]
+  fields: FieldDefinition[],
+  dictionary?: string
 ): void => {
   // 创建生成器实例
-  const sqlGenerator = new SQLGenerator(controller, _action, fields)
-  const schemaGenerator = new SchemaGenerator(controller, _action, fields)
-  const resolverGenerator = new ResolverGenerator(controller, _action, fields)
-  const serviceGenerator = new ServiceGenerator(controller, _action, fields)
-  const pageGenerator = new PageGenerator(controller, _action, fields)
+  const sqlGenerator = new SQLGenerator(controller, action, fields)
+  const schemaGenerator = new SchemaGenerator(controller, action, fields)
+  const resolverGenerator = new ResolverGenerator(controller, action, fields)
+  const serviceGenerator = new ServiceGenerator(controller, action, fields)
+  const pageGenerator = new PageGenerator(controller, action, fields)
+
+  // 根据 dictionary 确定文件生成器的项目路径
+  const projectPath = !dictionary || dictionary === '.' ? '.' : path.join(destFolder, dictionary)
+  const fileGenerator = new FileGenerator(projectPath)
 
   // 生成并写入文件
   fs.writeFileSync(paths.destServerSqlController, sqlGenerator.generate())
@@ -260,6 +263,9 @@ const generateDynamicFiles = (
   fs.writeFileSync(paths.destServerModulesResolver, resolverGenerator.generate())
   fs.writeFileSync(paths.destClientAction, serviceGenerator.generate())
   fs.writeFileSync(paths.destPagesAction, pageGenerator.generate())
+
+  // 生成多语言文件
+  fileGenerator.generateI18nFiles(controller, action, fields)
 }
 
 /**
@@ -366,7 +372,7 @@ export const createFiles = (controller: string, action: string, dictionary?: str
     console.log('Directory structure created')
 
     // 4. 生成动态文件内容
-    generateDynamicFiles(controller, action, paths, finalFields)
+    generateDynamicFiles(controller, action, paths, finalFields, dictionary)
     console.log('Dynamic files generated')
 
     // 5. 复制并自定义模板文件

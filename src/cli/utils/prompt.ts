@@ -122,12 +122,12 @@ export class Prompt {
       {
         type: 'input',
         name: 'projectName',
-        message: '项目名称:',
+        message: '项目目录:',
         default: 'my-nsgm-project',
         validate: (input: string) => {
-          if (!input.trim()) return '项目名称不能为空'
+          if (!input.trim()) return '项目目录不能为空'
           // 允许路径格式，包括相对路径和绝对路径
-          if (!/^[a-zA-Z0-9\-_./\\]+$/.test(input)) return '项目名称只能包含字母、数字、横线、下划线和路径分隔符'
+          if (!/^[a-zA-Z0-9\-_./\\]+$/.test(input)) return '项目目录只能包含字母、数字、横线、下划线和路径分隔符'
           return true
         },
       },
@@ -172,6 +172,16 @@ export class Prompt {
     const answers: any = await inquirer.prompt([
       {
         type: 'input',
+        name: 'dictionary',
+        message: '项目目录:',
+        default: '.',
+        validate: (input: string) => {
+          if (!input.trim()) return '项目目录不能为空'
+          return true
+        },
+      },
+      {
+        type: 'input',
         name: 'controller',
         message: '控制器名称:',
         validate: (input: string) => {
@@ -185,16 +195,6 @@ export class Prompt {
         name: 'description',
         message: '控制器描述:',
         default: (answers: any) => `${answers.controller} 控制器`,
-      },
-      {
-        type: 'input',
-        name: 'dictionary',
-        message: '项目目录:',
-        default: '.',
-        validate: (input: string) => {
-          if (!input.trim()) return '项目目录不能为空'
-          return true
-        },
       },
       {
         type: 'confirm',
@@ -234,11 +234,10 @@ export class Prompt {
   }
 
   /**
-   * 收集字段定义
+   * 收集字段定义 (简化版本)
    */
   static async collectFieldDefinitions(): Promise<FieldDefinition[]> {
     const fields: FieldDefinition[] = []
-    let addMore = true
 
     // 默认添加ID字段
     fields.push({
@@ -250,98 +249,66 @@ export class Prompt {
       isAutoIncrement: true,
     })
 
-    Console.info('💡 提示：系统会自动添加 create_date 和 update_date 字段')
+    Console.info('💡 输入字段信息，输入空白字段名结束添加')
 
-    while (addMore) {
-      const fieldAnswers: any = await inquirer.prompt([
-        {
-          type: 'input',
-          name: 'name',
-          message: '字段名称:',
-          validate: (input: string) => {
-            if (!input.trim()) return '字段名称不能为空'
-            if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(input))
-              return '字段名称只能包含字母、数字和下划线，且以字母或下划线开头'
-            if (fields.some((f) => f.name === input.trim())) return '字段名称已存在'
-            if (['create_date', 'update_date'].includes(input.trim())) return '系统字段将自动添加'
-            return true
-          },
-        },
-        {
-          type: 'list',
-          name: 'type',
-          message: '字段类型:',
-          choices: [
-            { name: 'varchar - 字符串', value: 'varchar' },
-            { name: 'text - 长文本', value: 'text' },
-            { name: 'integer - 整数', value: 'integer' },
-            { name: 'decimal - 小数', value: 'decimal' },
-            { name: 'boolean - 布尔值', value: 'boolean' },
-            { name: 'date - 日期', value: 'date' },
-            { name: 'datetime - 日期时间', value: 'datetime' },
-            { name: 'timestamp - 时间戳', value: 'timestamp' },
-          ],
-        },
-        {
-          type: 'input',
-          name: 'length',
-          message: '字段长度 (可选，数字类型可指定精度):',
-          when: (answers: any) => ['varchar', 'decimal'].includes(answers.type),
-          default: (answers: any) => (answers.type === 'varchar' ? '255' : '10,2'),
-        },
-        {
-          type: 'confirm',
-          name: 'required',
-          message: '是否必填:',
-          default: false,
-        },
-        {
-          type: 'input',
-          name: 'comment',
-          message: '字段注释:',
-          default: (answers: any) => answers.name,
-        },
-        {
-          type: 'confirm',
-          name: 'showInList',
-          message: '是否在列表页显示:',
-          default: true,
-        },
-        {
-          type: 'confirm',
-          name: 'showInForm',
-          message: '是否在表单中显示:',
-          default: true,
-        },
-        {
-          type: 'confirm',
-          name: 'searchable',
-          message: '是否可搜索:',
-          default: (answers: any) => answers.type === 'varchar',
-        },
+    let fieldIndex = 1
+    while (true) {
+      const fieldName = await this.input(`字段${fieldIndex} 名称 (留空结束):`)
+
+      if (!fieldName.trim()) break
+
+      // 验证字段名
+      if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(fieldName)) {
+        Console.error('字段名称格式无效，请重新输入')
+        continue
+      }
+
+      if (fields.some((f) => f.name === fieldName) || ['create_date', 'update_date'].includes(fieldName)) {
+        Console.error('字段名称已存在或为系统保留字段，请重新输入')
+        continue
+      }
+
+      // 简化的字段类型选择
+      const fieldType = await this.select('字段类型:', [
+        'varchar',
+        'text',
+        'integer',
+        'decimal',
+        'boolean',
+        'date',
+        'datetime',
       ])
 
-      fields.push({
-        name: fieldAnswers.name.trim(),
-        type: fieldAnswers.type,
-        length: fieldAnswers.length ? fieldAnswers.length.trim() : undefined,
-        required: fieldAnswers.required,
-        comment: fieldAnswers.comment.trim(),
-        showInList: fieldAnswers.showInList,
-        showInForm: fieldAnswers.showInForm,
-        searchable: fieldAnswers.searchable,
-      })
+      // 只对需要长度的类型询问长度
+      let length: string | undefined
+      if (fieldType === 'varchar') {
+        length = await this.input('字符串长度:', '255')
+      } else if (fieldType === 'decimal') {
+        length = await this.input('小数精度 (如: 10,2):', '10,2')
+      }
 
-      const continueAnswer = await inquirer.prompt([
-        {
-          type: 'confirm',
-          name: 'addMore',
-          message: '是否继续添加字段:',
-          default: false,
-        },
-      ])
+      // 简化配置：只询问是否必填和注释
+      const required = await this.confirm('是否必填:', true)
+      const comment = await this.input('字段注释:', fieldName)
 
-      addMore = continueAnswer.addMore
+      const field: FieldDefinition = {
+        name: fieldName,
+        type: fieldType as any,
+        required,
+        comment,
+        showInList: true, // 默认在列表显示
+        showInForm: true, // 默认在表单显示
+        searchable: fieldType === 'varchar', // varchar类型默认可搜索
+      }
+
+      // 只有当length有值时才添加
+      if (length) {
+        field.length = length
+      }
+
+      fields.push(field)
+
+      fieldIndex++
     }
 
     // 自动添加系统字段
@@ -380,6 +347,16 @@ export class Prompt {
     const answers: any = await inquirer.prompt([
       {
         type: 'input',
+        name: 'dictionary',
+        message: '项目目录:',
+        default: '.',
+        validate: (input: string) => {
+          if (!input.trim()) return '项目目录不能为空'
+          return true
+        },
+      },
+      {
+        type: 'input',
         name: 'controller',
         message: '控制器名称:',
         validate: (input: string) => {
@@ -397,16 +374,6 @@ export class Prompt {
           { name: '仅删除指定操作', value: 'manage' },
         ],
         default: 'all',
-      },
-      {
-        type: 'input',
-        name: 'dictionary',
-        message: '项目目录:',
-        default: '.',
-        validate: (input: string) => {
-          if (!input.trim()) return '项目目录不能为空'
-          return true
-        },
       },
       {
         type: 'confirm',

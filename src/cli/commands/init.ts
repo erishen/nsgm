@@ -12,7 +12,7 @@ export const initCommand: Command = {
   options: [
     {
       name: 'dictionary',
-      description: '项目目录名称',
+      description: '项目目录',
       default: '.',
       type: 'string',
     },
@@ -38,7 +38,7 @@ export const initCommand: Command = {
 
         Console.separator()
         Console.title('📋 项目配置确认')
-        Console.info(`项目名称: ${wizardResult.projectName}`)
+        Console.info(`项目目录: ${wizardResult.projectName}`)
         Console.info(`项目描述: ${wizardResult.description}`)
         Console.info(`作者: ${wizardResult.author}`)
         Console.info(`数据库: ${wizardResult.database ? '是' : '否'}`)
@@ -106,10 +106,10 @@ export const initCommand: Command = {
             `项目已成功创建到 ${finalOptions.dictionary} 目录\n\n` +
               `下一步:\n` +
               `1. cd ${finalOptions.dictionary}\n` +
-              `2. cp .env.example .env\n` +
-              `3. npm run generate-password yourPassword\n` +
-              `4. modify .env LOGIN_PASSWORD_HASH=yourEncryptedPassword\n` +
-              `5. npm run dev`,
+              `2. npm run dev\n\n` +
+              `默认登录账号: admin/admin123\n` +
+              `如需修改密码: npm run generate-password yourNewPassword\n` +
+              `然后修改 .env 中的 LOGIN_PASSWORD_HASH`,
             'success'
           )
         } catch (error) {

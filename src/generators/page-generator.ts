@@ -14,9 +14,6 @@ export class PageGenerator extends BaseGenerator {
     const formFields = this.getFormFields()
     const searchFields = this.getSearchableFields()
 
-    // 生成键值标题映射
-    const keyTitles = this.generateKeyTitles()
-
     // 生成表格列定义
     const tableColumns = this.generateTableColumns(listFields)
 
@@ -27,9 +24,20 @@ export class PageGenerator extends BaseGenerator {
     const mainSearchField = searchFields.length > 0 ? searchFields[0] : null
 
     return `import React, { useState, useEffect } from 'react'
-import { ConfigProvider, Table, Modal, Button, Input, Space, Upload, message } from 'antd'
-import { Container, SearchRow, ModalContainer } from '@/styled/${this.controller}/${this.action}'
-import styled from 'styled-components'
+import { ConfigProvider, Modal, Space, Upload, message } from 'antd'
+import {
+  Container,
+  SearchRow,
+  ModalContainer,
+  StyledButton,
+  StyledInput,
+  StyledTable,
+  ModalTitle,
+  ModalInput,
+  IconWrapper,
+  RoundedButton,
+  GlobalStyle,
+} from '@/styled/${this.controller}/${this.action}'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   add${capitalizedController},
@@ -37,12 +45,14 @@ import {
   del${capitalizedController},
   updateSSR${capitalizedController},
   search${capitalizedController},
-  batchDel${capitalizedController}
+  batchDel${capitalizedController},
 } from '@/redux/${this.controller}/${this.action}/actions'
 import { get${capitalizedController}Service } from '@/service/${this.controller}/${this.action}'
 import { RootState, AppDispatch } from '@/redux/store'
 import _ from 'lodash'
-import locale from 'antd/lib/locale/zh_CN'
+import { useTranslation } from 'next-i18next'
+import { getAntdLocale } from '@/utils/i18n'
+import { useRouter } from 'next/router'
 import { handleXSS, checkModalObj } from '@/utils/common'
 import { UploadOutlined } from '@ant-design/icons'
 import ExcelJS from 'exceljs'
@@ -51,91 +61,48 @@ import { createCSRFUploadProps } from '@/utils/fetch'
 
 const pageSize = 100
 
-const keyTitles = {
-${keyTitles}
-}
-
-// styled-components
-const StyledButton = styled(Button)<{ $primary?: boolean; $export?: boolean; $import?: boolean; $danger?: boolean }>\`
-  display: flex;
-  align-items: center;
-  border-radius: 6px;
-  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
-  \${(props) =>
-    props.$export &&
-    \`
-      background-color: #f6ffed;
-      color: #52c41a;
-      border-color: #b7eb8f;
-      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
-      transition: all 0.3s ease;
-    \`}
-  \${(props) =>
-    props.$import &&
-    \`
-      background-color: #e6f7ff;
-      color: #1890ff;
-      border-color: #91d5ff;
-      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
-      transition: all 0.3s ease;
-    \`}
-    \${(props) =>
-    props.$danger &&
-    \`
-      background-color: #fff1f0;
-      border-color: #ffa39e;
-      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
-      transition: all 0.3s ease;
-    \`}
-\`${
-      mainSearchField
-        ? `
-const StyledInput = styled(Input)\`
-  width: 200px;
-  border-radius: 6px;
-  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
-\``
-        : ''
-    }
-const StyledTable = styled(Table)\`
-  margin-top: 16px;
-  border-radius: 8px;
-  overflow: hidden;
-
-  .styled-pagination {
-    margin-top: 16px;
-    margin-bottom: 16px;
-  }
-\`
-const ModalTitle = styled.div\`
-  color: #1890ff;
-  font-weight: 500;
-\`
-const ModalInput = styled(Input)\`
-  border-radius: 4px;
-\`
-const IconWrapper = styled.i\`
-  margin-right: 5px;
-\`
-const RoundedButton = styled(Button)\`
-  border-radius: 4px;
-\`
-const GlobalStyle = styled.div\`
-  .rounded-button {
-    border-radius: 4px;
-  }
-\`
-
 const Page = ({ ${this.controller} }) => {
+  const { t } = useTranslation(['common', '${this.controller}'])
+  const router = useRouter()
+  const antdLocale = getAntdLocale(router.locale || 'zh-CN')
   const dispatch = useDispatch<AppDispatch>()
   const [isModalVisiable, setIsModalVisible] = useState(false)
   const [modalId, setModalId] = useState(0)
-${this.generateModalStates()}${mainSearchField ? "\n  const [searchKeyword, setSearchKeyword] = useState('')" : ''}
+${this.generateModalStates()}${mainSearchField ? `\n  const [search${mainSearchField.name.charAt(0).toUpperCase() + mainSearchField.name.slice(1)}, setSearch${mainSearchField.name.charAt(0).toUpperCase() + mainSearchField.name.slice(1)}] = useState('')` : ''}
   const [batchDelIds, setBatchDelIds] = useState([])
+
+  const keyTitles = {
+${this.generateTranslationKeyTitles()}
+  }
 
   useEffect(() => {
     dispatch(updateSSR${capitalizedController}(${this.controller}))
   }, [dispatch])
+
+  useEffect(() => {
+    // 管理弹窗打开时的滚动条显示
+    if (isModalVisiable) {
+      // 记录原始样式
+      const originalStyle = window.getComputedStyle(document.body).overflow
+      const originalPaddingRight = window.getComputedStyle(document.body).paddingRight
+
+      // 设置定时器，在 Modal 设置样式后覆盖
+      const timer = setTimeout(() => {
+        document.body.style.overflow = 'auto'
+        document.body.style.paddingRight = '0px'
+      }, 0)
+
+      return () => {
+        clearTimeout(timer)
+        // 清理时恢复原始样式
+        document.body.style.overflow = originalStyle
+        document.body.style.paddingRight = originalPaddingRight
+      }
+    }
+
+    // 当弹窗关闭时，不需要清理函数
+    return undefined
+  }, [isModalVisiable])
 
   const ${this.controller}${capitalizedAction} = useSelector((state: RootState) => state.${this.controller}${capitalizedAction})
 
@@ -152,38 +119,7 @@ ${this.generateModalStates()}${mainSearchField ? "\n  const [searchKeyword, setS
 
   const dataSource = ${this.controller}Items
   const columns: any = [
-${tableColumns},
-    {
-      title: '操作',
-      dataIndex: '',
-      width: '25%',
-      align: 'center',
-      render: (_: any, record: any) => {
-        return (
-          <Space size="small">
-            <RoundedButton
-              type="primary"
-              size="small"
-              onClick={() => {
-                update${capitalizedController}(record)
-              }}
-            >
-              修改
-            </RoundedButton>
-            <RoundedButton
-              danger
-              size="small"
-              onClick={() => {
-                const { id } = record
-                delete${capitalizedController}(id)
-              }}
-            >
-              删除
-            </RoundedButton>
-          </Space>
-        )
-      }
-    }
+${tableColumns}
   ]
 
   const rowSelection = {
@@ -208,10 +144,10 @@ ${this.generateModalSetStates()}
 
   const delete${capitalizedController} = (id: number) => {
     Modal.confirm({
-      title: '提示',
-      content: '确认删除吗',
-      okText: '确认',
-      cancelText: '取消',
+      title: t('common:common.warning'),
+      content: t('${this.controller}:${this.controller}.messages.confirmDelete'),
+      okText: t('${this.controller}:${this.controller}.buttons.confirm'),
+      cancelText: t('${this.controller}:${this.controller}.buttons.cancel'),
       onOk: () => {
         dispatch(del${capitalizedController}(id))
         Modal.destroyAll()
@@ -230,9 +166,11 @@ ${this.generateModalSetStates()}
   }
 
   const handleOk = () => {
-    const modalObj = {
+  const modalObj: any = {
 ${this.generateModalObj()}
     }
+
+${this.generateClientValidation()}
 
     const checkResult = checkModalObj(modalObj)
 
@@ -257,7 +195,7 @@ ${this.generateModalObj()}
   const doSearch = () => {
     ${
       mainSearchField
-        ? `const searchData = { ${mainSearchField.name}: handleXSS(searchKeyword) }`
+        ? `const searchData = { ${mainSearchField.name}: handleXSS(search${mainSearchField.name.charAt(0).toUpperCase() + mainSearchField.name.slice(1)}) }`
         : 'const searchData = {}'
     }
     dispatch(search${capitalizedController}(0, pageSize, searchData))
@@ -298,30 +236,30 @@ ${this.generateExcelColumns()}
           // 导出失败
         })
     } else {
-      message.info('没有数据无需导出')
+      message.info(t('${this.controller}:${this.controller}.messages.noData'))
     }
   }
 
   const uploadProps = createCSRFUploadProps('/rest/${this.controller}/import', {
     name: 'file',
     onSuccess: (fileName) => {
-      message.success(\`\${fileName} 文件上传成功\`)
+      message.success(\`\${fileName} \${t('${this.controller}:${this.controller}.messages.uploadSuccess')}\`)
       window.location.reload()
     },
     onError: (fileName) => {
-      message.error(\`\${fileName} 文件上传失败\`)
+      message.error(\`\${fileName} \${t('${this.controller}:${this.controller}.messages.uploadFailed')}\`)
     },
     beforeUpload: (file) => {
       const isExcel =
         file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
         file.type === 'application/vnd.ms-excel'
       if (!isExcel) {
-        message.error('只能上传 Excel 文件!')
+        message.error(t('${this.controller}:${this.controller}.messages.onlyExcel'))
         return false
       }
       const isLt2M = file.size / 1024 / 1024 < 2
       if (!isLt2M) {
-        message.error('文件大小不能超过 2MB!')
+        message.error(t('${this.controller}:${this.controller}.messages.fileSizeLimit'))
         return false
       }
       return true
@@ -331,59 +269,59 @@ ${this.generateExcelColumns()}
   const batchDelete${capitalizedController} = () => {
     if (batchDelIds.length > 0) {
       Modal.confirm({
-        title: '提示',
-        content: '确认批量删除吗',
-        okText: '确认',
-        cancelText: '取消',
+        title: t('common:common.warning'),
+        content: t('${this.controller}:${this.controller}.messages.confirmBatchDelete'),
+        okText: t('${this.controller}:${this.controller}.buttons.confirm'),
+        cancelText: t('${this.controller}:${this.controller}.buttons.cancel'),
         onOk: () => {
           dispatch(batchDel${capitalizedController}(batchDelIds))
           Modal.destroyAll()
         }
       })
     } else {
-      message.info('没有数据不能批量删除')
+      message.info(t('${this.controller}:${this.controller}.messages.noDataBatchDelete'))
     }
   }
 
   return (
     <Container>
       <GlobalStyle />
-      <div className="page-title">${capitalizedController} 管理</div>
-      <ConfigProvider locale={locale}>
+      <div className="page-title">{t('${this.controller}:${this.controller}.title')}</div>
+      <ConfigProvider locale={antdLocale}>
         <SearchRow>
           <Space size="middle" wrap>
             <Space size="small">
               <StyledButton type="primary" onClick={create${capitalizedController}} $primary>
                 <IconWrapper className="fa fa-plus"></IconWrapper>
-                新增
+                {t('${this.controller}:${this.controller}.buttons.add')}
               </StyledButton>
               ${
                 mainSearchField
                   ? `<StyledInput
-                value={searchKeyword}
-                placeholder="请输入${mainSearchField.comment || mainSearchField.name}搜索"
+                value={search${mainSearchField.name.charAt(0).toUpperCase() + mainSearchField.name.slice(1)}}
+                placeholder={t('${this.controller}:${this.controller}.placeholders.enter${mainSearchField.name.charAt(0).toUpperCase() + mainSearchField.name.slice(1)}')}
                 allowClear
-                onChange={(e) => setSearchKeyword(e.target.value)}
+                onChange={(e) => setSearch${mainSearchField.name.charAt(0).toUpperCase() + mainSearchField.name.slice(1)}(e.target.value)}
                 onPressEnter={doSearch}
               />`
                   : ''
               }
               <StyledButton type="primary" onClick={doSearch} $primary>
                 <IconWrapper className="fa fa-search"></IconWrapper>
-                搜索
+                {t('${this.controller}:${this.controller}.buttons.search')}
               </StyledButton>
             </Space>
             <Space size="small">
               <StyledButton onClick={export${capitalizedController}} icon={<UploadOutlined rotate={180} />} $export>
-                导出
+                {t('${this.controller}:${this.controller}.buttons.export')}
               </StyledButton>
               <Upload {...uploadProps}>
                 <StyledButton icon={<UploadOutlined />} $import>
-                  导入
+                  {t('${this.controller}:${this.controller}.buttons.import')}
                 </StyledButton>
               </Upload>
               <StyledButton danger onClick={batchDelete${capitalizedController}} $danger>
-                批量删除
+                {t('${this.controller}:${this.controller}.buttons.batchDelete')}
               </StyledButton>
             </Space>
           </Space>
@@ -402,11 +340,11 @@ ${this.generateExcelColumns()}
             pageSize: pageSize,
             showSizeChanger: false,
             showQuickJumper: true,
-            showTotal: (total) => \`共 \${total} 条记录\`,
+            showTotal: (total) => t('${this.controller}:${this.controller}.pagination.total', { total }),
             onChange: (page, pageSize) => {
               ${
                 mainSearchField
-                  ? `const searchData = { ${mainSearchField.name}: handleXSS(searchKeyword) }`
+                  ? `const searchData = { ${mainSearchField.name}: handleXSS(search${mainSearchField.name.charAt(0).toUpperCase() + mainSearchField.name.slice(1)}) }`
                   : 'const searchData = {}'
               }
               dispatch(search${capitalizedController}(page - 1, pageSize, searchData))
@@ -415,12 +353,16 @@ ${this.generateExcelColumns()}
           }}
         />
         <Modal
-          title={<ModalTitle>{\`\${modalId == 0 ? '新增' : '修改'} ${capitalizedController}\`}</ModalTitle>}
+          title={
+            <ModalTitle>
+              {modalId == 0 ? t('${this.controller}:${this.controller}.modal.addTitle') : t('${this.controller}:${this.controller}.modal.editTitle')}
+            </ModalTitle>
+          }
           open={isModalVisiable}
           onOk={handleOk}
           onCancel={handleCancel}
-          okText="确认"
-          cancelText="取消"
+          okText={t('${this.controller}:${this.controller}.buttons.confirm')}
+          cancelText={t('${this.controller}:${this.controller}.buttons.cancel')}
           centered
           maskClosable={false}
           destroyOnHidden
@@ -436,7 +378,9 @@ ${modalFields}
   )
 }
 
-Page.getInitialProps = async () => {
+export async function getServerSideProps(context) {
+  const { serverSideTranslations } = await import('next-i18next/serverSideTranslations')
+
   let ${this.controller} = null
 
   await get${capitalizedController}Service(0, pageSize).then((res: any) => {
@@ -444,8 +388,14 @@ Page.getInitialProps = async () => {
     ${this.controller} = data.${this.controller}
   })
 
+  const { locale } = context
+  const translations = await serverSideTranslations(locale || 'zh-CN', ['common', '${this.controller}', 'layout', 'login'])
+
   return {
-    ${this.controller}
+    props: {
+      ${this.controller},
+      ...translations
+    }
   }
 }
 
@@ -453,12 +403,12 @@ export default Page`
   }
 
   /**
-   * 生成键值标题映射
+   * 生成翻译键值标题映射
    */
-  private generateKeyTitles(): string {
+  private generateTranslationKeyTitles(): string {
     return this.getFormFields()
       .map((field) => {
-        return `  ${field.name}: '${field.comment || field.name}'`
+        return `    ${field.name}: t('${this.controller}:${this.controller}.fields.${field.name}')`
       })
       .join(',\n')
   }
@@ -530,7 +480,7 @@ export default Page`
               <label>{keyTitles.${field.name}}：</label>
               <ModalInput
                 value={modal${capitalizedName}}
-                placeholder="请输入${field.comment || field.name}"
+                placeholder={t('${this.controller}:${this.controller}.placeholders.input${capitalizedName}')}
                 allowClear
                 ${field === fields[0] ? 'autoFocus' : ''}
                 onChange={(e) => setModal${capitalizedName}(e.target.value)}
@@ -553,20 +503,101 @@ export default Page`
       .join(',\n')
   }
   private generateTableColumns(fields: any[]): string {
-    return fields
-      .map((field) => {
-        let column = `    {\n      title: '${field.comment || field.name}',\n      dataIndex: '${field.name}',\n      key: '${field.name}'`
+    const columns = fields.map((field, index) => {
+      let column = `    {\n      title: t('${this.controller}:${this.controller}.fields.${field.name}'),\n      dataIndex: '${field.name}',\n      key: '${field.name}'`
 
-        // 根据字段类型设置特定属性
-        if (field.type === 'timestamp' || field.type === 'date' || field.type === 'datetime') {
-          column += `,\n      render: (text: string) => text ? new Date(text).toLocaleString() : '-'`
-        } else if (field.type === 'integer' || field.type === 'decimal') {
-          column += `,\n      align: 'right' as const`
-        }
+      // 添加排序功能
+      if (field.type === 'integer') {
+        column += `,\n      sorter: (a: any, b: any) => a.${field.name} - b.${field.name}`
+      } else if (field.type === 'varchar' || field.type === 'text') {
+        column += `,\n      sorter: (a: any, b: any) => a.${field.name}.length - b.${field.name}.length`
+      }
 
-        column += '\n    }'
-        return column
-      })
-      .join(',\n')
+      // 添加排序方向和提示
+      if (field.type === 'integer' || field.type === 'varchar' || field.type === 'text') {
+        column += `,\n      sortDirections: ['descend', 'ascend'],\n      showSorterTooltip: false`
+      }
+
+      // 根据字段类型设置特定属性
+      if (field.type === 'timestamp' || field.type === 'date' || field.type === 'datetime') {
+        column += `,\n      render: (text: string) => text ? new Date(text).toLocaleString() : '-'`
+      } else if (field.type === 'integer' || field.type === 'decimal') {
+        column += `,\n      align: 'center' as const`
+      }
+
+      // 设置宽度
+      if (field.name === 'id') {
+        column += `,\n      width: '15%',\n      align: 'center' as const`
+      } else if (index === fields.length - 1) {
+        column += `,\n      width: '60%',\n      ellipsis: true`
+      }
+
+      column += '\n    }'
+      return column
+    })
+
+    // 添加操作列
+    const actionColumn = `    {
+      title: t('${this.controller}:${this.controller}.fields.actions'),
+      dataIndex: '',
+      width: '25%',
+      align: 'center' as const,
+      render: (_: any, record: any) => {
+        return (
+          <Space size="small">
+            <RoundedButton
+              type="primary"
+              size="small"
+              onClick={() => {
+                update${this.getCapitalizedController()}(record)
+              }}
+            >
+              {t('${this.controller}:${this.controller}.buttons.edit')}
+            </RoundedButton>
+            <RoundedButton
+              danger
+              size="small"
+              onClick={() => {
+                const { id } = record
+                delete${this.getCapitalizedController()}(id)
+              }}
+            >
+              {t('${this.controller}:${this.controller}.buttons.delete')}
+            </RoundedButton>
+          </Space>
+        )
+      }
+    }`
+
+    return [...columns, actionColumn].join(',\n')
+  }
+
+  /**
+   * 生成客户端验证逻辑
+   */
+  private generateClientValidation(): string {
+    const integerFields = this.getFormFields().filter((field) => field.type === 'integer')
+
+    if (integerFields.length === 0) {
+      return ''
+    }
+
+    const validations = integerFields.map((field) => {
+      const fieldName = field.name
+      const capitalizedName = fieldName.charAt(0).toUpperCase() + fieldName.slice(1)
+
+      return `    // 验证${fieldName}
+    const ${fieldName}Value = modalObj.${fieldName}
+    if (${fieldName}Value !== undefined && ${fieldName}Value !== null && ${fieldName}Value !== '') {
+      const parsed${capitalizedName} = parseInt(${fieldName}Value, 10)
+      if (isNaN(parsed${capitalizedName})) {
+        message.error(\`${fieldName}必须是数字，当前值: "\${${fieldName}Value}"\`)
+        return
+      }
+      modalObj.${fieldName} = parsed${capitalizedName}
+    }`
+    })
+
+    return `${validations.join('\n\n')}\n\n`
   }
 }

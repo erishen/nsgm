@@ -1,0 +1,48 @@
+{
+  "common": {
+    "confirm": "確認",
+    "cancel": "キャンセル",
+    "save": "保存",
+    "edit": "編集",
+    "delete": "削除",
+    "add": "追加",
+    "search": "検索",
+    "reset": "リセット",
+    "submit": "送信",
+    "back": "戻る",
+    "next": "次へ",
+    "previous": "前へ",
+    "loading": "読み込み中...",
+    "success": "成功",
+    "error": "エラー",
+    "warning": "警告",
+    "info": "情報",
+    "yes": "はい",
+    "no": "いいえ",
+    "close": "閉じる",
+    "refresh": "更新"
+  },
+  "navigation": {
+    "home": "ホーム",
+    "dashboard": "ダッシュボード",
+    "settings": "設定",
+    "profile": "プロフィール",
+    "logout": "ログアウト"
+  },
+  "form": {
+    "required": "この項目は必須です",
+    "invalidEmail": "有効なメールアドレスを入力してください",
+    "invalidPhone": "有効な電話番号を入力してください",
+    "passwordTooShort": "パスワードは8文字以上で入力してください",
+    "confirmPassword": "パスワード確認",
+    "passwordMismatch": "パスワードが一致しません"
+  },
+  "messages": {
+    "saveSuccess": "保存が完了しました",
+    "deleteSuccess": "削除が完了しました",
+    "updateSuccess": "更新が完了しました",
+    "createSuccess": "作成が完了しました",
+    "operationFailed": "操作に失敗しました",
+    "networkError": "ネットワークエラーが発生しました。後でもう一度お試しください"
+  }
+}

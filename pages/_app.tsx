@@ -1,11 +1,21 @@
+// 必须在所有其他导入之前执行
+import '@/utils/suppressWarnings'
+
 import React, { useEffect, useState } from 'react'
 import { Provider } from 'react-redux'
-import { ThemeProvider } from 'styled-components'
-import { useStore } from '@/redux/store'
-import { GlobalStyle, Loading } from '@/styled/common'
-import LayoutComponent from '@/layout'
-import { login } from '@/utils/sso'
 import { Spin } from 'antd'
+import { appWithTranslation } from 'next-i18next'
+import { useRouter } from 'next/router'
+import { useStore } from '@/redux/store'
+import { Loading } from '@/styled/common'
+import LayoutComponent from '@/layout'
+import ClientProviders from '@/components/ClientProviders'
+import SuppressHydrationWarnings from '@/components/SuppressHydrationWarnings'
+import SSRSafeAntdProvider from '@/components/SSRSafeAntdProvider'
+import { login } from '@/utils/sso'
+import { getAntdLocale } from '@/utils/i18n'
+import { navigateToLogin } from '@/utils/navigation'
+import nextI18NextConfig from '../next-i18next.config.js'
 import 'antd/dist/reset.css'
 
 const theme = {
@@ -16,16 +26,53 @@ const theme = {
 
 const App = ({ Component, pageProps }) => {
   const store = useStore(pageProps.initialReduxState)
+  const router = useRouter()
   const [ssoUser, setSsoUser] = useState(null)
   const [pageLoad, setPageLoad] = useState(false)
   const [loginChecked, setLoginChecked] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  const [currentLocale, setCurrentLocale] = useState('zh-CN')
+
+  // 检查是否为特殊页面（登录页、错误页）
+  // 避免在服务器端访问 router.pathname
+  const isSpecialPage =
+    Component.displayName === 'ErrorPage' ||
+    Component.name === 'ErrorPage' ||
+    Component.displayName === 'LoginPage' ||
+    Component.name === 'LoginPage'
+
+  // Get Antd locale based on current locale
+  const antdLocale = getAntdLocale(currentLocale)
 
   useEffect(() => {
-    // 检查当前路径是否为登录页
-    const isLoginPage = typeof window !== 'undefined' && window.location.pathname === '/login'
+    setMounted(true)
+    // 只在客户端设置当前语言
+    if (typeof window !== 'undefined') {
+      const locale = router.locale || 'zh-CN'
+      setCurrentLocale(locale)
+    }
+  }, [router.locale])
 
-    // 如果是登录页，直接设置加载完成
-    if (isLoginPage) {
+  useEffect(() => {
+    if (!mounted) return
+
+    // 对于特殊页面，跳过登录检查
+    if (isSpecialPage) {
+      setLoginChecked(true)
+      setPageLoad(true)
+      return
+    }
+
+    // 检查当前路径是否为登录页或错误页
+    const isLoginPage = typeof window !== 'undefined' && window.location.pathname === '/login'
+    const isErrorPage =
+      typeof window !== 'undefined' &&
+      (window.location.pathname === '/404' ||
+        window.location.pathname === '/500' ||
+        window.location.pathname === '/_error')
+
+    // 如果是登录页或错误页，直接设置加载完成，不进行登录检查
+    if (isLoginPage || isErrorPage) {
       setLoginChecked(true)
       setPageLoad(true)
       return
@@ -34,9 +81,9 @@ const App = ({ Component, pageProps }) => {
     // 检查是否有登录凭证
     const hasLoginCookie = typeof window !== 'undefined' && document.cookie.includes('_cas_nsgm')
 
-    // 如果没有登录凭证，直接跳转到登录页面
+    // 如果没有登录凭证，直接跳转到登录页面（保持当前语言）
     if (!hasLoginCookie && typeof window !== 'undefined') {
-      window.location.href = `${window.location.origin}/login`
+      navigateToLogin(router)
       return
     }
 
@@ -51,40 +98,42 @@ const App = ({ Component, pageProps }) => {
     setTimeout(() => {
       setPageLoad(true)
     }, 100)
-  }, [])
+  }, [mounted, isSpecialPage])
 
   return (
     <>
-      <GlobalStyle whiteColor={true} />
-      <ThemeProvider theme={theme}>
-        <Provider store={store}>
-          {!loginChecked ? (
-            <Loading>
-              <Spin size="large" />
-            </Loading>
-          ) : pageLoad ? (
-            ssoUser ? (
-              <LayoutComponent user={ssoUser}>
-                <Component {...pageProps} />
-              </LayoutComponent>
-            ) : (
+      <SuppressHydrationWarnings />
+      <SSRSafeAntdProvider locale={antdLocale}>
+        <ClientProviders theme={theme} whiteColor={true}>
+          <Provider store={store}>
+            {isSpecialPage ? (
+              // 特殊页面（错误页、登录页）直接渲染，不使用 Layout
               <Component {...pageProps} />
-            )
-          ) : (
-            <Loading>
-              <Spin size="large" />
-            </Loading>
-          )}
-        </Provider>
-      </ThemeProvider>
+            ) : !loginChecked ? (
+              <Loading>
+                <Spin size="large" />
+              </Loading>
+            ) : pageLoad ? (
+              ssoUser ? (
+                <LayoutComponent user={ssoUser}>
+                  <Component {...pageProps} />
+                </LayoutComponent>
+              ) : (
+                <Component {...pageProps} />
+              )
+            ) : (
+              <Loading>
+                <Spin size="large" />
+              </Loading>
+            )}
+          </Provider>
+        </ClientProviders>
+      </SSRSafeAntdProvider>
     </>
   )
 }
 
-App.getInitialProps = async ({ Component, ctx }) => {
-  return {
-    pageProps: await Component?.getInitialProps(ctx),
-  }
-}
+// 移除 getInitialProps 以启用静态优化
+// 如果需要页面级别的数据获取，请在各个页面中使用 getStaticProps 或 getServerSideProps
 
-export default App
+export default appWithTranslation(App, nextI18NextConfig)

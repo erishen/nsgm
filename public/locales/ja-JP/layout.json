@@ -1,0 +1,22 @@
+{
+  "layout": {
+    "userActions": {
+      "logout": "ログアウト",
+      "profile": "プロフィール",
+      "settings": "アカウント設定",
+      "notifications": "通知",
+      "user": "ユーザー"
+    },
+    "navigation": {
+      "home": "ホーム",
+      "dashboard": "ダッシュボード",
+      "management": "管理",
+      "system": "システム"
+    },
+    "menu": {
+      "introduction": "紹介",
+      "template": "テンプレート",
+      "template1": "テンプレート1"
+    }
+  }
+}

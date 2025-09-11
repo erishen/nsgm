@@ -4,4 +4,8 @@ import { BaseGenerator } from './base-generator';
  */
 export declare class ServiceGenerator extends BaseGenerator {
     generate(): string;
+    private generateValidationFunctions;
+    private generateValidationCallsForService;
+    private generateDataObjectWithValidation;
+    private generateBatchValidationCalls;
 }

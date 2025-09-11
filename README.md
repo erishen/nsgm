@@ -31,22 +31,26 @@ NSGM CLI is a comprehensive full-stack development framework that combines the p
 ## 🎯 Key Features
 
 ### 🧙‍♂️ **Intelligent CLI Wizard**
+
 - **Smart Mode Detection**: Automatically switches between interactive and command-line modes
 - **Beginner-Friendly**: Step-by-step guided setup for newcomers
 - **Expert-Efficient**: Quick command-line shortcuts for experienced developers
 
 ### ⚡ **Rapid Development**
+
 - **Code Generation**: Automatic CRUD operations, API endpoints, and database schemas
 - **Hot Reload**: Instant development feedback
 - **Type Safety**: Full TypeScript support throughout the stack
 
 ### 🔒 **Production-Ready Security**
+
 - **CSRF Protection**: Built-in cross-site request forgery prevention
 - **Password Encryption**: bcrypt-based secure authentication
 - **Session Management**: Robust user session handling
 - **CSP Headers**: Content Security Policy implementation
 
 ### 🏗️ **Modern Tech Stack**
+
 - **Frontend**: Next.js 13+, React 18+, Styled-components, Redux Toolkit
 - **Backend**: Express.js, GraphQL, REST APIs
 - **Database**: MySQL with native drivers
@@ -87,6 +91,7 @@ nsgm init my-awesome-app
 ```
 
 The wizard will guide you through:
+
 - ✅ Project name and directory
 - ✅ Database configuration
 - ✅ Security settings
@@ -99,9 +104,15 @@ cd your-project-name
 
 # Copy environment template
 cp .env.example .env
+```
 
+**Default Login**: `admin/admin123`
+
+**To change password** (optional):
+
+```bash
 # Generate secure password hash
-npm run generate-password your-secure-password
+npm run generate-password yourNewPassword
 
 # Edit .env file with generated hash
 nano .env
@@ -118,23 +129,24 @@ npm run dev
 ```
 
 Your application will be available at `http://localhost:3000` with:
+
 - 🎛️ Admin dashboard with CRUD interface
 - 📊 Data import/export functionality
 - 🗑️ Batch operations support
-- 🔐 Secure login system
+- 🔐 Secure login system (Default: admin/admin123)
 
 ## 🛠️ CLI Commands
 
 ### Core Commands
 
-| Command | Description | Mode | Example |
-|---------|-------------|------|---------|
-| `nsgm init` | Initialize new project | Interactive/CLI | `nsgm init blog-app` |
-| `nsgm create` | Generate controller with CRUD | Interactive/CLI | `nsgm create user` |
-| `nsgm delete` | Remove controller and files | Interactive/CLI | `nsgm delete product` |
-| `nsgm dev` | Start development server | CLI | `nsgm dev` |
-| `nsgm build` | Build for production | CLI | `nsgm build` |
-| `nsgm start` | Start production server | CLI | `nsgm start` |
+| Command       | Description                   | Mode            | Example               |
+| ------------- | ----------------------------- | --------------- | --------------------- |
+| `nsgm init`   | Initialize new project        | Interactive/CLI | `nsgm init blog-app`  |
+| `nsgm create` | Generate controller with CRUD | Interactive/CLI | `nsgm create user`    |
+| `nsgm delete` | Remove controller and files   | Interactive/CLI | `nsgm delete product` |
+| `nsgm dev`    | Start development server      | CLI             | `nsgm dev`            |
+| `nsgm build`  | Build for production          | CLI             | `nsgm build`          |
+| `nsgm start`  | Start production server       | CLI             | `nsgm start`          |
 
 ### Advanced Commands
 
@@ -157,6 +169,7 @@ npm run test:coverage        # Test coverage report
 Each controller created with `nsgm create` includes:
 
 ### 🔧 **Backend Components**
+
 - **GraphQL Schema**: Typed queries and mutations
 - **GraphQL Resolvers**: Business logic implementation
 - **REST API Endpoints**: RESTful service layer
@@ -164,6 +177,7 @@ Each controller created with `nsgm create` includes:
 - **Data Validation**: Input sanitization and validation
 
 ### 🎯 **Frontend Components**
+
 - **React Components**: Modern functional components with hooks
 - **Styled Components**: CSS-in-JS styling
 - **Redux Integration**: State management
@@ -171,6 +185,7 @@ Each controller created with `nsgm create` includes:
 - **Data Tables**: Sortable, filterable data grids
 
 ### 📊 **CRUD Operations**
+
 - **Create**: Add new records with validation
 - **Read**: List, search, and pagination
 - **Update**: Edit existing records
@@ -211,7 +226,7 @@ your-project/
 # .env file
 NODE_ENV=development
 LOGIN_USERNAME=admin
-LOGIN_PASSWORD_HASH=your_generated_hash
+LOGIN_PASSWORD_HASH=your_generated_hash  # Default: admin123
 DATABASE_URL=mysql://user:password@localhost:3306/dbname
 
 # Optional
@@ -229,18 +244,22 @@ module.exports = {
     port: process.env.DB_PORT || 3306,
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'nsgm_db'
-  }
+    database: process.env.DB_NAME || 'nsgm_db',
+  },
 }
 ```
 
 ## 🔒 Security Setup
 
-### Password Generation
+### Default Authentication
+
+**Default Login Credentials**: `admin/admin123`
+
+### Custom Password Setup (Optional)
 
 ```bash
-# Generate secure hash
-npm run generate-password your-secure-password
+# Generate secure hash for custom password
+npm run generate-password yourNewPassword
 
 # Add to .env file
 LOGIN_PASSWORD_HASH=your_generated_hash_here
@@ -255,13 +274,15 @@ NSGM CLI includes built-in CSRF protection:
 app.use(csrfProtection)
 
 // Custom CSP headers
-app.use(createCSPMiddleware({
-  directives: {
-    defaultSrc: ["'self'"],
-    styleSrc: ["'self'", "'unsafe-inline'"],
-    scriptSrc: ["'self'"]
-  }
-}))
+app.use(
+  createCSPMiddleware({
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'"],
+    },
+  })
+)
 ```
 
 ## 🧪 Testing
@@ -312,7 +333,7 @@ router.get('/stats', (req, res) => {
   res.json({
     totalPosts: 42,
     totalUsers: 15,
-    lastUpdate: new Date()
+    lastUpdate: new Date(),
   })
 })
 
@@ -341,7 +362,7 @@ module.exports = {
       createdAt: Date!
       updatedAt: Date!
     }
-  `
+  `,
 }
 ```
 
@@ -403,6 +424,7 @@ npm run tsbuild
 ### Common Issues
 
 **Port already in use**
+
 ```bash
 # Kill process on port 3000
 lsof -ti:3000 | xargs kill -9
@@ -412,6 +434,7 @@ PORT=3001 npm run dev
 ```
 
 **Database connection failed**
+
 ```bash
 # Check MySQL service
 sudo systemctl status mysql
@@ -421,6 +444,7 @@ cat .env | grep DB_
 ```
 
 **Permission denied**
+
 ```bash
 # Fix npm permissions
 sudo chown -R $(whoami) ~/.npm
@@ -449,4 +473,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 [GitHub](https://github.com/erishen/nsgm) • [npm](https://www.npmjs.com/package/nsgm-cli) • [Issues](https://github.com/erishen/nsgm/issues)
 
 </div>
-

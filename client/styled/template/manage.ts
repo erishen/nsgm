@@ -1,7 +1,9 @@
 import styled from 'styled-components'
+import { Button, Input, Table } from 'antd'
 
 export const Container = styled.div`
-  margin: 20px;
+  margin: 20px 0 0 0;
+  padding-bottom: 32px;
 
   .ant-table {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -133,5 +135,90 @@ export const ModalContainer = styled.div`
         align-items: center;
       }
     }
+  }
+`
+
+// Button 样式组件
+export const StyledButton = styled(Button)<{
+  $primary?: boolean
+  $export?: boolean
+  $import?: boolean
+  $danger?: boolean
+}>`
+  display: flex;
+  align-items: center;
+  border-radius: 6px;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
+  ${(props) =>
+    props.$export &&
+    `
+      background-color: #f6ffed;
+      color: #52c41a;
+      border-color: #b7eb8f;
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
+      transition: all 0.3s ease;
+    `}
+  ${(props) =>
+    props.$import &&
+    `
+      background-color: #e6f7ff;
+      color: #1890ff;
+      border-color: #91d5ff;
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
+      transition: all 0.3s ease;
+    `}
+    ${(props) =>
+    props.$danger &&
+    `
+      background-color: #fff1f0;
+      border-color: #ffa39e;
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
+      transition: all 0.3s ease;
+    `}
+`
+
+export const StyledInput = styled(Input)`
+  width: 200px;
+  border-radius: 6px;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
+`
+
+export const StyledTable = styled(Table)`
+  margin-top: 16px;
+  border-radius: 8px;
+  overflow: hidden;
+
+  .styled-pagination {
+    margin-top: 16px;
+    margin-bottom: 16px;
+  }
+`
+
+export const ModalTitle = styled.div`
+  color: #1890ff;
+  font-weight: 500;
+`
+
+export const ModalInput = styled(Input)`
+  border-radius: 4px;
+`
+
+export const IconWrapper = styled.i`
+  margin-right: 5px;
+`
+
+export const RoundedButton = styled(Button)`
+  border-radius: 4px;
+`
+
+export const GlobalStyle = styled.div`
+  .rounded-button {
+    border-radius: 4px;
+  }
+
+  /* 防止Modal打开时滚动条消失 */
+  &.modal-open body {
+    overflow: auto !important;
+    padding-right: 0 !important;
   }
 `

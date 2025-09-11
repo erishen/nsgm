@@ -27,12 +27,15 @@ const publicPathSource = '../public'
 const publicPath = './public'
 const scriptsPathSource = '../scripts'
 const scriptsPath = './scripts'
+const typesPathSource = '../types'
+const typesPath = './types'
 const reduxPath = '/redux'
 const servicePath = '/service'
 const styledPath = '/styled'
 const styledLayoutPath = '/layout'
 const utilsPath = '/utils'
 const layoutPath = '/layout'
+const componentsPath = '/components'
 const modulesPath = '/modules'
 const apisPath = '/apis'
 const sqlPath = '/sql'
@@ -50,6 +53,11 @@ const sourceServerPathGeneration = path.join(sourceGenerationPath, serverPath)
 const sourcePagesPath = path.join(sourceFolder, pagesPathSource)
 const sourcePublicPath = path.join(sourceFolder, publicPathSource)
 const sourceScriptsPath = path.join(sourceFolder, scriptsPathSource)
+const sourceTypesPath = path.join(sourceFolder, typesPathSource)
+
+// 当前项目的实际文件路径（用于复制现有文件）
+const projectClientPath = path.join(destFolder, clientPath)
+const projectPublicPath = path.join(destFolder, publicPath)
 
 const destClientPath = path.join(destFolder, clientPath)
 const destClientReduxPath = resolve(destClientPath + reduxPath)
@@ -66,6 +74,7 @@ const destServerUtilsPath = resolve(destServerPath + utilsPath)
 const destPagesPath = path.join(destFolder, pagesPath)
 const destPublicPath = path.join(destFolder, publicPath)
 const destScriptsPath = path.join(destFolder, scriptsPath)
+const destTypesPath = path.join(destFolder, typesPath)
 
 const destClientUtilsMenuPath = resolve(destClientUtilsPath + utilsMenuPath)
 const destClientReduxReducersAllPath = resolve(destClientReduxPath + reduxReducersPath)
@@ -88,12 +97,15 @@ export {
   publicPath,
   scriptsPathSource,
   scriptsPath,
+  typesPathSource,
+  typesPath,
   reduxPath,
   servicePath,
   styledPath,
   styledLayoutPath,
   utilsPath,
   layoutPath,
+  componentsPath,
   modulesPath,
   apisPath,
   sqlPath,
@@ -110,6 +122,9 @@ export {
   sourcePagesPath,
   sourcePublicPath,
   sourceScriptsPath,
+  sourceTypesPath,
+  projectClientPath,
+  projectPublicPath,
   destClientPath,
   destClientReduxPath,
   destClientServicePath,
@@ -125,6 +140,7 @@ export {
   destPagesPath,
   destPublicPath,
   destScriptsPath,
+  destTypesPath,
   destClientUtilsMenuPath,
   destClientReduxReducersAllPath,
   destPublicHealthCheckPath,
