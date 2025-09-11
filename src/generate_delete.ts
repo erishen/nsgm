@@ -117,8 +117,13 @@ const cleanupConfigurationFiles = (controller: string, action: string, paths: De
   if (action === 'all') {
     // 清理所有控制器相关的配置
     // 1. 删除 import 语句
-    shell.sed('-i', new RegExp(`^.*import.*${controller}.*Reducer.*from.*$`, 'gm'), '', paths.destClientReduxReducersAllPath)
-    
+    shell.sed(
+      '-i',
+      new RegExp(`^.*import.*${controller}.*Reducer.*from.*$`, 'gm'),
+      '',
+      paths.destClientReduxReducersAllPath
+    )
+
     // 2. 删除 export 对象中的属性行
     shell.sed(
       '-i',
@@ -126,16 +131,16 @@ const cleanupConfigurationFiles = (controller: string, action: string, paths: De
       '',
       paths.destClientReduxReducersAllPath
     )
-    
+
     // 3. 修复可能出现的语法问题
     // 移除空行
     shell.sed('-i', /^\s*$/g, '', paths.destClientReduxReducersAllPath)
     shell.sed('-i', /\n\n\n/g, '\n\n', paths.destClientReduxReducersAllPath)
-    
+
     // 4. 修复对象末尾的逗号问题
     // 如果对象只剩一个属性，移除末尾逗号
     shell.sed('-i', /,(\s*\n\s*\})/, '$1', paths.destClientReduxReducersAllPath)
-    
+
     // 5. 清理服务器端配置
     shell.sed('-i', new RegExp(`.*${controller}.*`, 'g'), '', paths.destServerRestPath)
   } else {
@@ -155,7 +160,7 @@ const cleanupConfigurationFiles = (controller: string, action: string, paths: De
       '',
       paths.destClientReduxReducersAllPath
     )
-    
+
     // 修复语法问题
     shell.sed('-i', /^\s*$/g, '', paths.destClientReduxReducersAllPath)
     shell.sed('-i', /,(\s*\n\s*\})/, '$1', paths.destClientReduxReducersAllPath)
@@ -224,10 +229,10 @@ const performAdvancedCleanup = (controller: string, action: string, paths: Delet
   setTimeout(() => {
     replaceInFileAll(cleanupRules, 0, () => {
       console.log('Advanced cleanup completed')
-      
+
       // 执行额外的清理步骤
       performFinalCleanup(paths)
-      
+
       // 如果是删除整个控制器，还需要清理菜单缩进
       if (action === 'all') {
         cleanupMenuIndentation(paths)
@@ -240,7 +245,7 @@ const performAdvancedCleanup = (controller: string, action: string, paths: Delet
 const cleanupMenuIndentation = (paths: DeletePaths): void => {
   // 读取菜单文件内容
   const menuFile = paths.destClientUtilsMenuPath
-  
+
   // 使用更智能的方式处理菜单清理，保持正确的缩进
   setTimeout(() => {
     // 清理可能出现的缩进问题，确保注释代码块有正确的缩进
@@ -251,14 +256,14 @@ const cleanupMenuIndentation = (paths: DeletePaths): void => {
     shell.sed('-i', /^[ ]{0,4}icon:/gm, '      icon:', menuFile)
     shell.sed('-i', /^[ ]{0,4}subMenus:/gm, '      subMenus:', menuFile)
     shell.sed('-i', /^[ ]{0,2}\}\*\//gm, '    }*/', menuFile)
-    
+
     // 修复可能出现的连续逗号问题
     shell.sed('-i', /,,+/g, ',', menuFile)
     // 修复数组末尾多余的逗号（在注释前）
     shell.sed('-i', /,(\s*\/\*)/g, '$1', menuFile)
     // 确保数组项之间有正确的逗号
     shell.sed('-i', /(\})(\s*\/\*)/g, '$1,$2', menuFile)
-    
+
     console.log('Menu indentation cleanup completed')
   }, 1500)
 }
@@ -273,7 +278,7 @@ const performFinalCleanup = (paths: DeletePaths): void => {
     shell.sed('-i', /\{\s*,\s*\}/, '{}', paths.destClientReduxReducersAllPath)
     // 标准化缩进
     shell.sed('-i', /^[ ]{2}/gm, '  ', paths.destClientReduxReducersAllPath)
-    
+
     console.log('Final cleanup completed')
   }, 500)
 }
