@@ -1,6 +1,6 @@
 const user = 'root'
 const password = 'password'
-const host = '127.0.0.1'
+const host = process.env.MYSQL_HOST || 'mysql'
 const port = 3306
 const database = 'crm_demo'
 
