@@ -55,10 +55,6 @@ const sourcePublicPath = path.join(sourceFolder, publicPathSource)
 const sourceScriptsPath = path.join(sourceFolder, scriptsPathSource)
 const sourceTypesPath = path.join(sourceFolder, typesPathSource)
 
-// 当前项目的实际文件路径（用于复制现有文件）
-const projectClientPath = path.join(destFolder, clientPath)
-const projectPublicPath = path.join(destFolder, publicPath)
-
 const destClientPath = path.join(destFolder, clientPath)
 const destClientReduxPath = resolve(destClientPath + reduxPath)
 const destClientServicePath = resolve(destClientPath + servicePath)
@@ -123,8 +119,6 @@ export {
   sourcePublicPath,
   sourceScriptsPath,
   sourceTypesPath,
-  projectClientPath,
-  projectPublicPath,
   destClientPath,
   destClientReduxPath,
   destClientServicePath,

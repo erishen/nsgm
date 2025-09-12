@@ -28,8 +28,6 @@ import {
   sourcePagesPath,
   sourcePublicPath,
   sourceScriptsPath,
-  projectClientPath,
-  projectPublicPath,
   destClientPath,
   destServerPath,
   destPagesPath,
@@ -210,17 +208,17 @@ export const initClientFiles = (dictionary: string, newDestFolder: string, upgra
         upgradeFlag,
       },
       {
-        source: resolve(projectClientPath + utilsPath + CLIENT_FILES.utilsI18n),
+        source: resolve(sourceClientPath + utilsPath + CLIENT_FILES.utilsI18n),
         dest: resolve(destPaths.utils + CLIENT_FILES.utilsI18n),
         upgradeFlag,
       },
       {
-        source: resolve(projectClientPath + utilsPath + CLIENT_FILES.utilsNavigation),
+        source: resolve(sourceClientPath + utilsPath + CLIENT_FILES.utilsNavigation),
         dest: resolve(destPaths.utils + CLIENT_FILES.utilsNavigation),
         upgradeFlag,
       },
       {
-        source: resolve(projectClientPath + componentsPath + CLIENT_FILES.languageSwitcher),
+        source: resolve(sourceClientPath + componentsPath + CLIENT_FILES.languageSwitcher),
         dest: resolve(baseDestPath + componentsPath + CLIENT_FILES.languageSwitcher),
         upgradeFlag,
       },
@@ -441,7 +439,7 @@ export const initPublicFiles = (dictionary: string, newDestFolder: string, upgra
     }
 
     // 6. 复制 locales 目录下的所有文件（递归复制）
-    const sourceLocalesDir = resolve(projectPublicPath + PUBLIC_FILES.locales)
+    const sourceLocalesDir = resolve(sourcePublicPath + PUBLIC_FILES.locales)
     if (existsSync(sourceLocalesDir)) {
       const copyLocalesRecursive = (sourceDir: string, destDir: string) => {
         const items = readdirSync(sourceDir, { withFileTypes: true })
@@ -532,7 +530,7 @@ export const initRootFiles = (dictionary: string, newDestFolder: string): InitRe
         dest: resolve(baseDestPath + ROOT_FILES.nextConfig),
       },
       {
-        source: resolve(destFolder + ROOT_FILES.nextI18nConfig),
+        source: resolve(path.join(sourceFolder, '..', ROOT_FILES.nextI18nConfig)),
         dest: resolve(baseDestPath + ROOT_FILES.nextI18nConfig),
       },
       {
