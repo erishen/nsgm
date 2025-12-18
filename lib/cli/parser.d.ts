@@ -1,4 +1,4 @@
-import { CommandOptions, ParsedArgs } from './types';
+import { CommandOptions, ParsedArgs } from "./types";
 /**
  * 改进的命令行参数解析器
  */

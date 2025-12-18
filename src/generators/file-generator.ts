@@ -1,119 +1,119 @@
-import { I18nGenerator } from './i18n-generator'
-import * as fs from 'fs'
-import * as path from 'path'
+import { I18nGenerator } from "./i18n-generator";
+import * as fs from "fs";
+import * as path from "path";
 
 /**
  * 文件生成器
  * 负责将生成的内容写入到文件系统
  */
 export class FileGenerator {
-  private projectPath: string
+  private projectPath: string;
 
-  constructor(projectPath = '.') {
-    this.projectPath = projectPath
+  constructor(projectPath = ".") {
+    this.projectPath = projectPath;
   }
 
   /**
    * 生成多语言文件
    */
   generateI18nFiles(controller: string, action: string, fields: any[]): void {
-    const i18nGenerator = new I18nGenerator(controller, action, fields)
+    const i18nGenerator = new I18nGenerator(controller, action, fields);
 
     // 定义支持的语言
     const locales = [
-      { code: 'zh-CN', generator: () => i18nGenerator.generateChineseTranslation() },
-      { code: 'en-US', generator: () => i18nGenerator.generateEnglishTranslation() },
-      { code: 'ja-JP', generator: () => i18nGenerator.generateJapaneseTranslation() },
-    ]
+      { code: "zh-CN", generator: () => i18nGenerator.generateChineseTranslation() },
+      { code: "en-US", generator: () => i18nGenerator.generateEnglishTranslation() },
+      { code: "ja-JP", generator: () => i18nGenerator.generateJapaneseTranslation() },
+    ];
 
     // 为每种语言生成文件
     locales.forEach((locale) => {
-      const localeDir = path.join(this.projectPath, 'public', 'locales', locale.code)
-      const filePath = path.join(localeDir, `${controller}.json`)
+      const localeDir = path.join(this.projectPath, "public", "locales", locale.code);
+      const filePath = path.join(localeDir, `${controller}.json`);
 
       // 确保目录存在
-      this.ensureDirectoryExists(localeDir)
+      this.ensureDirectoryExists(localeDir);
 
       // 生成内容
-      const content = locale.generator()
+      const content = locale.generator();
 
       // 写入文件
-      fs.writeFileSync(filePath, content, 'utf8')
+      fs.writeFileSync(filePath, content, "utf8");
 
-      console.log(`✅ 生成多语言文件: ${filePath}`)
-    })
+      console.log(`✅ 生成多语言文件: ${filePath}`);
+    });
   }
 
   /**
    * 生成页面组件文件
    */
   generatePageFile(controller: string, action: string, _fields: any[], content: string): void {
-    const pageDir = path.join(this.projectPath, 'pages', controller)
-    const filePath = path.join(pageDir, `${action}.tsx`)
+    const pageDir = path.join(this.projectPath, "pages", controller);
+    const filePath = path.join(pageDir, `${action}.tsx`);
 
     // 确保目录存在
-    this.ensureDirectoryExists(pageDir)
+    this.ensureDirectoryExists(pageDir);
 
     // 写入文件
-    fs.writeFileSync(filePath, content, 'utf8')
+    fs.writeFileSync(filePath, content, "utf8");
 
-    console.log(`✅ 生成页面文件: ${filePath}`)
+    console.log(`✅ 生成页面文件: ${filePath}`);
   }
 
   /**
    * 生成样式文件
    */
   generateStyleFile(controller: string, action: string): void {
-    const styleDir = path.join(this.projectPath, 'client', 'styled', controller)
-    const filePath = path.join(styleDir, `${action}.ts`)
+    const styleDir = path.join(this.projectPath, "client", "styled", controller);
+    const filePath = path.join(styleDir, `${action}.ts`);
 
     // 确保目录存在
-    this.ensureDirectoryExists(styleDir)
+    this.ensureDirectoryExists(styleDir);
 
-    const content = this.generateStyledComponentsContent(controller, action)
+    const content = this.generateStyledComponentsContent(controller, action);
 
     // 写入文件
-    fs.writeFileSync(filePath, content, 'utf8')
+    fs.writeFileSync(filePath, content, "utf8");
 
-    console.log(`✅ 生成样式文件: ${filePath}`)
+    console.log(`✅ 生成样式文件: ${filePath}`);
   }
 
   /**
    * 生成Redux相关文件
    */
   generateReduxFiles(controller: string, action: string, _fields: any[]): void {
-    const reduxDir = path.join(this.projectPath, 'client', 'redux', controller, action)
+    const reduxDir = path.join(this.projectPath, "client", "redux", controller, action);
 
     // 确保目录存在
-    this.ensureDirectoryExists(reduxDir)
+    this.ensureDirectoryExists(reduxDir);
 
     // 生成actions文件
-    const actionsContent = this.generateActionsContent(controller, action)
-    fs.writeFileSync(path.join(reduxDir, 'actions.ts'), actionsContent, 'utf8')
+    const actionsContent = this.generateActionsContent(controller, action);
+    fs.writeFileSync(path.join(reduxDir, "actions.ts"), actionsContent, "utf8");
 
     // 生成reducer文件
-    const reducerContent = this.generateReducerContent(controller, action)
-    fs.writeFileSync(path.join(reduxDir, 'reducer.ts'), reducerContent, 'utf8')
+    const reducerContent = this.generateReducerContent(controller, action);
+    fs.writeFileSync(path.join(reduxDir, "reducer.ts"), reducerContent, "utf8");
 
-    console.log(`✅ 生成Redux文件: ${reduxDir}`)
+    console.log(`✅ 生成Redux文件: ${reduxDir}`);
   }
 
   /**
    * 生成服务文件
    */
   generateServiceFile(controller: string, action: string): void {
-    const serviceDir = path.join(this.projectPath, 'client', 'service', controller)
-    const filePath = path.join(serviceDir, `${action}.ts`)
+    const serviceDir = path.join(this.projectPath, "client", "service", controller);
+    const filePath = path.join(serviceDir, `${action}.ts`);
 
     // 确保目录存在
-    this.ensureDirectoryExists(serviceDir)
+    this.ensureDirectoryExists(serviceDir);
 
-    const content = this.generateServiceContent(controller, action)
+    const content = this.generateServiceContent(controller, action);
 
     // 写入文件
-    fs.writeFileSync(filePath, content, 'utf8')
+    fs.writeFileSync(filePath, content, "utf8");
 
-    console.log(`✅ 生成服务文件: ${filePath}`)
+    console.log(`✅ 生成服务文件: ${filePath}`);
   }
 
   /**
@@ -121,7 +121,7 @@ export class FileGenerator {
    */
   private ensureDirectoryExists(dirPath: string): void {
     if (!fs.existsSync(dirPath)) {
-      fs.mkdirSync(dirPath, { recursive: true })
+      fs.mkdirSync(dirPath, { recursive: true });
     }
   }
 
@@ -258,14 +258,14 @@ export const GlobalStyle = styled.div\`
     border-radius: 4px;
   }
 \`
-`
+`;
   }
 
   /**
    * 生成Actions内容
    */
   private generateActionsContent(controller: string, action: string): string {
-    const capitalizedController = controller.charAt(0).toUpperCase() + controller.slice(1)
+    const capitalizedController = controller.charAt(0).toUpperCase() + controller.slice(1);
 
     return `import { createAsyncThunk } from '@reduxjs/toolkit'
 import { get${capitalizedController}Service } from '@/service/${controller}/${action}'
@@ -317,15 +317,15 @@ export const batchDel${capitalizedController} = createAsyncThunk(
     return ids
   }
 )
-`
+`;
   }
 
   /**
    * 生成Reducer内容
    */
   private generateReducerContent(controller: string, action: string): string {
-    const capitalizedController = controller.charAt(0).toUpperCase() + controller.slice(1)
-    const capitalizedAction = action.charAt(0).toUpperCase() + action.slice(1)
+    const capitalizedController = controller.charAt(0).toUpperCase() + controller.slice(1);
+    const capitalizedAction = action.charAt(0).toUpperCase() + action.slice(1);
 
     return `import { createSlice } from '@reduxjs/toolkit'
 import {
@@ -398,14 +398,14 @@ const ${controller}${capitalizedAction}Slice = createSlice({
 })
 
 export default ${controller}${capitalizedAction}Slice.reducer
-`
+`;
   }
 
   /**
    * 生成Service内容
    */
   private generateServiceContent(controller: string, _action: string): string {
-    const capitalizedController = controller.charAt(0).toUpperCase() + controller.slice(1)
+    const capitalizedController = controller.charAt(0).toUpperCase() + controller.slice(1);
 
     return `import { myFetch } from '@/utils/fetch'
 
@@ -450,6 +450,6 @@ export const batchDelete${capitalizedController}Service = async (ids: number[]) 
     body: JSON.stringify({ ids })
   })
 }
-`
+`;
   }
 }

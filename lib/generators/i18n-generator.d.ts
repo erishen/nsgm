@@ -1,4 +1,4 @@
-import { BaseGenerator } from './base-generator';
+import { BaseGenerator } from "./base-generator";
 /**
  * 国际化文件生成器
  * 生成控制器对应的多语言文件

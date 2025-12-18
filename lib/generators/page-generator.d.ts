@@ -1,4 +1,4 @@
-import { BaseGenerator } from './base-generator';
+import { BaseGenerator } from "./base-generator";
 /**
  * 页面生成器
  * 基于现有的 pages/template/manage.tsx 模板生成页面组件

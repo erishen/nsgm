@@ -1,7 +1,7 @@
-import styled from 'styled-components'
-import { Layout, Menu, Breadcrumb } from 'antd'
+import styled from "styled-components";
+import { Layout, Menu, Breadcrumb } from "antd";
 
-const { Header, Content, Sider } = Layout
+const { Header, Content, Sider } = Layout;
 
 export const Container = styled.div`
   .main-layout {
@@ -9,14 +9,14 @@ export const Container = styled.div`
     display: flex;
     flex-direction: column;
   }
-`
+`;
 
 export const FlexLayout = styled(Layout)`
   display: flex;
   flex: 1;
   margin-top: 64px;
   position: relative;
-`
+`;
 
 export const StyledSider = styled(Sider)`
   display: flex;
@@ -32,7 +32,7 @@ export const StyledSider = styled(Sider)`
   border-right: 1px solid #e8e9ea;
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     right: 0;
@@ -46,13 +46,13 @@ export const StyledSider = styled(Sider)`
       transparent 100%
     );
   }
-`
+`;
 
 export const SideMenu = styled(Menu)`
   height: 100%;
   border-right: 0;
   padding: 8px 0;
-`
+`;
 
 export const ContentLayout = styled(Layout)<{ collapsed?: boolean }>`
   display: flex;
@@ -61,11 +61,11 @@ export const ContentLayout = styled(Layout)<{ collapsed?: boolean }>`
   background: linear-gradient(135deg, #f5f7fa 0%, #f0f2f5 100%);
   position: relative;
   z-index: 1;
-  margin-left: ${(props) => (props.collapsed ? '80px' : '228px')};
+  margin-left: ${(props) => (props.collapsed ? "80px" : "228px")};
   padding: 0 16px 24px;
   min-height: 100vh;
   transition: margin-left 0.2s ease;
-`
+`;
 
 export const StyledHeader = styled(Header)`
   display: flex;
@@ -88,7 +88,7 @@ export const StyledHeader = styled(Header)`
     cursor: pointer;
 
     &::before {
-      content: '';
+      content: "";
       position: absolute;
       left: -12px;
       top: 50%;
@@ -120,7 +120,7 @@ export const StyledHeader = styled(Header)`
       font-size: 28px;
       font-weight: 800;
       color: #fff;
-      font-family: 'Arial', 'Microsoft YaHei', sans-serif;
+      font-family: "Arial", "Microsoft YaHei", sans-serif;
       letter-spacing: 3px;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
@@ -160,7 +160,7 @@ export const StyledHeader = styled(Header)`
       }
     }
   }
-`
+`;
 
 export const StyledBreadcrumb = styled(Breadcrumb)`
   margin: 20px 0;
@@ -186,7 +186,7 @@ export const StyledBreadcrumb = styled(Breadcrumb)`
     color: #1890ff;
     font-weight: 600;
   }
-`
+`;
 
 export const StyledContent = styled(Content)`
   margin: 0;
@@ -206,7 +206,7 @@ export const StyledContent = styled(Content)`
   flex: 1;
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -217,7 +217,7 @@ export const StyledContent = styled(Content)`
   }
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     top: -50%;
     left: -50%;
@@ -259,4 +259,4 @@ export const StyledContent = styled(Content)`
       border-radius: 10px 10px 0 0;
     }
   }
-`
+`;

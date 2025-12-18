@@ -1,4 +1,4 @@
-import { BaseGenerator } from './base-generator';
+import { BaseGenerator } from "./base-generator";
 /**
  * 客户端服务生成器
  */

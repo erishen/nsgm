@@ -1,7 +1,7 @@
 /**
  * CLI 类型定义
  */
-export * from './types/project';
+export * from "./types/project";
 export interface CommandOptions {
     dictionary?: string;
     controller?: string;
@@ -23,7 +23,7 @@ export interface CommandOption {
     description: string;
     required?: boolean;
     default?: any;
-    type?: 'string' | 'number' | 'boolean';
+    type?: "string" | "number" | "boolean";
 }
 export interface ParsedArgs {
     command: string;

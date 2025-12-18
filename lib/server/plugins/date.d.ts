@@ -1,4 +1,4 @@
-import { GraphQLScalarType } from 'graphql';
+import { GraphQLScalarType } from "graphql";
 declare const _default: {
     Date: GraphQLScalarType<number | null, string>;
 };

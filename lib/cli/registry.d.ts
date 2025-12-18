@@ -1,4 +1,4 @@
-import { Command } from './types';
+import { Command } from "./types";
 /**
  * CLI 命令注册表
  */

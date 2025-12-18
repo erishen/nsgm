@@ -1,10 +1,10 @@
-import { Request, Response, NextFunction } from 'express';
-declare module 'express-session' {
+import { Request, Response, NextFunction } from "express";
+declare module "express-session" {
     interface SessionData {
         _csrf?: string;
     }
 }
-declare module 'express-serve-static-core' {
+declare module "express-serve-static-core" {
     interface Request {
         csrfToken?: () => string;
     }

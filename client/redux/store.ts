@@ -1,19 +1,19 @@
-import { useMemo } from 'react'
-import { combineReducers } from 'redux'
-import { configureStore, type EnhancedStore } from '@reduxjs/toolkit'
-import reducers from './reducers'
+import { useMemo } from "react";
+import { combineReducers } from "redux";
+import { configureStore, type EnhancedStore } from "@reduxjs/toolkit";
+import reducers from "./reducers";
 
-let store: EnhancedStore | undefined
+let store: EnhancedStore | undefined;
 
-const reducersKeysLen = Object.keys(reducers).length
+const reducersKeysLen = Object.keys(reducers).length;
 
-let combineReducer: any = () => ({})
+let combineReducer: any = () => ({});
 
 if (reducersKeysLen > 0) {
-  combineReducer = combineReducers({ ...reducers })
+  combineReducer = combineReducers({ ...reducers });
 }
 
-export type RootState = ReturnType<typeof combineReducer>
+export type RootState = ReturnType<typeof combineReducer>;
 
 // 创建一个临时 store 实例来获取正确的 dispatch 类型
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -22,46 +22,46 @@ const tempStore = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
+        ignoredActions: ["persist/PERSIST", "persist/REHYDRATE"],
       },
     }),
-})
+});
 
-export type AppDispatch = typeof tempStore.dispatch
+export type AppDispatch = typeof tempStore.dispatch;
 
 function initStore(initialState?: any): EnhancedStore {
   return configureStore({
     reducer: combineReducer,
     preloadedState: initialState,
-    devTools: process.env.NODE_ENV !== 'production',
+    devTools: process.env.NODE_ENV !== "production",
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
         serializableCheck: {
-          ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
+          ignoredActions: ["persist/PERSIST", "persist/REHYDRATE"],
         },
       }),
-  })
+  });
 }
 
 export const initializeStore = (preloadedState?: any): EnhancedStore => {
-  let _store = store ?? initStore(preloadedState)
+  let _store = store ?? initStore(preloadedState);
 
   if (preloadedState && store) {
     _store = initStore({
       ...store.getState(),
       ...preloadedState,
-    })
-    store = undefined
+    });
+    store = undefined;
   }
 
-  if (typeof window === 'undefined') return _store
+  if (typeof window === "undefined") return _store;
 
-  if (!store) store = _store
+  if (!store) store = _store;
 
-  return _store
-}
+  return _store;
+};
 
 export function useStore(initialState?: any): EnhancedStore {
-  const store = useMemo(() => initializeStore(initialState), [initialState])
-  return store
+  const store = useMemo(() => initializeStore(initialState), [initialState]);
+  return store;
 }

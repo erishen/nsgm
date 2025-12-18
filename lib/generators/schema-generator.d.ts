@@ -1,4 +1,4 @@
-import { BaseGenerator } from './base-generator';
+import { BaseGenerator } from "./base-generator";
 /**
  * GraphQL Schema生成器
  */

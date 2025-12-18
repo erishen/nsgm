@@ -45,7 +45,7 @@ export declare class Console {
     /**
      * 简单的加载动画
      */
-    static spinner(text: string, color?: 'red' | 'green' | 'yellow' | 'blue' | 'magenta' | 'cyan' | 'white'): {
+    static spinner(text: string, color?: "red" | "green" | "yellow" | "blue" | "magenta" | "cyan" | "white"): {
         start(): void;
         stop(): void;
         succeed(message?: string): void;
@@ -54,7 +54,7 @@ export declare class Console {
     /**
      * 带边框的消息
      */
-    static box(message: string, type?: 'success' | 'error' | 'warning' | 'info'): void;
+    static box(message: string, type?: "success" | "error" | "warning" | "info"): void;
     /**
      * 进度条（简单版本）
      */

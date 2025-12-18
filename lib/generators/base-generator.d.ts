@@ -1,4 +1,4 @@
-import { FieldDefinition } from '../cli/utils/prompt';
+import { FieldDefinition } from "../cli/utils/prompt";
 /**
  * 基础生成器抽象类
  * 定义所有代码生成器的通用接口

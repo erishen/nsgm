@@ -1,6 +1,6 @@
-import path, { resolve } from 'path'
-import shell from 'shelljs'
-import fs from 'fs'
+import path, { resolve } from "path";
+import shell from "shelljs";
+import fs from "fs";
 import {
   sourceFolder,
   destFolder,
@@ -23,15 +23,15 @@ import {
   mysqlPassword,
   mysqlHost,
   mysqlPort,
-} from './constants'
-import { firstUpperCase, mkdirSync, copyFileSync, handleReplace, replaceInFileAll } from './utils'
-import { FieldDefinition } from './cli/utils/prompt'
-import { SQLGenerator } from './generators/sql-generator'
-import { SchemaGenerator } from './generators/schema-generator'
-import { ResolverGenerator } from './generators/resolver-generator'
-import { ServiceGenerator } from './generators/service-generator'
-import { PageGenerator } from './generators/page-generator'
-import { FileGenerator } from './generators/file-generator'
+} from "./constants";
+import { firstUpperCase, mkdirSync, copyFileSync, handleReplace, replaceInFileAll } from "./utils";
+import { FieldDefinition } from "./cli/utils/prompt";
+import { SQLGenerator } from "./generators/sql-generator";
+import { SchemaGenerator } from "./generators/schema-generator";
+import { ResolverGenerator } from "./generators/resolver-generator";
+import { ServiceGenerator } from "./generators/service-generator";
+import { PageGenerator } from "./generators/page-generator";
+import { FileGenerator } from "./generators/file-generator";
 
 /**
  * 文件生成器 - 重构后的清晰架构
@@ -47,35 +47,35 @@ import { FileGenerator } from './generators/file-generator'
 
 // 类型定义
 interface ReplaceRule {
-  regex: string
-  replacement: string
-  paths: string[]
+  regex: string;
+  replacement: string;
+  paths: string[];
 }
 
 // 常量定义
 const TEMPLATE_FILES = {
-  reduxActions: 'redux/template/manage/actions.ts',
-  reduxReducers: 'redux/template/manage/reducers.ts',
-  reduxTypes: 'redux/template/manage/types.ts',
-  styled: 'styled/template/manage.ts',
-  serverApi: 'apis/template.js',
-} as const
+  reduxActions: "redux/template/manage/actions.ts",
+  reduxReducers: "redux/template/manage/reducers.ts",
+  reduxTypes: "redux/template/manage/types.ts",
+  styled: "styled/template/manage.ts",
+  serverApi: "apis/template.js",
+} as const;
 
-const MYSQL_TIMEOUT = 1000
+const MYSQL_TIMEOUT = 1000;
 
 // 辅助函数
 const createDirectoryStructure = (basePaths: string[]): void => {
-  basePaths.forEach((path) => mkdirSync(path))
-}
+  basePaths.forEach((path) => mkdirSync(path));
+};
 
-const generateFilePaths = (controller: string, action: string, dictionary = '.') => {
+const generateFilePaths = (controller: string, action: string, dictionary = ".") => {
   // 根据 dictionary 确定目标路径
   const getDestPath = (basePath: string) => {
-    if (!dictionary || dictionary === '.') {
-      return basePath
+    if (!dictionary || dictionary === ".") {
+      return basePath;
     }
-    return path.join(destFolder, dictionary, basePath.replace(`${destFolder}/`, ''))
-  }
+    return path.join(destFolder, dictionary, basePath.replace(`${destFolder}/`, ""));
+  };
 
   const paths = {
     // Pages - 动态生成，不需要源文件
@@ -115,19 +115,19 @@ const generateFilePaths = (controller: string, action: string, dictionary = '.')
 
     // Configuration files
     destClientReduxReducersAllPath:
-      !dictionary || dictionary === '.'
+      !dictionary || dictionary === "."
         ? destClientReduxReducersAllPath
         : resolve(`${getDestPath(destClientReduxPath)}/reducers.ts`),
     destServerRestPath:
-      !dictionary || dictionary === '.' ? destServerRestPath : resolve(`${getDestPath(destServerPath)}/rest.js`),
+      !dictionary || dictionary === "." ? destServerRestPath : resolve(`${getDestPath(destServerPath)}/rest.js`),
     destClientUtilsMenuPath:
-      !dictionary || dictionary === '.'
+      !dictionary || dictionary === "."
         ? destClientUtilsMenuPath
         : resolve(`${getDestPath(destClientPath)}/utils/menu.tsx`),
-  }
+  };
 
-  return paths
-}
+  return paths;
+};
 
 const performBasicReplacements = (
   controller: string,
@@ -136,7 +136,7 @@ const performBasicReplacements = (
 ): void => {
   const replacements: ReplaceRule[] = [
     {
-      regex: 'template',
+      regex: "template",
       replacement: controller,
       paths: [
         paths.destPagesAction,
@@ -149,7 +149,7 @@ const performBasicReplacements = (
       ],
     },
     {
-      regex: 'Template',
+      regex: "Template",
       replacement: firstUpperCase(controller),
       paths: [
         paths.destPagesAction,
@@ -160,26 +160,26 @@ const performBasicReplacements = (
       ],
     },
     {
-      regex: 'TEMPLATE',
+      regex: "TEMPLATE",
       replacement: controller.toUpperCase(),
       paths: [paths.destClientReduxActions, paths.destClientReduxReducers, paths.destClientReduxTypes],
     },
     {
-      regex: 'manage',
+      regex: "manage",
       replacement: action,
       paths: [paths.destPagesAction, paths.destClientReduxActions],
     },
     {
-      regex: 'Manage',
+      regex: "Manage",
       replacement: firstUpperCase(action),
       paths: [paths.destPagesAction, paths.destClientReduxReducers],
     },
-  ]
+  ];
 
   replacements.forEach((rule) => {
-    handleReplace(rule)
-  })
-}
+    handleReplace(rule);
+  });
+};
 
 const performAdvancedReplacements = (
   controller: string,
@@ -218,26 +218,26 @@ const performAdvancedReplacements = (
         }'\n      }\n    ]\n    // ${controller}_${action}_end\n  },\n  /*{\n    key: (++key).toString(),`,
       files: [paths.destClientUtilsMenuPath],
     },
-  ]
+  ];
 
   if (isLocal) {
     optionsArr.push({
       from: /'nsgm-cli'\)/,
       to: "'../../../index')",
       files: [paths.destServerModulesResolver],
-    })
+    });
   }
 
   // 清理之前的配置
-  shell.sed('-i', /.*${controller}${firstUpperCase(action)}Reducer.*/, '', paths.destClientReduxReducersAllPath)
-  shell.sed('-i', /.*${controller}.*/, '', paths.destServerRestPath)
+  shell.sed("-i", /.*${controller}${firstUpperCase(action)}Reducer.*/, "", paths.destClientReduxReducersAllPath);
+  shell.sed("-i", /.*${controller}.*/, "", paths.destServerRestPath);
 
   setTimeout(() => {
     replaceInFileAll(optionsArr, 0, () => {
-      console.log('special replace dest files finished')
-    })
-  }, MYSQL_TIMEOUT)
-}
+      console.log("special replace dest files finished");
+    });
+  }, MYSQL_TIMEOUT);
+};
 
 const generateDynamicFiles = (
   controller: string,
@@ -247,26 +247,26 @@ const generateDynamicFiles = (
   dictionary?: string
 ): void => {
   // 创建生成器实例
-  const sqlGenerator = new SQLGenerator(controller, action, fields)
-  const schemaGenerator = new SchemaGenerator(controller, action, fields)
-  const resolverGenerator = new ResolverGenerator(controller, action, fields)
-  const serviceGenerator = new ServiceGenerator(controller, action, fields)
-  const pageGenerator = new PageGenerator(controller, action, fields)
+  const sqlGenerator = new SQLGenerator(controller, action, fields);
+  const schemaGenerator = new SchemaGenerator(controller, action, fields);
+  const resolverGenerator = new ResolverGenerator(controller, action, fields);
+  const serviceGenerator = new ServiceGenerator(controller, action, fields);
+  const pageGenerator = new PageGenerator(controller, action, fields);
 
   // 根据 dictionary 确定文件生成器的项目路径
-  const projectPath = !dictionary || dictionary === '.' ? '.' : path.join(destFolder, dictionary)
-  const fileGenerator = new FileGenerator(projectPath)
+  const projectPath = !dictionary || dictionary === "." ? "." : path.join(destFolder, dictionary);
+  const fileGenerator = new FileGenerator(projectPath);
 
   // 生成并写入文件
-  fs.writeFileSync(paths.destServerSqlController, sqlGenerator.generate())
-  fs.writeFileSync(paths.destServerModulesSchema, schemaGenerator.generate())
-  fs.writeFileSync(paths.destServerModulesResolver, resolverGenerator.generate())
-  fs.writeFileSync(paths.destClientAction, serviceGenerator.generate())
-  fs.writeFileSync(paths.destPagesAction, pageGenerator.generate())
+  fs.writeFileSync(paths.destServerSqlController, sqlGenerator.generate());
+  fs.writeFileSync(paths.destServerModulesSchema, schemaGenerator.generate());
+  fs.writeFileSync(paths.destServerModulesResolver, resolverGenerator.generate());
+  fs.writeFileSync(paths.destClientAction, serviceGenerator.generate());
+  fs.writeFileSync(paths.destPagesAction, pageGenerator.generate());
 
   // 生成多语言文件
-  fileGenerator.generateI18nFiles(controller, action, fields)
-}
+  fileGenerator.generateI18nFiles(controller, action, fields);
+};
 
 /**
  * 复制并自定义模板文件
@@ -282,12 +282,12 @@ const copyAndCustomizeTemplateFiles = (
     [paths.sourceClientReduxTypes, paths.destClientReduxTypes],
     [paths.sourceClientStyledAction, paths.destClientStyledAction],
     [paths.sourceServerApisController, paths.destServerApisController],
-  ]
+  ];
 
   fileMappings.forEach(([source, dest]) => {
-    copyFileSync(source, dest)
-  })
-}
+    copyFileSync(source, dest);
+  });
+};
 
 /**
  * 设置动态数据库
@@ -298,15 +298,15 @@ const setupDynamicDatabase = (
   _fields: FieldDefinition[]
 ): void => {
   // SQL 文件已经在 generateDynamicFiles 中生成，这里直接执行
-  const mysqlCommand = `mysql -u${mysqlUser} -p${mysqlPassword} -h${mysqlHost} -P${mysqlPort} < ${paths.destServerSqlController}`
+  const mysqlCommand = `mysql -u${mysqlUser} -p${mysqlPassword} -h${mysqlHost} -P${mysqlPort} < ${paths.destServerSqlController}`;
 
   try {
-    shell.exec(mysqlCommand)
-    console.log('Dynamic database setup completed')
+    shell.exec(mysqlCommand);
+    console.log("Dynamic database setup completed");
   } catch (error) {
-    console.error('Failed to execute dynamic SQL script:', error)
+    console.error("Failed to execute dynamic SQL script:", error);
   }
-}
+};
 
 /**
  * 创建控制器和动作相关的文件
@@ -316,38 +316,38 @@ const setupDynamicDatabase = (
  * @param fields 字段定义数组（可选）
  */
 export const createFiles = (controller: string, action: string, dictionary?: string, fields?: FieldDefinition[]) => {
-  console.log('createFiles', sourceFolder, destFolder, isLocal, controller, action, dictionary)
+  console.log("createFiles", sourceFolder, destFolder, isLocal, controller, action, dictionary);
 
   try {
     // 如果没有提供字段定义，使用默认字段
     const defaultFields: FieldDefinition[] = [
-      { name: 'id', type: 'integer', required: true, comment: '主键', isPrimaryKey: true, isAutoIncrement: true },
+      { name: "id", type: "integer", required: true, comment: "主键", isPrimaryKey: true, isAutoIncrement: true },
       {
-        name: 'name',
-        type: 'varchar',
+        name: "name",
+        type: "varchar",
         length: 100,
         required: true,
-        comment: '名称',
+        comment: "名称",
         showInList: true,
         showInForm: true,
         searchable: true,
       },
-      { name: 'create_date', type: 'timestamp', required: true, comment: '创建时间', isSystemField: true },
-      { name: 'update_date', type: 'timestamp', required: true, comment: '更新时间', isSystemField: true },
-    ]
+      { name: "create_date", type: "timestamp", required: true, comment: "创建时间", isSystemField: true },
+      { name: "update_date", type: "timestamp", required: true, comment: "更新时间", isSystemField: true },
+    ];
 
-    const finalFields = fields && fields.length > 0 ? fields : defaultFields
+    const finalFields = fields && fields.length > 0 ? fields : defaultFields;
 
     // 1. 生成文件路径
-    const paths = generateFilePaths(controller, action, dictionary)
+    const paths = generateFilePaths(controller, action, dictionary);
 
     // 2. 根据 dictionary 确定基础路径
     const getDestPath = (basePath: string) => {
-      if (!dictionary || dictionary === '.') {
-        return basePath
+      if (!dictionary || dictionary === ".") {
+        return basePath;
       }
-      return path.join(destFolder, dictionary, basePath.replace(`${destFolder}/`, ''))
-    }
+      return path.join(destFolder, dictionary, basePath.replace(`${destFolder}/`, ""));
+    };
 
     // 3. 创建目录结构（包括基础目录和特定目录）
     const basePaths = [
@@ -366,33 +366,33 @@ export const createFiles = (controller: string, action: string, dictionary?: str
       paths.destClientServiceController,
       paths.destClientStyledController,
       paths.destServerModulesController,
-    ]
+    ];
 
-    createDirectoryStructure(basePaths)
-    console.log('Directory structure created')
+    createDirectoryStructure(basePaths);
+    console.log("Directory structure created");
 
     // 4. 生成动态文件内容
-    generateDynamicFiles(controller, action, paths, finalFields, dictionary)
-    console.log('Dynamic files generated')
+    generateDynamicFiles(controller, action, paths, finalFields, dictionary);
+    console.log("Dynamic files generated");
 
     // 5. 复制并自定义模板文件
-    copyAndCustomizeTemplateFiles(paths, finalFields)
-    console.log('Template files processed')
+    copyAndCustomizeTemplateFiles(paths, finalFields);
+    console.log("Template files processed");
 
     // 6. 执行基本替换
-    performBasicReplacements(controller, action, paths)
-    console.log('Basic replacements completed')
+    performBasicReplacements(controller, action, paths);
+    console.log("Basic replacements completed");
 
     // 7. 执行高级替换
-    performAdvancedReplacements(controller, action, paths)
-    console.log('Advanced replacements initiated')
+    performAdvancedReplacements(controller, action, paths);
+    console.log("Advanced replacements initiated");
 
     // 8. 设置数据库
-    setupDynamicDatabase(controller, paths, finalFields)
+    setupDynamicDatabase(controller, paths, finalFields);
 
-    console.log('createFiles completed successfully')
+    console.log("createFiles completed successfully");
   } catch (error) {
-    console.error('Failed to create files:', error)
-    throw error
+    console.error("Failed to create files:", error);
+    throw error;
   }
-}
+};

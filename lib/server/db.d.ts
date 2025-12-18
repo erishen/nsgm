@@ -1,4 +1,4 @@
-import mysql from 'mysql2';
+import mysql from "mysql2";
 declare const _default: {
     getMysqlConfig: () => null;
     getConnection: () => Promise<unknown>;

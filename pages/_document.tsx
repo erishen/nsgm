@@ -1,10 +1,10 @@
-import Document, { Html, Head, Main, NextScript, DocumentContext } from 'next/document'
-import React from 'react'
-import { ServerStyleSheet } from 'styled-components'
+import Document, { Html, Head, Main, NextScript, DocumentContext } from "next/document";
+import React from "react";
+import { ServerStyleSheet } from "styled-components";
 
 const MyDocument = (props) => {
   // 从 props 中获取语言信息，如果没有则默认为 zh-CN
-  const locale = props.locale || 'zh-CN'
+  const locale = props.locale || "zh-CN";
 
   return (
     <Html lang={locale}>
@@ -86,31 +86,31 @@ const MyDocument = (props) => {
         <NextScript />
       </body>
     </Html>
-  )
-}
+  );
+};
 
 // MyDocument.renderDocument = Document.renderDocument
 
 MyDocument.getInitialProps = async (ctx: DocumentContext) => {
-  const sheet = new ServerStyleSheet()
-  const originalRenderPage = ctx.renderPage
+  const sheet = new ServerStyleSheet();
+  const originalRenderPage = ctx.renderPage;
 
   try {
     ctx.renderPage = () =>
       originalRenderPage({
         enhanceApp: (App) => (props) => sheet.collectStyles(<App {...props} />),
-      })
+      });
 
-    const initialProps = await Document?.getInitialProps(ctx)
+    const initialProps = await Document?.getInitialProps(ctx);
 
     return {
       ...initialProps,
-      locale: ctx.locale || 'zh-CN',
+      locale: ctx.locale || "zh-CN",
       styles: [initialProps.styles, sheet.getStyleElement()],
-    }
+    };
   } finally {
-    sheet.seal()
+    sheet.seal();
   }
-}
+};
 
-export default MyDocument
+export default MyDocument;

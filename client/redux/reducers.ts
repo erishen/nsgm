@@ -1,5 +1,5 @@
-import { templateManageReducer } from './template/manage/reducers'
+import { templateManageReducer } from "./template/manage/reducers";
 
 export default {
   templateManage: templateManageReducer,
-}
+};

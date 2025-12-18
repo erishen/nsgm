@@ -1,4 +1,4 @@
-import styled, { createGlobalStyle } from 'styled-components'
+import styled, { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle`
   html,body,#__next {
@@ -6,15 +6,15 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    background-color: ${(props: any) => (props.whiteColor ? 'white' : 'black')};
+    background-color: ${(props: any) => (props.whiteColor ? "white" : "black")};
     font-family: Helvetica;
     margin: 0;
   }
-`
+`;
 
 export const Container = styled.div`
   margin: 20px;
-`
+`;
 
 export const LoginContainer = styled.div`
   margin: auto;
@@ -42,7 +42,7 @@ export const LoginContainer = styled.div`
     height: 40px;
     border-radius: 4px;
   }
-`
+`;
 
 export const Loading = styled.div`
   display: flex;
@@ -51,4 +51,4 @@ export const Loading = styled.div`
   justify-content: center;
   align-items: center;
   margin-top: 100px;
-`
+`;

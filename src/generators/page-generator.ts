@@ -1,4 +1,4 @@
-import { BaseGenerator } from './base-generator'
+import { BaseGenerator } from "./base-generator";
 
 /**
  * 页面生成器
@@ -6,22 +6,22 @@ import { BaseGenerator } from './base-generator'
  */
 export class PageGenerator extends BaseGenerator {
   generate(): string {
-    const capitalizedController = this.getCapitalizedController()
-    const capitalizedAction = this.getCapitalizedAction()
+    const capitalizedController = this.getCapitalizedController();
+    const capitalizedAction = this.getCapitalizedAction();
 
     // 获取各种字段类型
-    const listFields = this.getDisplayFields()
-    const formFields = this.getFormFields()
-    const searchFields = this.getSearchableFields()
+    const listFields = this.getDisplayFields();
+    const formFields = this.getFormFields();
+    const searchFields = this.getSearchableFields();
 
     // 生成表格列定义
-    const tableColumns = this.generateTableColumns(listFields)
+    const tableColumns = this.generateTableColumns(listFields);
 
     // 生成表单字段
-    const modalFields = this.generateModalFields(formFields)
+    const modalFields = this.generateModalFields(formFields);
 
     // 生成搜索字段（取第一个可搜索字段作为主要搜索）
-    const mainSearchField = searchFields.length > 0 ? searchFields[0] : null
+    const mainSearchField = searchFields.length > 0 ? searchFields[0] : null;
 
     return `import React, { useState, useEffect } from 'react'
 import { ConfigProvider, Modal, Space, Upload, message } from 'antd'
@@ -68,7 +68,7 @@ const Page = ({ ${this.controller} }) => {
   const dispatch = useDispatch<AppDispatch>()
   const [isModalVisiable, setIsModalVisible] = useState(false)
   const [modalId, setModalId] = useState(0)
-${this.generateModalStates()}${mainSearchField ? `\n  const [search${mainSearchField.name.charAt(0).toUpperCase() + mainSearchField.name.slice(1)}, setSearch${mainSearchField.name.charAt(0).toUpperCase() + mainSearchField.name.slice(1)}] = useState('')` : ''}
+${this.generateModalStates()}${mainSearchField ? `\n  const [search${mainSearchField.name.charAt(0).toUpperCase() + mainSearchField.name.slice(1)}, setSearch${mainSearchField.name.charAt(0).toUpperCase() + mainSearchField.name.slice(1)}] = useState('')` : ""}
   const [batchDelIds, setBatchDelIds] = useState([])
 
   const keyTitles = {
@@ -196,7 +196,7 @@ ${this.generateClientValidation()}
     ${
       mainSearchField
         ? `const searchData = { ${mainSearchField.name}: handleXSS(search${mainSearchField.name.charAt(0).toUpperCase() + mainSearchField.name.slice(1)}) }`
-        : 'const searchData = {}'
+        : "const searchData = {}"
     }
     dispatch(search${capitalizedController}(0, pageSize, searchData))
   }
@@ -304,7 +304,7 @@ ${this.generateExcelColumns()}
                 onChange={(e) => setSearch${mainSearchField.name.charAt(0).toUpperCase() + mainSearchField.name.slice(1)}(e.target.value)}
                 onPressEnter={doSearch}
               />`
-                  : ''
+                  : ""
               }
               <StyledButton type="primary" onClick={doSearch} $primary>
                 <IconWrapper className="fa fa-search"></IconWrapper>
@@ -345,7 +345,7 @@ ${this.generateExcelColumns()}
               ${
                 mainSearchField
                   ? `const searchData = { ${mainSearchField.name}: handleXSS(search${mainSearchField.name.charAt(0).toUpperCase() + mainSearchField.name.slice(1)}) }`
-                  : 'const searchData = {}'
+                  : "const searchData = {}"
               }
               dispatch(search${capitalizedController}(page - 1, pageSize, searchData))
             },
@@ -399,7 +399,7 @@ export async function getServerSideProps(context) {
   }
 }
 
-export default Page`
+export default Page`;
   }
 
   /**
@@ -408,9 +408,9 @@ export default Page`
   private generateTranslationKeyTitles(): string {
     return this.getFormFields()
       .map((field) => {
-        return `    ${field.name}: t('${this.controller}:${this.controller}.fields.${field.name}')`
+        return `    ${field.name}: t('${this.controller}:${this.controller}.fields.${field.name}')`;
       })
-      .join(',\n')
+      .join(",\n");
   }
 
   /**
@@ -419,18 +419,18 @@ export default Page`
   private generateModalStates(): string {
     return this.getFormFields()
       .map((field) => {
-        const capitalizedName = field.name.charAt(0).toUpperCase() + field.name.slice(1)
-        return `  const [modal${capitalizedName}, setModal${capitalizedName}] = useState('')`
+        const capitalizedName = field.name.charAt(0).toUpperCase() + field.name.slice(1);
+        return `  const [modal${capitalizedName}, setModal${capitalizedName}] = useState('')`;
       })
-      .join('\n')
+      .join("\n");
   }
 
   /**
    * 生成记录解构
    */
   private generateRecordDestructuring(): string {
-    const fields = this.getFormFields().map((field) => field.name)
-    return fields.length > 0 ? `, ${fields.join(', ')}` : ''
+    const fields = this.getFormFields().map((field) => field.name);
+    return fields.length > 0 ? `, ${fields.join(", ")}` : "";
   }
 
   /**
@@ -439,10 +439,10 @@ export default Page`
   private generateModalResetStates(): string {
     return this.getFormFields()
       .map((field) => {
-        const capitalizedName = field.name.charAt(0).toUpperCase() + field.name.slice(1)
-        return `    setModal${capitalizedName}('')`
+        const capitalizedName = field.name.charAt(0).toUpperCase() + field.name.slice(1);
+        return `    setModal${capitalizedName}('')`;
       })
-      .join('\n')
+      .join("\n");
   }
 
   /**
@@ -451,10 +451,10 @@ export default Page`
   private generateModalSetStates(): string {
     return this.getFormFields()
       .map((field) => {
-        const capitalizedName = field.name.charAt(0).toUpperCase() + field.name.slice(1)
-        return `    setModal${capitalizedName}(${field.name})`
+        const capitalizedName = field.name.charAt(0).toUpperCase() + field.name.slice(1);
+        return `    setModal${capitalizedName}(${field.name})`;
       })
-      .join('\n')
+      .join("\n");
   }
 
   /**
@@ -463,10 +463,10 @@ export default Page`
   private generateModalObj(): string {
     return this.getFormFields()
       .map((field) => {
-        const capitalizedName = field.name.charAt(0).toUpperCase() + field.name.slice(1)
-        return `      ${field.name}: handleXSS(modal${capitalizedName})`
+        const capitalizedName = field.name.charAt(0).toUpperCase() + field.name.slice(1);
+        return `      ${field.name}: handleXSS(modal${capitalizedName})`;
       })
-      .join(',\n')
+      .join(",\n");
   }
 
   /**
@@ -475,66 +475,66 @@ export default Page`
   private generateModalFields(fields: any[]): string {
     return fields
       .map((field) => {
-        const capitalizedName = field.name.charAt(0).toUpperCase() + field.name.slice(1)
+        const capitalizedName = field.name.charAt(0).toUpperCase() + field.name.slice(1);
         return `            <div className="line">
               <label>{keyTitles.${field.name}}：</label>
               <ModalInput
                 value={modal${capitalizedName}}
                 placeholder={t('${this.controller}:${this.controller}.placeholders.input${capitalizedName}')}
                 allowClear
-                ${field === fields[0] ? 'autoFocus' : ''}
+                ${field === fields[0] ? "autoFocus" : ""}
                 onChange={(e) => setModal${capitalizedName}(e.target.value)}
               />
-            </div>`
+            </div>`;
       })
-      .join('\n')
+      .join("\n");
   }
 
   /**
    * 生成Excel列配置
    */
   private generateExcelColumns(): string {
-    const displayFields = this.getDisplayFields()
+    const displayFields = this.getDisplayFields();
     return displayFields
       .map((field, index) => {
-        const width = field.type === 'text' ? 50 : field.type === 'integer' ? 15 : 30
-        return `        { header: '${(field.comment || field.name).toUpperCase()}', key: 'header${index + 1}', width: ${width} }`
+        const width = field.type === "text" ? 50 : field.type === "integer" ? 15 : 30;
+        return `        { header: '${(field.comment || field.name).toUpperCase()}', key: 'header${index + 1}', width: ${width} }`;
       })
-      .join(',\n')
+      .join(",\n");
   }
   private generateTableColumns(fields: any[]): string {
     const columns = fields.map((field, index) => {
-      let column = `    {\n      title: t('${this.controller}:${this.controller}.fields.${field.name}'),\n      dataIndex: '${field.name}',\n      key: '${field.name}'`
+      let column = `    {\n      title: t('${this.controller}:${this.controller}.fields.${field.name}'),\n      dataIndex: '${field.name}',\n      key: '${field.name}'`;
 
       // 添加排序功能
-      if (field.type === 'integer') {
-        column += `,\n      sorter: (a: any, b: any) => a.${field.name} - b.${field.name}`
-      } else if (field.type === 'varchar' || field.type === 'text') {
-        column += `,\n      sorter: (a: any, b: any) => a.${field.name}.length - b.${field.name}.length`
+      if (field.type === "integer") {
+        column += `,\n      sorter: (a: any, b: any) => a.${field.name} - b.${field.name}`;
+      } else if (field.type === "varchar" || field.type === "text") {
+        column += `,\n      sorter: (a: any, b: any) => a.${field.name}.length - b.${field.name}.length`;
       }
 
       // 添加排序方向和提示
-      if (field.type === 'integer' || field.type === 'varchar' || field.type === 'text') {
-        column += `,\n      sortDirections: ['descend', 'ascend'],\n      showSorterTooltip: false`
+      if (field.type === "integer" || field.type === "varchar" || field.type === "text") {
+        column += `,\n      sortDirections: ['descend', 'ascend'],\n      showSorterTooltip: false`;
       }
 
       // 根据字段类型设置特定属性
-      if (field.type === 'timestamp' || field.type === 'date' || field.type === 'datetime') {
-        column += `,\n      render: (text: string) => text ? new Date(text).toLocaleString() : '-'`
-      } else if (field.type === 'integer' || field.type === 'decimal') {
-        column += `,\n      align: 'center' as const`
+      if (field.type === "timestamp" || field.type === "date" || field.type === "datetime") {
+        column += `,\n      render: (text: string) => text ? new Date(text).toLocaleString() : '-'`;
+      } else if (field.type === "integer" || field.type === "decimal") {
+        column += `,\n      align: 'center' as const`;
       }
 
       // 设置宽度
-      if (field.name === 'id') {
-        column += `,\n      width: '15%',\n      align: 'center' as const`
+      if (field.name === "id") {
+        column += `,\n      width: '15%',\n      align: 'center' as const`;
       } else if (index === fields.length - 1) {
-        column += `,\n      width: '60%',\n      ellipsis: true`
+        column += `,\n      width: '60%',\n      ellipsis: true`;
       }
 
-      column += '\n    }'
-      return column
-    })
+      column += "\n    }";
+      return column;
+    });
 
     // 添加操作列
     const actionColumn = `    {
@@ -567,24 +567,24 @@ export default Page`
           </Space>
         )
       }
-    }`
+    }`;
 
-    return [...columns, actionColumn].join(',\n')
+    return [...columns, actionColumn].join(",\n");
   }
 
   /**
    * 生成客户端验证逻辑
    */
   private generateClientValidation(): string {
-    const integerFields = this.getFormFields().filter((field) => field.type === 'integer')
+    const integerFields = this.getFormFields().filter((field) => field.type === "integer");
 
     if (integerFields.length === 0) {
-      return ''
+      return "";
     }
 
     const validations = integerFields.map((field) => {
-      const fieldName = field.name
-      const capitalizedName = fieldName.charAt(0).toUpperCase() + fieldName.slice(1)
+      const fieldName = field.name;
+      const capitalizedName = fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
 
       return `    // 验证${fieldName}
     const ${fieldName}Value = modalObj.${fieldName}
@@ -595,9 +595,9 @@ export default Page`
         return
       }
       modalObj.${fieldName} = parsed${capitalizedName}
-    }`
-    })
+    }`;
+    });
 
-    return `${validations.join('\n\n')}\n\n`
+    return `${validations.join("\n\n")}\n\n`;
   }
 }

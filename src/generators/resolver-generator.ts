@@ -1,28 +1,28 @@
-import { BaseGenerator } from './base-generator'
+import { BaseGenerator } from "./base-generator";
 
 /**
  * Resolver生成器
  */
 export class ResolverGenerator extends BaseGenerator {
   generate(): string {
-    const selectFields = this.fields.map((f) => f.name).join(', ')
-    const insertFields = this.getFormFields()
-    const searchableFields = this.getSearchableFields()
+    const selectFields = this.fields.map((f) => f.name).join(", ");
+    const insertFields = this.getFormFields();
+    const searchableFields = this.getSearchableFields();
 
-    const insertFieldNames = insertFields.map((f) => f.name).join(', ')
-    const insertPlaceholders = insertFields.map(() => '?').join(', ')
+    const insertFieldNames = insertFields.map((f) => f.name).join(", ");
+    const insertPlaceholders = insertFields.map(() => "?").join(", ");
     const insertValues = insertFields
       .map((f) => {
-        if (f.type === 'integer') {
-          return `valid${f.name.charAt(0).toUpperCase() + f.name.slice(1)}`
+        if (f.type === "integer") {
+          return `valid${f.name.charAt(0).toUpperCase() + f.name.slice(1)}`;
         }
-        return `data.${f.name}`
+        return `data.${f.name}`;
       })
-      .join(', ')
+      .join(", ");
 
-    const searchConditions = this.generateSearchConditions(searchableFields)
+    const searchConditions = this.generateSearchConditions(searchableFields);
 
-    const updateFields = insertFields.map((f) => `${f.name} = ?`).join(', ')
+    const updateFields = insertFields.map((f) => `${f.name} = ?`).join(", ");
 
     return `const { executeQuery, executePaginatedQuery } = require('../../utils/common')
 const { validateInteger, validatePagination, validateId } = require('../../utils/validation')
@@ -228,21 +228,21 @@ ${this.generateUpdateValidation(insertFields)}
             throw error;
         }
     }
-}`
+}`;
   }
 
   private generateSearchConditions(searchableFields: any[]): string {
-    if (searchableFields.length === 0) return ''
+    if (searchableFields.length === 0) return "";
 
     const conditions = searchableFields.map((field) => {
-      if (field.type === 'varchar' || field.type === 'text') {
+      if (field.type === "varchar" || field.type === "text") {
         return `            if (data.${field.name} && data.${field.name}.trim() !== '') {
                 whereSql += ' AND ${field.name} LIKE ?';
                 const ${field.name}Pattern = \`%\${data.${field.name}.trim()}%\`;
                 values.push(${field.name}Pattern);
                 countValues.push(${field.name}Pattern);
-            }`
-      } else if (field.type === 'integer') {
+            }`;
+      } else if (field.type === "integer") {
         return `            if (data.${field.name} !== undefined && data.${field.name} !== null && data.${field.name} !== '') {
                 // 使用通用验证工具验证 ${field.name}
                 const valid${field.name.charAt(0).toUpperCase() + field.name.slice(1)} = validateInteger(data.${field.name}, '${field.name}', { min: 0, max: 150 });
@@ -251,96 +251,96 @@ ${this.generateUpdateValidation(insertFields)}
                     values.push(valid${field.name.charAt(0).toUpperCase() + field.name.slice(1)});
                     countValues.push(valid${field.name.charAt(0).toUpperCase() + field.name.slice(1)});
                 }
-            }`
+            }`;
       } else {
         return `            if (data.${field.name} !== undefined && data.${field.name} !== null) {
                 whereSql += ' AND ${field.name} = ?';
                 values.push(data.${field.name});
                 countValues.push(data.${field.name});
-            }`
+            }`;
       }
-    })
+    });
 
-    return conditions.join('\n\n')
+    return conditions.join("\n\n");
   }
 
   private generateNewValidationCalls(insertFields: any[]): string {
     return insertFields
       .map((f) => {
-        if (f.type === 'integer') {
-          const validationOptions = f.name === 'age' ? '{ min: 0, max: 150, required: true }' : '{ required: true }'
-          return `            const valid${f.name.charAt(0).toUpperCase() + f.name.slice(1)} = validateInteger(data.${f.name}, '${f.name}', ${validationOptions});`
+        if (f.type === "integer") {
+          const validationOptions = f.name === "age" ? "{ min: 0, max: 150, required: true }" : "{ required: true }";
+          return `            const valid${f.name.charAt(0).toUpperCase() + f.name.slice(1)} = validateInteger(data.${f.name}, '${f.name}', ${validationOptions});`;
         } else if (f.required) {
           return `            if (!data.${f.name}) {
                 throw new Error('${f.comment || f.name}是必填字段');
-            }`
+            }`;
         }
-        return ''
+        return "";
       })
       .filter((call) => call.length > 0)
-      .join('\n')
+      .join("\n");
   }
 
   private generateBatchValidation(insertFields: any[]): string {
     return insertFields
       .map((f) => {
-        if (f.type === 'integer') {
-          const validationOptions = f.name === 'age' ? '{ min: 0, max: 150, required: true }' : '{ required: true }'
-          return `                    const valid${f.name.charAt(0).toUpperCase() + f.name.slice(1)} = validateInteger(data.${f.name}, \`第\${index + 1}条数据的${f.name}\`, ${validationOptions});`
+        if (f.type === "integer") {
+          const validationOptions = f.name === "age" ? "{ min: 0, max: 150, required: true }" : "{ required: true }";
+          return `                    const valid${f.name.charAt(0).toUpperCase() + f.name.slice(1)} = validateInteger(data.${f.name}, \`第\${index + 1}条数据的${f.name}\`, ${validationOptions});`;
         } else if (f.required) {
           return `                    if (!data.${f.name}) {
                         throw new Error('${f.comment || f.name}是必填字段');
-                    }`
+                    }`;
         }
-        return ''
+        return "";
       })
       .filter((call) => call.length > 0)
-      .join('\n')
+      .join("\n");
   }
 
   private generateUpdateValidation(insertFields: any[]): string {
     return insertFields
       .map((f) => {
-        if (f.type === 'integer') {
-          const validationOptions = f.name === 'age' ? '{ min: 0, max: 150, required: true }' : '{ required: true }'
+        if (f.type === "integer") {
+          const validationOptions = f.name === "age" ? "{ min: 0, max: 150, required: true }" : "{ required: true }";
           return `            let valid${f.name.charAt(0).toUpperCase() + f.name.slice(1)} = data.${f.name};
             if (data.${f.name} !== undefined) {
                 valid${f.name.charAt(0).toUpperCase() + f.name.slice(1)} = validateInteger(data.${f.name}, '${f.name}', ${validationOptions});
-            }`
+            }`;
         } else if (f.required) {
           return `            if (data.${f.name} !== undefined && !data.${f.name}) {
                 throw new Error('${f.comment || f.name}是必填字段');
-            }`
+            }`;
         }
-        return ''
+        return "";
       })
       .filter((call) => call.length > 0)
-      .join('\n')
+      .join("\n");
   }
 
   private generateUpdateValues(insertFields: any[]): string {
     return insertFields
       .map((f) => {
-        if (f.type === 'integer') {
-          return `valid${f.name.charAt(0).toUpperCase() + f.name.slice(1)}`
+        if (f.type === "integer") {
+          return `valid${f.name.charAt(0).toUpperCase() + f.name.slice(1)}`;
         }
-        return `data.${f.name}`
+        return `data.${f.name}`;
       })
-      .join(', ')
+      .join(", ");
   }
 
   private generateBatchReturnObject(insertFields: any[]): string {
     return insertFields
       .map((f) => {
-        if (f.type === 'integer') {
-          return `${f.name}: valid${f.name.charAt(0).toUpperCase() + f.name.slice(1)}`
+        if (f.type === "integer") {
+          return `${f.name}: valid${f.name.charAt(0).toUpperCase() + f.name.slice(1)}`;
         }
-        return `${f.name}: data.${f.name}`
+        return `${f.name}: data.${f.name}`;
       })
-      .join(', ')
+      .join(", ");
   }
 
   private generateBatchInsertValues(insertFields: any[]): string {
-    return insertFields.map((f) => `data.${f.name}`).join(', ')
+    return insertFields.map((f) => `data.${f.name}`).join(", ");
   }
 }

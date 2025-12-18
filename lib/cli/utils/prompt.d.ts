@@ -1,6 +1,6 @@
 export interface FieldDefinition {
     name: string;
-    type: 'varchar' | 'text' | 'integer' | 'decimal' | 'boolean' | 'date' | 'datetime' | 'timestamp';
+    type: "varchar" | "text" | "integer" | "decimal" | "boolean" | "date" | "datetime" | "timestamp";
     length?: string | number;
     required?: boolean;
     comment?: string;

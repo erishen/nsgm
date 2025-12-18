@@ -1,4 +1,4 @@
-import { FieldDefinition } from './cli/utils/prompt';
+import { FieldDefinition } from "./cli/utils/prompt";
 /**
  * 创建控制器和动作相关的文件
  * @param controller 控制器名称

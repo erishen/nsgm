@@ -1,26 +1,26 @@
-import { BaseGenerator } from './base-generator'
+import { BaseGenerator } from "./base-generator";
 
 /**
  * GraphQL Schema生成器
  */
 export class SchemaGenerator extends BaseGenerator {
   generate(): string {
-    const capitalizedTypeName = this.getCapitalizedController()
-    const pluralTypeName = `${capitalizedTypeName}s`
+    const capitalizedTypeName = this.getCapitalizedController();
+    const pluralTypeName = `${capitalizedTypeName}s`;
 
     const typeFields = this.getNonSystemFields()
       .map((field) => `            ${field.name}: ${this.getGraphQLType(field.type)}`)
-      .join('\n')
+      .join("\n");
 
     const inputFields = this.getFormFields()
       .map((field) => `            ${field.name}: ${this.getGraphQLType(field.type)}`)
-      .join('\n')
+      .join("\n");
 
-    const searchableFields = this.getSearchableFields()
+    const searchableFields = this.getSearchableFields();
     const searchFields =
       searchableFields.length > 0
-        ? searchableFields.map((field) => `            ${field.name}: ${this.getGraphQLType(field.type)}`).join('\n')
-        : '            name: String'
+        ? searchableFields.map((field) => `            ${field.name}: ${this.getGraphQLType(field.type)}`).join("\n")
+        : "            name: String";
 
     return `module.exports = {
     query: \`
@@ -54,6 +54,6 @@ ${inputFields}
 ${searchFields}
         }
     \`
-}`
+}`;
   }
 }

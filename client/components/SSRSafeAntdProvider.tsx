@@ -1,9 +1,9 @@
-import React from 'react'
-import { ConfigProvider } from 'antd'
+import React from "react";
+import { ConfigProvider } from "antd";
 
 interface SSRSafeAntdProviderProps {
-  children: React.ReactNode
-  locale?: any
+  children: React.ReactNode;
+  locale?: any;
 }
 
 const SSRSafeAntdProvider: React.FC<SSRSafeAntdProviderProps> = ({ children, locale }) => {
@@ -18,7 +18,7 @@ const SSRSafeAntdProvider: React.FC<SSRSafeAntdProviderProps> = ({ children, loc
     >
       {children}
     </ConfigProvider>
-  )
-}
+  );
+};
 
-export default SSRSafeAntdProvider
+export default SSRSafeAntdProvider;

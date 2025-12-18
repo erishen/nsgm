@@ -1,5 +1,5 @@
-import styled from 'styled-components'
-import { Button, Input, Table } from 'antd'
+import styled from "styled-components";
+import { Button, Input, Table } from "antd";
 
 export const Container = styled.div`
   margin: 20px 0 0 0;
@@ -46,7 +46,7 @@ export const Container = styled.div`
     position: relative;
 
     &:after {
-      content: '';
+      content: "";
       position: absolute;
       bottom: -1px;
       left: 0;
@@ -56,7 +56,7 @@ export const Container = styled.div`
       border-radius: 3px;
     }
   }
-`
+`;
 
 export const SearchRow = styled.div`
   margin: 10px 0 20px 0;
@@ -74,7 +74,7 @@ export const SearchRow = styled.div`
   &:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   }
-`
+`;
 
 export const ModalContainer = styled.div`
   .line {
@@ -99,7 +99,7 @@ export const ModalContainer = styled.div`
       position: relative;
 
       &:after {
-        content: '';
+        content: "";
         position: absolute;
         left: -8px;
         top: 50%;
@@ -136,14 +136,14 @@ export const ModalContainer = styled.div`
       }
     }
   }
-`
+`;
 
 // Button 样式组件
 export const StyledButton = styled(Button)<{
-  $primary?: boolean
-  $export?: boolean
-  $import?: boolean
-  $danger?: boolean
+  $primary?: boolean;
+  $export?: boolean;
+  $import?: boolean;
+  $danger?: boolean;
 }>`
   display: flex;
   align-items: center;
@@ -175,13 +175,13 @@ export const StyledButton = styled(Button)<{
       box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
       transition: all 0.3s ease;
     `}
-`
+`;
 
 export const StyledInput = styled(Input)`
   width: 200px;
   border-radius: 6px;
   box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
-`
+`;
 
 export const StyledTable = styled(Table)`
   margin-top: 16px;
@@ -192,24 +192,24 @@ export const StyledTable = styled(Table)`
     margin-top: 16px;
     margin-bottom: 16px;
   }
-`
+`;
 
 export const ModalTitle = styled.div`
   color: #1890ff;
   font-weight: 500;
-`
+`;
 
 export const ModalInput = styled(Input)`
   border-radius: 4px;
-`
+`;
 
 export const IconWrapper = styled.i`
   margin-right: 5px;
-`
+`;
 
 export const RoundedButton = styled(Button)`
   border-radius: 4px;
-`
+`;
 
 export const GlobalStyle = styled.div`
   .rounded-button {
@@ -221,4 +221,4 @@ export const GlobalStyle = styled.div`
     overflow: auto !important;
     padding-right: 0 !important;
   }
-`
+`;

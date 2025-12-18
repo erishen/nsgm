@@ -1,4 +1,4 @@
-import { CommandRegistry } from './registry';
+import { CommandRegistry } from "./registry";
 /**
  * CLI 应用程序主类
  */

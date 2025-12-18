@@ -1,4 +1,4 @@
-import { NextRouter } from 'next/router'
+import { NextRouter } from "next/router";
 
 /**
  * 跳转到指定页面，保持当前语言设置
@@ -7,20 +7,20 @@ import { NextRouter } from 'next/router'
  */
 export const navigateWithLocale = (router: NextRouter, path: string) => {
   // 只在客户端执行
-  if (typeof window === 'undefined') return
+  if (typeof window === "undefined") return;
 
-  const currentLocale = router.locale || 'zh-CN'
-  const baseUrl = window.location.origin
+  const currentLocale = router.locale || "zh-CN";
+  const baseUrl = window.location.origin;
 
-  let targetUrl: string
-  if (currentLocale === 'zh-CN') {
-    targetUrl = `${baseUrl}${path}`
+  let targetUrl: string;
+  if (currentLocale === "zh-CN") {
+    targetUrl = `${baseUrl}${path}`;
   } else {
-    targetUrl = `${baseUrl}/${currentLocale}${path}`
+    targetUrl = `${baseUrl}/${currentLocale}${path}`;
   }
 
-  window.location.href = targetUrl
-}
+  window.location.href = targetUrl;
+};
 
 /**
  * 跳转到登录页面，保持当前语言设置
@@ -28,10 +28,10 @@ export const navigateWithLocale = (router: NextRouter, path: string) => {
  */
 export const navigateToLogin = (router: NextRouter) => {
   // 只在客户端执行
-  if (typeof window === 'undefined') return
+  if (typeof window === "undefined") return;
 
-  navigateWithLocale(router, '/login')
-}
+  navigateWithLocale(router, "/login");
+};
 
 /**
  * 跳转到首页，保持当前语言设置
@@ -40,19 +40,19 @@ export const navigateToLogin = (router: NextRouter) => {
  */
 export const navigateToHome = (router: NextRouter, forceLocalePrefix = false) => {
   // 只在客户端执行
-  if (typeof window === 'undefined') return
+  if (typeof window === "undefined") return;
 
-  const currentLocale = router.locale || 'zh-CN'
-  const baseUrl = window.location.origin
+  const currentLocale = router.locale || "zh-CN";
+  const baseUrl = window.location.origin;
 
-  let targetUrl: string
-  if (forceLocalePrefix || currentLocale !== 'zh-CN') {
+  let targetUrl: string;
+  if (forceLocalePrefix || currentLocale !== "zh-CN") {
     // 强制添加语言前缀或非中文时
-    targetUrl = `${baseUrl}/${currentLocale}`
+    targetUrl = `${baseUrl}/${currentLocale}`;
   } else {
     // 中文且不强制添加前缀
-    targetUrl = baseUrl
+    targetUrl = baseUrl;
   }
 
-  window.location.href = targetUrl
-}
+  window.location.href = targetUrl;
+};

@@ -1,55 +1,55 @@
-import { useEffect } from 'react'
+import { useEffect } from "react";
 
 // 全局抑制 useLayoutEffect 警告的函数
 const suppressUseLayoutEffectWarnings = () => {
-  if (typeof window === 'undefined' && process.env.NODE_ENV === 'development') {
-    const originalError = console.error
-    const originalWarn = console.warn
+  if (typeof window === "undefined" && process.env.NODE_ENV === "development") {
+    const originalError = console.error;
+    const originalWarn = console.warn;
 
     console.error = (...args) => {
-      const errorMessage = args[0]
+      const errorMessage = args[0];
       if (
-        typeof errorMessage === 'string' &&
-        (errorMessage.includes('useLayoutEffect does nothing on the server') ||
-          errorMessage.includes('Warning: useLayoutEffect does nothing on the server'))
+        typeof errorMessage === "string" &&
+        (errorMessage.includes("useLayoutEffect does nothing on the server") ||
+          errorMessage.includes("Warning: useLayoutEffect does nothing on the server"))
       ) {
-        return
+        return;
       }
-      originalError.apply(console, args)
-    }
+      originalError.apply(console, args);
+    };
 
     console.warn = (...args) => {
-      const warnMessage = args[0]
+      const warnMessage = args[0];
       if (
-        typeof warnMessage === 'string' &&
-        (warnMessage.includes('useLayoutEffect does nothing on the server') ||
-          warnMessage.includes('Warning: useLayoutEffect does nothing on the server'))
+        typeof warnMessage === "string" &&
+        (warnMessage.includes("useLayoutEffect does nothing on the server") ||
+          warnMessage.includes("Warning: useLayoutEffect does nothing on the server"))
       ) {
-        return
+        return;
       }
-      originalWarn.apply(console, args)
-    }
+      originalWarn.apply(console, args);
+    };
 
     // 返回清理函数
     return () => {
-      console.error = originalError
-      console.warn = originalWarn
-    }
+      console.error = originalError;
+      console.warn = originalWarn;
+    };
   }
-  return undefined
-}
+  return undefined;
+};
 
 // 在模块加载时立即执行
-suppressUseLayoutEffectWarnings()
+suppressUseLayoutEffectWarnings();
 
 const SuppressHydrationWarnings = () => {
   useEffect(() => {
     // 在客户端也抑制这些警告（以防万一）
-    const cleanup = suppressUseLayoutEffectWarnings()
-    return cleanup
-  }, [])
+    const cleanup = suppressUseLayoutEffectWarnings();
+    return cleanup;
+  }, []);
 
-  return null
-}
+  return null;
+};
 
-export default SuppressHydrationWarnings
+export default SuppressHydrationWarnings;

@@ -1,5 +1,5 @@
-import { ProjectConfig } from './cli/types/project';
-import { FieldDefinition } from './cli/utils/prompt';
+import { ProjectConfig } from "./cli/types/project";
+import { FieldDefinition } from "./cli/utils/prompt";
 /**
  * 初始化项目文件和目录结构
  * @param dictionary 目标目录名称，空字符串表示当前目录

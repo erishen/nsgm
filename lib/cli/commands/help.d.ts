@@ -1,2 +1,2 @@
-import { Command } from '../types';
+import { Command } from "../types";
 export declare const helpCommand: Command;
