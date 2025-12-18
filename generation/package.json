@@ -34,6 +34,8 @@
     "@testing-library/jest-dom": "^6",
     "@testing-library/react": "^14",
     "@testing-library/user-event": "^14",
+    "@typescript-eslint/eslint-plugin": "^8",
+    "@typescript-eslint/parser": "^8",
     "@types/jest": "^30",
     "eslint": "^9",
     "eslint-config-prettier": "^10",

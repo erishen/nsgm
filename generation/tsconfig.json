@@ -2,7 +2,7 @@
   "compilerOptions": {
     "jsx": "preserve",
     "target": "ES2022",
-    "module": "commonjs",
+    "module": "esnext",
     "declaration": true,
     "strict": true,
     "lib": ["dom", "ES2022"],

@@ -104,6 +104,8 @@ const ROOT_FILES = {
   gitignoreSource: '/gitignore',
   gitignore: '/.gitignore',
   eslintrc: '/eslint.config.js',
+  prettierrcSource: '/.prettierrc',
+  prettierrc: '/.prettierrc',
   nextEnvSource: '../next-env.d.ts',
   nextEnv: '/next-env.d.ts',
   readme: '/README.md',
@@ -556,6 +558,10 @@ export const initRootFiles = (dictionary: string, newDestFolder: string): InitRe
       {
         source: resolve(sourceGenerationPath + ROOT_FILES.eslintrc),
         dest: resolve(baseDestPath + ROOT_FILES.eslintrc),
+      },
+      {
+        source: path.join(sourceFolder, '..', ROOT_FILES.prettierrcSource),
+        dest: resolve(baseDestPath + ROOT_FILES.prettierrc),
       },
       {
         source: path.join(sourceFolder, ROOT_FILES.nextEnvSource),
