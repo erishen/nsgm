@@ -17,9 +17,8 @@
     "isolatedModules": true,
     "noImplicitAny": false,
     "incremental": true,
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["client/*"]
+      "@/*": ["./client/*"]
     },
     // TypeScript 检查配置（建议启用以提高代码质量）
     "noUnusedLocals": true,

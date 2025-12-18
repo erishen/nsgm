@@ -16,9 +16,8 @@
     "isolatedModules": true,
     "noImplicitAny": false,
     "incremental": true,
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["client/*"]
+      "@/*": ["./client/*"]
     },
     "noUnusedLocals": true,
     "noUnusedParameters": true,
