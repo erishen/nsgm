@@ -17,20 +17,6 @@ import { getAntdLocale } from "@/utils/i18n";
 import { navigateToLogin } from "@/utils/navigation";
 import "antd/dist/reset.css";
 
-// 动态加载 i18n 配置
-let nextI18NextConfig;
-try {
-  nextI18NextConfig = require("../next-i18next.config.js");
-} catch (error) {
-  console.warn("Failed to load next-i18next config:", error);
-  nextI18NextConfig = {
-    i18n: {
-      defaultLocale: "zh-CN",
-      locales: ["zh-CN", "en-US", "ja-JP"],
-    },
-  };
-}
-
 const theme = {
   colors: {
     primary: "#0070f3",
@@ -146,4 +132,5 @@ const App = ({ Component, pageProps }) => {
   );
 };
 
-export default appWithTranslation(App, nextI18NextConfig);
+// appWithTranslation 会自动从 next.config.js 读取 i18n 配置
+export default appWithTranslation(App);

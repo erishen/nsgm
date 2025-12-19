@@ -4,7 +4,13 @@
 const { PHASE_DEVELOPMENT_SERVER, PHASE_EXPORT } = require('next/constants')
 const fs = require('fs')
 const path = require('path')
-const { i18n } = require(path.resolve(__dirname, './next-i18next.config'))
+
+// 直接定义 i18n 配置，避免在 Vercel 上找不到配置文件
+const i18n = {
+  defaultLocale: 'zh-CN',
+  locales: ['zh-CN', 'en-US', 'ja-JP'],
+  localeDetection: false,
+}
 
 module.exports = (phase, defaultConfig, options) => {
   let projectConfig = null

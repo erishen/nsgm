@@ -7,14 +7,15 @@ module.exports = {
   i18n: {
     defaultLocale: 'zh-CN',
     locales: ['zh-CN', 'en-US', 'ja-JP'],
-    localeDetection: false, // 禁用自动语言检测
+    localeDetection: false,
   },
-  localePath: path.resolve(process.cwd(), './public/locales'),
-  /** To avoid issues when deploying to some platforms, we can configure the cache */
+  localePath: typeof window === 'undefined' ? path.resolve('./public/locales') : '/locales',
   saveMissing: false,
-  strictMode: true,
+  strictMode: false, // 在生产环境中禁用严格模式
   serializeConfig: false,
   react: {
     useSuspense: false,
   },
+  // 在 serverless 环境中使用
+  reloadOnPrerender: process.env.NODE_ENV === 'development',
 }
