@@ -8,12 +8,12 @@ const getLoginCredentials = () => {
   const username = process.env.LOGIN_USERNAME || 'admin'
   let passwordHash = process.env.LOGIN_PASSWORD_HASH
   
-  console.log('[SSO Debug] getLoginCredentials - username:', username)
-  console.log('[SSO Debug] getLoginCredentials - passwordHash from env:', passwordHash ? `${passwordHash.substring(0, 20)}...` : 'undefined')
+  console.warn('[SSO] getLoginCredentials - username:', username)
+  console.warn('[SSO] getLoginCredentials - passwordHash from env:', passwordHash ? `${passwordHash.substring(0, 20)}...` : 'undefined')
   
   // 如果环境变量被截断，尝试手动读取 .env 文件
   if (!passwordHash || passwordHash.length < 60) {
-    console.log('[SSO Debug] passwordHash too short or missing, trying to read from .env')
+    console.warn('[SSO] passwordHash too short or missing, trying to read from .env')
     try {
       const fs = require('fs')
       const path = require('path')
@@ -25,17 +25,17 @@ const getLoginCredentials = () => {
         if (line.startsWith('LOGIN_PASSWORD_HASH=')) {
           // 移除引号和前缀
           passwordHash = line.replace('LOGIN_PASSWORD_HASH=', '').replace(/"/g, '').trim()
-          console.log('[SSO Debug] Found passwordHash in .env:', `${passwordHash.substring(0, 20)}...`)
+          console.warn('[SSO] Found passwordHash in .env:', `${passwordHash.substring(0, 20)}...`)
           break
         }
       }
     } catch (error) {
-      console.error('[SSO Debug] 读取 .env 文件失败:', error.message)
+      console.warn('[SSO] 读取 .env 文件失败:', error.message)
     }
   }
   
   if (!passwordHash) {
-    console.warn('[SSO Debug] ⚠️  警告: LOGIN_PASSWORD_HASH 环境变量未设置，使用默认密码哈希')
+    console.warn('[SSO] ⚠️  警告: LOGIN_PASSWORD_HASH 环境变量未设置，使用默认密码哈希')
     // 默认密码 "admin123" 的哈希值（仅用于开发环境）
     return {
       username,
@@ -43,7 +43,7 @@ const getLoginCredentials = () => {
     }
   }
   
-  console.log('[SSO Debug] getLoginCredentials - final passwordHash:', `${passwordHash.substring(0, 20)}...`)
+  console.warn('[SSO] getLoginCredentials - final passwordHash:', `${passwordHash.substring(0, 20)}...`)
   return { username, passwordHash }
 }
 
@@ -81,27 +81,27 @@ router.get('/ticketCheck', async (req, res) => {
   const { query } = req
   const { name } = query
   
-  console.log('[SSO Debug] ticketCheck called, name:', name)
+  console.warn('[SSO] ticketCheck called, name:', name)
   
   try {
     // 使用 Buffer 解码 Base64 字符串，然后使用 decodeURIComponent 处理特殊字符
     const decodedBase64 = Buffer.from(name, 'base64').toString('utf-8')
-    console.log('[SSO Debug] Decoded Base64:', decodedBase64)
+    console.warn('[SSO] Decoded Base64:', decodedBase64)
     
     const decodedName = decodeURIComponent(decodedBase64)
-    console.log('[SSO Debug] Decoded name:', decodedName)
+    console.warn('[SSO] Decoded name:', decodedName)
     
     const [inputUsername, inputPassword] = decodedName.split(',')
-    console.log('[SSO Debug] Input username:', inputUsername, 'password length:', inputPassword?.length)
+    console.warn('[SSO] Input username:', inputUsername, 'password length:', inputPassword?.length)
     
     const { username: expectedUsername, passwordHash } = getLoginCredentials()
-    console.log('[SSO Debug] Expected username:', expectedUsername, 'passwordHash length:', passwordHash?.length)
+    console.warn('[SSO] Expected username:', expectedUsername, 'passwordHash length:', passwordHash?.length)
     
     const isValid = await validateCredentials(inputUsername, inputPassword)
-    console.log('[SSO Debug] Credentials valid:', isValid)
+    console.warn('[SSO] Credentials valid:', isValid)
     
     if (isValid) {
-      console.log('[SSO Debug] Login successful for user:', inputUsername)
+      console.warn('[SSO] Login successful for user:', inputUsername)
       res.json({
         name: 'ticketCheck',
         query,
@@ -115,7 +115,7 @@ router.get('/ticketCheck', async (req, res) => {
       })
     } else {
       // 记录失败的登录尝试（用于安全审计）
-      console.log(`[SSO Debug] 登录失败 - 用户名: ${inputUsername}, 时间: ${new Date().toISOString()}, IP: ${req.ip}`)
+      console.warn(`[SSO] 登录失败 - 用户名: ${inputUsername}, 时间: ${new Date().toISOString()}, IP: ${req.ip}`)
       
       res.json({
         name: 'ticketCheck',
@@ -125,7 +125,7 @@ router.get('/ticketCheck', async (req, res) => {
       })
     }
   } catch (error) {
-    console.error('[SSO Debug] 登录验证出错:', error)
+    console.warn('[SSO] 登录验证出错:', error)
     res.status(500).json({
       name: 'ticketCheck',
       returnCode: -1,

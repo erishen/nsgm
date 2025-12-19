@@ -213,30 +213,30 @@ export const directLogin = (userName: string, userPassword: string, callback: an
   const apiPrefix = getLocalApiPrefix();
   const url = `${apiPrefix}/rest/sso/ticketCheck?ticket=XXX&name=${encodedName}`;
 
-  console.log("[Login Debug] API Prefix:", apiPrefix);
-  console.log("[Login Debug] Login URL:", url);
-  console.log("[Login Debug] Username:", userName);
+  console.warn("[Login] API Prefix:", apiPrefix);
+  console.warn("[Login] Login URL:", url);
+  console.warn("[Login] Username:", userName);
 
   return fetch(url)
     .then((response) => {
-      console.log("[Login Debug] Response status:", response.status);
+      console.warn("[Login] Response status:", response.status);
       return response.json();
     })
     .then((data) => {
-      console.log("[Login Debug] Response data:", data);
+      console.warn("[Login] Response data:", data);
       if (data && data.returnCode === 0) {
         // 登录成功，设置cookie
         if (typeof window !== "undefined") {
-          console.log("[Login Debug] Login successful");
+          console.warn("[Login] Login successful");
           storeLogin(data.cookieValue, data.cookieExpire, data.userAttr, callback);
           return { success: true };
         }
       }
-      console.log("[Login Debug] Login failed, returnCode:", data?.returnCode, "message:", data?.message);
+      console.warn("[Login] Login failed, returnCode:", data?.returnCode, "message:", data?.message);
       return { success: false, message: "用户名或密码错误" };
     })
     .catch((error) => {
-      console.error("[Login Debug] Login request failed:", error);
+      console.warn("[Login] Login request failed:", error);
       return { success: false, message: "登录请求失败，请稍后重试" };
     });
 };
