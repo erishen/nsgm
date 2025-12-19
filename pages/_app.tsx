@@ -45,7 +45,10 @@ const App = ({ Component, pageProps }) => {
 
   useEffect(() => {
     setMounted(true);
-    // 只在客户端设置当前语言
+  }, []);
+
+  useEffect(() => {
+    // 同步当前语言
     if (typeof window !== "undefined") {
       const locale = router.locale || "zh-CN";
       setCurrentLocale(locale);

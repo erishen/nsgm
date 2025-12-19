@@ -11,11 +11,10 @@ module.exports = {
   },
   localePath: typeof window === 'undefined' ? path.resolve('./public/locales') : '/locales',
   saveMissing: false,
-  strictMode: false, // 在生产环境中禁用严格模式
-  serializeConfig: false,
+  strictMode: false,
+  serializeConfig: true, // 序列化配置到页面中，避免抖动
   react: {
     useSuspense: false,
   },
-  // 在 serverless 环境中使用
   reloadOnPrerender: process.env.NODE_ENV === 'development',
 }

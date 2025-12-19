@@ -27,7 +27,7 @@ const renderArr: any = [];
 renderArr.push("NSGM");
 
 const Page = ({ html }) => {
-  const { t } = useTranslation(["login"]);
+  const { t } = useTranslation("login");
   const router = useRouter();
   const [userName, setUserName] = useState("");
   const [userPassword, setUserPassword] = useState("");
@@ -135,19 +135,10 @@ export const getServerSideProps = async ({ locale }) => {
     html += md.render(item);
   });
 
-  // 直接传递配置，避免在 Vercel 上找不到配置文件
-  const i18nConfig = {
-    i18n: {
-      defaultLocale: 'zh-CN',
-      locales: ['zh-CN', 'en-US', 'ja-JP'],
-    },
-    localePath: './public/locales',
-  };
-
   return {
     props: {
       html,
-      ...(await serverSideTranslations(currentLocale, ["common", "layout", "login"], i18nConfig)),
+      ...(await serverSideTranslations(currentLocale, ["common", "layout", "login"])),
     },
   };
 };
