@@ -1,7 +1,7 @@
 // 必须在所有其他导入之前执行
 import "@/utils/suppressWarnings";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Provider } from "react-redux";
 import { Spin } from "antd";
 import { appWithTranslation } from "next-i18next";
