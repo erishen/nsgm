@@ -9,10 +9,10 @@ module.exports = {
     locales: ['zh-CN', 'en-US', 'ja-JP'],
     localeDetection: false,
   },
-  localePath: typeof window === 'undefined' ? path.resolve('./public/locales') : '/locales',
+  localePath: path.resolve(process.cwd(), 'public/locales'),
   saveMissing: false,
   strictMode: false,
-  serializeConfig: true, // 序列化配置到页面中，避免抖动
+  serializeConfig: true,
   react: {
     useSuspense: false,
   },

@@ -135,12 +135,13 @@ export const getServerSideProps = async ({ locale }) => {
     html += md.render(item);
   });
 
+  const path = require('path');
   const i18nConfig = {
     i18n: {
       defaultLocale: 'zh-CN',
       locales: ['zh-CN', 'en-US', 'ja-JP'],
     },
-    localePath: './public/locales',
+    localePath: path.resolve(process.cwd(), 'public/locales'),
   };
 
   return {
