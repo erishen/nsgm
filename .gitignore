@@ -13,5 +13,6 @@ coverage
 .env.local
 .env.production
 .env.development
+.env.vercel
 *.log
 .serena

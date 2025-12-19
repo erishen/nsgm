@@ -59,8 +59,9 @@ PlanetScale 是 MySQL 兼容的无服务器数据库，完美适配 Vercel：
 
 - **buildCommand**: 编译 TypeScript 并构建 Next.js
 - **outputDirectory**: `.next` 目录
-- **functions**: 服务器函数配置
-- **routes**: API 路由映射
+- **env**: 生产环境变量
+
+Vercel 会自动检测 Next.js 项目并配置路由和函数。
 
 ### 5. 自动部署
 
