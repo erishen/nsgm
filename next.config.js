@@ -86,7 +86,7 @@ module.exports = (phase, defaultConfig, options) => {
       esmExternals: true, // 支持 ESM 外部依赖
     },
     compiler: {
-      removeConsole: phase !== PHASE_DEVELOPMENT_SERVER,
+      removeConsole: phase !== PHASE_DEVELOPMENT_SERVER ? { exclude: ['warn', 'error'] } : false,
       styledComponents: true,
     },
     ...(phase === PHASE_DEVELOPMENT_SERVER && {
