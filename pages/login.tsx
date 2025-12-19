@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { Input, Button, Form, Typography, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { directLogin } from "../client/utils/sso";
+import { getLocalApiPrefix } from "../client/utils/common";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -32,9 +33,13 @@ const Page = ({ html }) => {
   const [userName, setUserName] = useState("");
   const [userPassword, setUserPassword] = useState("");
   const [mounted, setMounted] = useState(false);
+  const [debugInfo, setDebugInfo] = useState("");
 
   useEffect(() => {
     setMounted(true);
+    // 显示调试信息
+    const apiPrefix = getLocalApiPrefix();
+    setDebugInfo(`API: ${apiPrefix}`);
   }, []);
 
   const createMarkup = () => {
@@ -65,6 +70,7 @@ const Page = ({ html }) => {
     // 检查是否是 Promise
     if (result && typeof (result as any).then === "function") {
       (result as Promise<any>).then((loginResult) => {
+        setDebugInfo(`Login result: ${JSON.stringify(loginResult)}`);
         if (!loginResult.success) {
           message.error(loginResult.message);
         }
@@ -72,6 +78,7 @@ const Page = ({ html }) => {
     } else {
       // 直接返回的结果
       const syncResult = result as { success: boolean; message?: string };
+      setDebugInfo(`Login result: ${JSON.stringify(syncResult)}`);
       if (!syncResult.success) {
         message.error(syncResult.message || t("login.errors.loginFailed"));
       }
@@ -91,6 +98,11 @@ const Page = ({ html }) => {
       <div style={{ position: "absolute", top: "20px", right: "20px" }}>
         <LanguageSwitcher />
       </div>
+      {debugInfo && (
+        <div style={{ position: "absolute", top: "60px", right: "20px", fontSize: "12px", color: "#999", maxWidth: "300px", wordBreak: "break-all" }}>
+          {debugInfo}
+        </div>
+      )}
       <div dangerouslySetInnerHTML={createMarkup()} />
       <Typography.Title level={3} style={{ textAlign: "center", marginBottom: 24 }}>
         {t("login.title")}
