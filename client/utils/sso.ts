@@ -210,7 +210,8 @@ export const directLogin = (userName: string, userPassword: string, callback: an
   // 使用 encodeURIComponent 处理可能的特殊字符，然后再进行 Base64 编码
   const safeStr = handleXSS(`${userName},${userPassword}`);
   const encodedName = btoa(encodeURIComponent(safeStr));
-  const url = `/api/sso/ticketCheck?ticket=XXX&name=${encodedName}`;
+  const apiPrefix = getLocalApiPrefix();
+  const url = `${apiPrefix}/rest/sso/ticketCheck?ticket=XXX&name=${encodedName}`;
 
   console.warn("[Login] Login URL:", url);
   console.warn("[Login] Username:", userName);

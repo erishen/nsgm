@@ -34,7 +34,11 @@ export const getLocalApiPrefix = () => {
   const isStandardPort = (protocol === "https" && port === "443") || (protocol === "http" && port === "80") || !port;
   const portStr = isStandardPort ? "" : `:${port}`;
   
-  localApiPrefix = `${protocol}://${host}${portStr}${prefix}`;
+  // 在 Vercel 环境中自动加上 /api 前缀
+  const isVercel = process.env.NEXT_PUBLIC_IS_VERCEL === "true";
+  const apiPrefix = isVercel ? "/api" : prefix;
+  
+  localApiPrefix = `${protocol}://${host}${portStr}${apiPrefix}`;
   return localApiPrefix;
 };
 
