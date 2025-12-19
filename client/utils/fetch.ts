@@ -10,7 +10,7 @@ axios.defaults.withCredentials = true;
 
 export const GRAPHQL_CONFIG = {
   // GraphQL 端点
-  endpoint: "/graphql",
+  endpoint: "/api/graphql",
 
   // 默认请求头
   defaultHeaders: {
@@ -141,7 +141,7 @@ export const getLocalGraphql = async (query: string, variables: any = {}) => {
       }
 
       response = await axios.post(
-        `${getLocalApiPrefix()}/graphql`,
+        `/api/graphql`,
         {
           query,
           variables,
@@ -159,7 +159,7 @@ export const getLocalGraphql = async (query: string, variables: any = {}) => {
         params.append("variables", JSON.stringify(variables));
       }
 
-      response = await axios.get(`${getLocalApiPrefix()}/graphql?${params.toString()}`, {
+      response = await axios.get(`/api/graphql?${params.toString()}`, {
         headers: {
           Accept: "application/json",
         },
@@ -188,7 +188,7 @@ export const getLocalGraphql = async (query: string, variables: any = {}) => {
           };
 
           const retryResponse = await axios.post(
-            `${getLocalApiPrefix()}/graphql`,
+            `/api/graphql`,
             { query, variables },
             { headers: retryHeaders, withCredentials: true }
           );
