@@ -195,9 +195,12 @@ module.exports = (phase, defaultConfig, options) => {
   }
 
   if (phase !== PHASE_DEVELOPMENT_SERVER) {
+    // 在 Vercel 环境中使用默认的 .next 目录，否则使用 build 目录
+    const distDir = process.env.VERCEL ? '.next' : 'build'
+    
     configObj = {
       ...configObj,
-      distDir: 'build',
+      distDir,
       assetPrefix: prefix,
       async rewrites() {
         return [

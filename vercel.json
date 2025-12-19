@@ -3,6 +3,7 @@
   "buildCommand": "npm run tsbuild && npm run build",
   "outputDirectory": ".next",
   "env": {
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "VERCEL": "true"
   }
 }
