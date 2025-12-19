@@ -16,8 +16,18 @@ module.exports = (phase, defaultConfig, options) => {
 
   if (fs.existsSync(curProjectConfigPath)) {
     projectConfig = require(curProjectConfigPath)
-  } else {
+  } else if (fs.existsSync('./project.config.js')) {
     projectConfig = require('./project.config.js')
+  } else {
+    // 默认配置（用于 Vercel 等环境）
+    projectConfig = {
+      env: 'production',
+      version: '1.0.0',
+      prefix: '',
+      protocol: 'https',
+      host: 'localhost',
+      port: '443'
+    }
   }
 
   if (fs.existsSync(curPkgPath)) {
