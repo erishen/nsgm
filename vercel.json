@@ -4,13 +4,6 @@
   "outputDirectory": ".next",
   "env": {
     "NODE_ENV": "production",
-    "VERCEL": "true",
-    "NEXT_PUBLIC_VERSION": "@latest",
-    "NEXT_PUBLIC_PREFIX": "",
-    "NEXT_PUBLIC_PROTOCOL": "https",
-    "NEXT_PUBLIC_HOST": "@VERCEL_URL",
-    "NEXT_PUBLIC_PORT": "443",
-    "NEXT_PUBLIC_ENV": "production",
-    "NEXT_PUBLIC_IS_EXPORT": "false"
+    "VERCEL": "true"
   }
 }
