@@ -15,8 +15,21 @@ import SSRSafeAntdProvider from "@/components/SSRSafeAntdProvider";
 import { login } from "@/utils/sso";
 import { getAntdLocale } from "@/utils/i18n";
 import { navigateToLogin } from "@/utils/navigation";
-import nextI18NextConfig from "../next-i18next.config.js";
 import "antd/dist/reset.css";
+
+// 动态加载 i18n 配置
+let nextI18NextConfig;
+try {
+  nextI18NextConfig = require("../next-i18next.config.js");
+} catch (error) {
+  console.warn("Failed to load next-i18next config:", error);
+  nextI18NextConfig = {
+    i18n: {
+      defaultLocale: "zh-CN",
+      locales: ["zh-CN", "en-US", "ja-JP"],
+    },
+  };
+}
 
 const theme = {
   colors: {
