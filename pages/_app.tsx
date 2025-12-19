@@ -133,7 +133,4 @@ const App = ({ Component, pageProps }) => {
   );
 };
 
-// 移除 getInitialProps 以启用静态优化
-// 如果需要页面级别的数据获取，请在各个页面中使用 getStaticProps 或 getServerSideProps
-
 export default appWithTranslation(App, nextI18NextConfig);

@@ -15,7 +15,6 @@ import path from "path";
 import bodyParser from "body-parser";
 import fileUpload from "express-fileupload";
 import localGraphql from "./server/graphql";
-import getConfig from "next/config";
 import cors from "cors";
 import session from "express-session";
 import { csrfProtection, getCSRFToken, securityMiddleware, createCSPMiddleware } from "./server/csrf";
@@ -142,9 +141,10 @@ export const startExpress = (options: any, callback?: () => void, command = "dev
       server.use("/static", express.static(path.join(__dirname, "public")));
       server.use("/graphql", localGraphql(command));
 
-      const nextConfig = getConfig();
-      const { publicRuntimeConfig } = nextConfig;
-      const { host, port, prefix } = publicRuntimeConfig;
+      // 从环境变量读取配置
+      const host = process.env.NEXT_PUBLIC_HOST || "localhost";
+      const port = process.env.NEXT_PUBLIC_PORT || "3000";
+      const prefix = process.env.NEXT_PUBLIC_PREFIX || "";
 
       // 提供 CSRF token 的端点
       server.get("/csrf-token", getCSRFToken);

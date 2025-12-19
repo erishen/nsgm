@@ -1,5 +1,4 @@
 import { BookOutlined, SolutionOutlined } from '@ant-design/icons'
-import React from 'react'
 
 // 统一的菜单配置函数，支持可选的多语言翻译
 export const getMenuConfig = (t?: (key: string) => string) => {

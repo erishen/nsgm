@@ -1,19 +1,17 @@
-import getConfig from "next/config";
 import _ from "lodash";
 
 export const getLocalEnv = () => {
-  const nextConfig = getConfig();
-  const { publicRuntimeConfig } = nextConfig;
-  let { env = "uat" } = publicRuntimeConfig;
+  let env = process.env.NEXT_PUBLIC_ENV || "uat";
   env = env.toLowerCase();
   return env;
 };
 
 export const getLocalApiPrefix = () => {
-  const nextConfig = getConfig();
-  const { publicRuntimeConfig } = nextConfig;
-  let { protocol, host, port } = publicRuntimeConfig;
-  const { prefix, isExport } = publicRuntimeConfig;
+  let protocol = process.env.NEXT_PUBLIC_PROTOCOL || "http";
+  let host = process.env.NEXT_PUBLIC_HOST || "localhost";
+  let port = process.env.NEXT_PUBLIC_PORT || "3000";
+  const prefix = process.env.NEXT_PUBLIC_PREFIX || "";
+  const isExport = process.env.NEXT_PUBLIC_IS_EXPORT === "true";
 
   let localApiPrefix = "";
 

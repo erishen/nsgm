@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { ConfigProvider, Modal, Space, Upload, message } from "antd";
 import {
   Container,

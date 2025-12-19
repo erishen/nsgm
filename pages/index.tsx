@@ -1,6 +1,5 @@
 import _ from "lodash";
 import { Container } from "../client/styled/common";
-import React from "react";
 import { Card, Typography, Divider, Row, Col, Tag } from "antd";
 import { CodeOutlined, BookOutlined, DatabaseOutlined, SettingOutlined } from "@ant-design/icons";
 import { useTranslation } from "next-i18next";

@@ -13,7 +13,6 @@ import {
 import { useRouter } from "next/router";
 import _ from "lodash";
 import menuConfig, { getMenuConfig } from "@/utils/menu";
-import getConfig from "next/config";
 import { LogoutOutlined } from "@ant-design/icons";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useTranslation } from "next-i18next";
@@ -33,9 +32,8 @@ interface MenuItem {
   subMenus?: SubMenuItem[];
 }
 
-const nextConfig = getConfig();
-const { publicRuntimeConfig } = nextConfig;
-const { prefix } = publicRuntimeConfig;
+// 从环境变量获取 prefix
+const prefix = process.env.NEXT_PUBLIC_PREFIX || "";
 
 const getLocationKey = () => {
   const result = {

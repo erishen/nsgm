@@ -1,12 +1,15 @@
 {
   "compilerOptions": {
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "target": "ES2022",
     "module": "esnext",
     "declaration": true,
     "outDir": "./lib",
     "strict": true,
-    "lib": ["dom", "ES2022"],
+    "lib": [
+      "dom",
+      "ES2022"
+    ],
     "esModuleInterop": true,
     "allowJs": true,
     "skipLibCheck": true,
@@ -18,7 +21,9 @@
     "noImplicitAny": false,
     "incremental": true,
     "paths": {
-      "@/*": ["./client/*"]
+      "@/*": [
+        "./client/*"
+      ]
     },
     // TypeScript 检查配置（建议启用以提高代码质量）
     "noUnusedLocals": true,
@@ -27,6 +32,16 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["next-env.d.ts", "src", "pages", "client"],
-  "exclude": ["node_modules", "**/__tests__/*", ".next", "lib"]
+  "include": [
+    "next-env.d.ts",
+    "src",
+    "pages",
+    "client"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/__tests__/*",
+    ".next",
+    "lib"
+  ]
 }

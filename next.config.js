@@ -40,21 +40,19 @@ module.exports = (phase, defaultConfig, options) => {
     prefix = ''
   }
 
+  // 设置环境变量用于客户端访问
+  process.env.NEXT_PUBLIC_VERSION = version
+  process.env.NEXT_PUBLIC_PREFIX = prefix
+  process.env.NEXT_PUBLIC_PROTOCOL = protocol
+  process.env.NEXT_PUBLIC_HOST = host
+  process.env.NEXT_PUBLIC_PORT = port
+  process.env.NEXT_PUBLIC_ENV = env
+  process.env.NEXT_PUBLIC_IS_EXPORT = phase === PHASE_EXPORT ? 'true' : 'false'
+
   let configObj = {
     // target: 'serverless',
     // crossOrign: 'anonymous',
     i18n,
-    serverRuntimeConfig: {},
-    publicRuntimeConfig: {
-      version,
-      prefix,
-      protocol,
-      host,
-      port,
-      env,
-      phase,
-      isExport: phase === PHASE_EXPORT,
-    },
     transpilePackages: [
       'antd',
       '@ant-design',
@@ -90,105 +88,10 @@ module.exports = (phase, defaultConfig, options) => {
       '127.0.0.1',
       'localhost',
     ],
-    webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
-      // 抑制服务端渲染时的 useLayoutEffect 警告
-      if (dev && isServer) {
-        const originalWarn = console.warn
-        const originalError = console.error
-
-        console.warn = (...args) => {
-          const warnMessage = args[0]
-          if (
-            typeof warnMessage === 'string' &&
-            (warnMessage.includes('useLayoutEffect does nothing on the server') ||
-              warnMessage.includes('Warning: useLayoutEffect does nothing on the server'))
-          ) {
-            return
-          }
-          originalWarn.apply(console, args)
-        }
-
-        console.error = (...args) => {
-          const errorMessage = args[0]
-          if (
-            typeof errorMessage === 'string' &&
-            (errorMessage.includes('useLayoutEffect does nothing on the server') ||
-              errorMessage.includes('Warning: useLayoutEffect does nothing on the server'))
-          ) {
-            return
-          }
-          originalError.apply(console, args)
-        }
-      }
-
-      // 启用压缩
-      if (!dev && !isServer) {
-        config.optimization = {
-          ...config.optimization,
-          splitChunks: {
-            chunks: 'all',
-            cacheGroups: {
-              vendor: {
-                test: /[\\/]node_modules[\\/]/,
-                name: 'vendors',
-                chunks: 'all',
-                enforce: true,
-              },
-              antd: {
-                test: /[\\/]node_modules[\\/](antd|@ant-design)[\\/]/,
-                name: 'antd',
-                chunks: 'all',
-                priority: 10,
-              },
-              react: {
-                test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
-                name: 'react',
-                chunks: 'all',
-                priority: 10,
-              },
-              common: {
-                name: 'common',
-                minChunks: 2,
-                chunks: 'all',
-                priority: 5,
-              },
-            },
-          },
-          minimize: true,
-        }
-
-        // 添加分析工具
-        if (process.env.ANALYZE === 'true') {
-          const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
-          config.plugins.push(
-            new BundleAnalyzerPlugin({
-              analyzerMode: 'static',
-              openAnalyzer: false,
-            })
-          )
-        }
-      }
-
-      // 优化模块解析
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        '@': path.resolve(__dirname, 'client'),
-      }
-
-      // 支持 TypeScript 路径映射
-      config.resolve.modules = [path.resolve(__dirname, 'client'), 'node_modules']
-
-      return config
-    },
+    // 使用 Turbopack（Next.js 16 默认）
+    turbopack: {},
     generateBuildId: async () => {
       return 'nsgm-cli-' + version
-    },
-    exportPathMap: async function (defaultPathMap, { dev, dir, outDir }) {
-      if (dev) {
-        return defaultPathMap
-      }
-
-      return defaultPathMap
     },
     generateEtags: false,
     useFileSystemPublicRoutes: true,

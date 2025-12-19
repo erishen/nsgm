@@ -2,7 +2,7 @@ import MarkdownIt from "markdown-it";
 import _ from "lodash";
 import { LoginContainer } from "../client/styled/common";
 // import getConfig from 'next/config'
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Input, Button, Form, Typography, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { directLogin } from "../client/utils/sso";
