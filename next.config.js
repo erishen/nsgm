@@ -4,7 +4,7 @@
 const { PHASE_DEVELOPMENT_SERVER, PHASE_EXPORT } = require('next/constants')
 const fs = require('fs')
 const path = require('path')
-const { i18n } = require('./next-i18next.config')
+const { i18n } = require(path.resolve(__dirname, './next-i18next.config'))
 
 module.exports = (phase, defaultConfig, options) => {
   let projectConfig = null
