@@ -383,12 +383,52 @@ npm run export
 
 ### Production Deployment
 
+#### Local Deployment
+
 ```bash
 # Start production server
 npm start
 
 # Or use PM2
 pm2 start npm --name "nsgm-app" -- start
+```
+
+#### Vercel Deployment (Recommended)
+
+NSGM CLI 完全支持 Vercel 部署，包括自动化 CI/CD 流程。
+
+**快速开始：**
+
+1. 推送项目到 GitHub
+2. 访问 [Vercel Dashboard](https://vercel.com/dashboard)
+3. 导入 GitHub 仓库
+4. 配置环境变量（参考 `.env.vercel.example`）
+5. 点击 "Deploy"
+
+**详细指南：** 查看 [VERCEL_DEPLOYMENT.md](VERCEL_DEPLOYMENT.md)
+
+**特性：**
+
+- ✅ 自动 CI/CD 流程
+- ✅ 预览环境（每个 PR）
+- ✅ 自动 HTTPS
+- ✅ 全球 CDN
+- ✅ 无服务器函数
+- ✅ 一键回滚
+
+**环境变量配置：**
+
+```
+NODE_ENV=production
+LOGIN_USERNAME=admin
+LOGIN_PASSWORD_HASH=your_hash
+DATABASE_URL=mysql://...
+```
+
+**获取密码哈希：**
+
+```bash
+npm run generate-password yourPassword
 ```
 
 ## 🤝 Contributing

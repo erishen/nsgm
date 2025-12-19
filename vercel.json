@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "buildCommand": "npm run tsbuild && npm run build",
+  "outputDirectory": ".next",
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "functions": {
+    "server/**/*.js": {
+      "runtime": "nodejs20.x"
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/server/apis/$1.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/.next/server/pages/$1"
+    }
+  ]
+}
