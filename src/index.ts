@@ -173,7 +173,10 @@ export const startExpress = (options: any, callback?: () => void, command = "dev
 };
 
 // 使用新的 CLI 架构
-runCli().catch((error) => {
-  console.error("CLI 执行失败:", error);
-  process.exit(1);
-});
+// 仅在非测试环境中执行 CLI
+if (process.env.NODE_ENV !== "test") {
+  runCli().catch((error) => {
+    console.error("CLI 执行失败:", error);
+    process.exit(1);
+  });
+}

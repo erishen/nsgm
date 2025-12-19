@@ -1,17 +1,20 @@
 import { ArgumentParser } from "../parser";
 
-// Mock process.exit before importing any CLI modules
-const mockExit = jest.fn();
-const originalExit = process.exit;
-process.exit = mockExit as any;
-
 describe("ArgumentParser 测试", () => {
-  beforeEach(() => {
-    mockExit.mockClear();
+  // Mock process.exit 以防止测试中断
+  const originalExit = process.exit;
+  const mockExit = jest.fn();
+
+  beforeAll(() => {
+    process.exit = mockExit as any;
   });
 
   afterAll(() => {
     process.exit = originalExit;
+  });
+
+  beforeEach(() => {
+    mockExit.mockClear();
   });
 
   test("应该正确解析基本命令", () => {
