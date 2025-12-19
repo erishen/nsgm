@@ -161,9 +161,17 @@ const Page = () => {
 export const getServerSideProps = async ({ locale }) => {
   const currentLocale = locale || "zh-CN";
 
+  const i18nConfig = {
+    i18n: {
+      defaultLocale: 'zh-CN',
+      locales: ['zh-CN', 'en-US', 'ja-JP'],
+    },
+    localePath: './public/locales',
+  };
+
   return {
     props: {
-      ...(await serverSideTranslations(currentLocale, ["common", "home", "layout"])),
+      ...(await serverSideTranslations(currentLocale, ["common", "home", "layout"], i18nConfig)),
     },
   };
 };

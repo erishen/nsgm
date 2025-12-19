@@ -47,11 +47,11 @@ const Page = ({ html }) => {
     if (!mounted || typeof window === "undefined") return;
 
     if (userName === "") {
-      message.error(t("login:login.errors.usernameRequired"));
+      message.error(t("login.errors.usernameRequired"));
       return;
     }
     if (userPassword === "") {
-      message.error(t("login:login.errors.passwordRequired"));
+      message.error(t("login.errors.passwordRequired"));
       return;
     }
 
@@ -73,7 +73,7 @@ const Page = ({ html }) => {
       // 直接返回的结果
       const syncResult = result as { success: boolean; message?: string };
       if (!syncResult.success) {
-        message.error(syncResult.message || t("login:login.errors.loginFailed"));
+        message.error(syncResult.message || t("login.errors.loginFailed"));
       }
     }
   };
@@ -93,13 +93,13 @@ const Page = ({ html }) => {
       </div>
       <div dangerouslySetInnerHTML={createMarkup()} />
       <Typography.Title level={3} style={{ textAlign: "center", marginBottom: 24 }}>
-        {t("login:login.title")}
+        {t("login.title")}
       </Typography.Title>
       <Form layout="vertical" style={{ width: "100%" }}>
         <Form.Item>
           <Input
             prefix={<UserOutlined style={{ color: "rgba(0,0,0,.25)" }} />}
-            placeholder={t("login:login.username")}
+            placeholder={t("login.username")}
             size="large"
             value={userName}
             onChange={doChangeName}
@@ -109,7 +109,7 @@ const Page = ({ html }) => {
         <Form.Item>
           <Input.Password
             prefix={<LockOutlined style={{ color: "rgba(0,0,0,.25)" }} />}
-            placeholder={t("login:login.password")}
+            placeholder={t("login.password")}
             size="large"
             value={userPassword}
             onChange={doChangePassword}
@@ -118,7 +118,7 @@ const Page = ({ html }) => {
         </Form.Item>
         <Form.Item>
           <Button type="primary" onClick={doLogin} size="large" block>
-            {t("login:login.loginButton")}
+            {t("login.loginButton")}
           </Button>
         </Form.Item>
       </Form>
@@ -135,10 +135,18 @@ export const getServerSideProps = async ({ locale }) => {
     html += md.render(item);
   });
 
+  const i18nConfig = {
+    i18n: {
+      defaultLocale: 'zh-CN',
+      locales: ['zh-CN', 'en-US', 'ja-JP'],
+    },
+    localePath: './public/locales',
+  };
+
   return {
     props: {
       html,
-      ...(await serverSideTranslations(currentLocale, ["common", "layout", "login"])),
+      ...(await serverSideTranslations(currentLocale, ["common", "layout", "login"], i18nConfig)),
     },
   };
 };

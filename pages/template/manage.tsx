@@ -412,7 +412,16 @@ export async function getServerSideProps(context) {
   });
 
   const { locale } = context;
-  const translations = await serverSideTranslations(locale || "zh-CN", ["common", "template", "layout", "login"]);
+  
+  const i18nConfig = {
+    i18n: {
+      defaultLocale: 'zh-CN',
+      locales: ['zh-CN', 'en-US', 'ja-JP'],
+    },
+    localePath: './public/locales',
+  };
+  
+  const translations = await serverSideTranslations(locale || "zh-CN", ["common", "template", "layout", "login"], i18nConfig);
 
   return {
     props: {
