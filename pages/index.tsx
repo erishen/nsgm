@@ -159,12 +159,20 @@ const Page = () => {
 };
 
 export const getServerSideProps = async ({ locale }) => {
-  // 确保 locale 有默认值，避免 serverSideTranslations 报错
   const currentLocale = locale || "zh-CN";
+  
+  // 直接传递配置，避免在 Vercel 上找不到配置文件
+  const i18nConfig = {
+    i18n: {
+      defaultLocale: 'zh-CN',
+      locales: ['zh-CN', 'en-US', 'ja-JP'],
+    },
+    localePath: './public/locales',
+  };
 
   return {
     props: {
-      ...(await serverSideTranslations(currentLocale, ["common", "home", "layout"])),
+      ...(await serverSideTranslations(currentLocale, ["common", "home", "layout"], i18nConfig)),
     },
   };
 };
