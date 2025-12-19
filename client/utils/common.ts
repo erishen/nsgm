@@ -25,12 +25,16 @@ export const getLocalApiPrefix = () => {
         protocol = protocol.split(":")[0];
       }
       host = location.hostname;
-      port = location.port || (protocol.indexOf("https") !== -1 ? "443" : "80");
+      port = location.port;
     }
     // 服务器端：直接使用配置中的值，无需额外处理
   }
 
-  localApiPrefix = `${protocol}://${host}:${port}${prefix}`;
+  // 只在非标准端口时才添加端口号
+  const isStandardPort = (protocol === "https" && port === "443") || (protocol === "http" && port === "80") || !port;
+  const portStr = isStandardPort ? "" : `:${port}`;
+  
+  localApiPrefix = `${protocol}://${host}${portStr}${prefix}`;
   return localApiPrefix;
 };
 
