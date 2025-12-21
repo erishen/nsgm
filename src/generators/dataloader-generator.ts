@@ -9,7 +9,7 @@ export class DataLoaderGenerator extends BaseGenerator {
     const capitalizedController = this.getCapitalizedController();
     const selectFields = this.fields.map((f) => f.name).join(", ");
     // const searchableFields = this.getSearchableFields(); // 暂时注释掉未使用的变量
-    
+
     return `import DataLoader from 'dataloader';
 import { executeQuery } from '../utils/common';
 
@@ -179,17 +179,18 @@ export function create${capitalizedController}DataLoader(): ${capitalizedControl
    * 生成外键 DataLoader
    */
   private generateForeignKeyLoaders(): string {
-    const foreignKeys = this.fields.filter(f => f.name.endsWith('_id') && f.name !== 'id');
-    
+    const foreignKeys = this.fields.filter((f) => f.name.endsWith("_id") && f.name !== "id");
+
     if (foreignKeys.length === 0) {
       return "";
     }
 
-    return foreignKeys.map(fk => {
-      const relatedTable = fk.name.replace('_id', '');
-      const capitalizedRelated = relatedTable.charAt(0).toUpperCase() + relatedTable.slice(1);
-      
-      return `
+    return foreignKeys
+      .map((fk) => {
+        const relatedTable = fk.name.replace("_id", "");
+        const capitalizedRelated = relatedTable.charAt(0).toUpperCase() + relatedTable.slice(1);
+
+        return `
     // 按 ${fk.name} 批量加载相关的 ${this.controller}
     this.by${capitalizedRelated}Id = new DataLoader(
       async (${fk.name}s: readonly number[]) => {
@@ -197,7 +198,7 @@ export function create${capitalizedController}DataLoader(): ${capitalizedControl
           console.log(\`🔍 DataLoader: 批量加载 \${${fk.name}s.length} 个 ${this.controller} by ${fk.name}\`);
           
           const placeholders = ${fk.name}s.map(() => '?').join(',');
-          const sql = \`SELECT ${this.fields.map(f => f.name).join(", ")} FROM ${this.controller} WHERE ${fk.name} IN (\${placeholders})\`;
+          const sql = \`SELECT ${this.fields.map((f) => f.name).join(", ")} FROM ${this.controller} WHERE ${fk.name} IN (\${placeholders})\`;
           
           const results = await executeQuery(sql, [...${fk.name}s]);
           
@@ -216,6 +217,7 @@ export function create${capitalizedController}DataLoader(): ${capitalizedControl
         batchScheduleFn: callback => setTimeout(callback, 10),
       }
     );`;
-    }).join('\n');
+      })
+      .join("\n");
   }
 }

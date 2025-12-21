@@ -1,4 +1,4 @@
-import { TemplateDataLoader } from './template-dataloader';
+import { TemplateDataLoader } from "./template-dataloader";
 /**
  * DataLoader 上下文接口
  */

@@ -1,4 +1,4 @@
-import DataLoader from 'dataloader';
+import DataLoader from "dataloader";
 /**
  * Template DataLoader
  * 针对 template 表的批量数据加载器，解决 N+1 查询问题

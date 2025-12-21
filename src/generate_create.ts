@@ -270,7 +270,7 @@ const generateDynamicFiles = (
   const dataLoaderPath = resolve(`${projectPath}/server/dataloaders/${controller}-dataloader.ts`);
   mkdirSync(path.dirname(dataLoaderPath));
   fs.writeFileSync(dataLoaderPath, dataLoaderGenerator.generate());
-  
+
   console.log(`🚀 已生成 DataLoader 文件: ${dataLoaderPath}`);
 
   // 生成多语言文件

@@ -99,7 +99,17 @@ const Page = ({ html }) => {
         <LanguageSwitcher />
       </div>
       {debugInfo && (
-        <div style={{ position: "absolute", top: "60px", right: "20px", fontSize: "12px", color: "#999", maxWidth: "300px", wordBreak: "break-all" }}>
+        <div
+          style={{
+            position: "absolute",
+            top: "60px",
+            right: "20px",
+            fontSize: "12px",
+            color: "#999",
+            maxWidth: "300px",
+            wordBreak: "break-all",
+          }}
+        >
           {debugInfo}
         </div>
       )}
@@ -147,13 +157,13 @@ export const getServerSideProps = async ({ locale }) => {
     html += md.render(item);
   });
 
-  const path = require('path');
+  const path = require("path");
   const i18nConfig = {
     i18n: {
-      defaultLocale: 'zh-CN',
-      locales: ['zh-CN', 'en-US', 'ja-JP'],
+      defaultLocale: "zh-CN",
+      locales: ["zh-CN", "en-US", "ja-JP"],
     },
-    localePath: path.resolve(process.cwd(), 'public/locales'),
+    localePath: path.resolve(process.cwd(), "public/locales"),
   };
 
   return {

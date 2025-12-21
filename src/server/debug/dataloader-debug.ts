@@ -1,5 +1,5 @@
-import { DataLoaderMonitor, getDataLoaderHealth } from '../utils/dataloader-monitor';
-import { DataLoaderContext } from '../dataloaders';
+import { DataLoaderMonitor, getDataLoaderHealth } from "../utils/dataloader-monitor";
+import { DataLoaderContext } from "../dataloaders";
 
 /**
  * DataLoader 调试和监控 API
@@ -15,7 +15,7 @@ export const dataLoaderStatsResolver = {
     try {
       const health = getDataLoaderHealth(context);
       const allStats = DataLoaderMonitor.getAllStats();
-      
+
       return {
         status: health.status,
         score: health.score,
@@ -26,7 +26,7 @@ export const dataLoaderStatsResolver = {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      console.error('获取 DataLoader 统计信息失败:', error);
+      console.error("获取 DataLoader 统计信息失败:", error);
       throw error;
     }
   },
@@ -37,11 +37,11 @@ export const dataLoaderStatsResolver = {
       DataLoaderMonitor.resetStats();
       return {
         success: true,
-        message: 'DataLoader 统计信息已重置',
+        message: "DataLoader 统计信息已重置",
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      console.error('重置 DataLoader 统计信息失败:', error);
+      console.error("重置 DataLoader 统计信息失败:", error);
       throw error;
     }
   },
@@ -52,14 +52,14 @@ export const dataLoaderStatsResolver = {
       if (context?.dataloaders?.template) {
         context.dataloaders.template.clearAll();
       }
-      
+
       return {
         success: true,
-        message: 'DataLoader 缓存已清除',
+        message: "DataLoader 缓存已清除",
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      console.error('清除 DataLoader 缓存失败:', error);
+      console.error("清除 DataLoader 缓存失败:", error);
       throw error;
     }
   },
@@ -133,13 +133,13 @@ export const dataLoaderDebugSchema = {
  */
 export function createDataLoaderDebugRoutes(app: any) {
   // 仅在开发环境中启用调试接口
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === "development") {
     // 获取 DataLoader 统计信息
-    app.get('/debug/dataloader/stats', (_req: any, res: any) => {
+    app.get("/debug/dataloader/stats", (_req: any, res: any) => {
       try {
         const health = getDataLoaderHealth();
         const allStats = DataLoaderMonitor.getAllStats();
-        
+
         res.json({
           health,
           stats: allStats,
@@ -147,49 +147,49 @@ export function createDataLoaderDebugRoutes(app: any) {
         });
       } catch (error) {
         res.status(500).json({
-          error: 'Failed to get DataLoader stats',
+          error: "Failed to get DataLoader stats",
           message: error instanceof Error ? error.message : String(error),
         });
       }
     });
 
     // 重置统计信息
-    app.post('/debug/dataloader/reset', (_req: any, res: any) => {
+    app.post("/debug/dataloader/reset", (_req: any, res: any) => {
       try {
         DataLoaderMonitor.resetStats();
         res.json({
           success: true,
-          message: 'DataLoader stats reset successfully',
+          message: "DataLoader stats reset successfully",
           timestamp: new Date().toISOString(),
         });
       } catch (error) {
         res.status(500).json({
-          error: 'Failed to reset DataLoader stats',
+          error: "Failed to reset DataLoader stats",
           message: error instanceof Error ? error.message : String(error),
         });
       }
     });
 
     // 打印性能报告
-    app.post('/debug/dataloader/report', (_req: any, res: any) => {
+    app.post("/debug/dataloader/report", (_req: any, res: any) => {
       try {
         DataLoaderMonitor.printPerformanceReport();
         res.json({
           success: true,
-          message: 'Performance report printed to console',
+          message: "Performance report printed to console",
           timestamp: new Date().toISOString(),
         });
       } catch (error) {
         res.status(500).json({
-          error: 'Failed to print performance report',
+          error: "Failed to print performance report",
           message: error instanceof Error ? error.message : String(error),
         });
       }
     });
 
-    console.log('🔧 DataLoader 调试接口已启用:');
-    console.log('  GET  /debug/dataloader/stats  - 获取统计信息');
-    console.log('  POST /debug/dataloader/reset  - 重置统计信息');
-    console.log('  POST /debug/dataloader/report - 打印性能报告');
+    console.log("🔧 DataLoader 调试接口已启用:");
+    console.log("  GET  /debug/dataloader/stats  - 获取统计信息");
+    console.log("  POST /debug/dataloader/reset  - 重置统计信息");
+    console.log("  POST /debug/dataloader/report - 打印性能报告");
   }
 }

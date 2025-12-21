@@ -161,13 +161,13 @@ const Page = () => {
 export const getServerSideProps = async ({ locale }) => {
   const currentLocale = locale || "zh-CN";
 
-  const path = require('path');
+  const path = require("path");
   const i18nConfig = {
     i18n: {
-      defaultLocale: 'zh-CN',
-      locales: ['zh-CN', 'en-US', 'ja-JP'],
+      defaultLocale: "zh-CN",
+      locales: ["zh-CN", "en-US", "ja-JP"],
     },
-    localePath: path.resolve(process.cwd(), 'public/locales'),
+    localePath: path.resolve(process.cwd(), "public/locales"),
   };
 
   return {

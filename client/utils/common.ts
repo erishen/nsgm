@@ -33,7 +33,7 @@ export const getLocalApiPrefix = () => {
   // 只在非标准端口时才添加端口号
   const isStandardPort = (protocol === "https" && port === "443") || (protocol === "http" && port === "80") || !port;
   const portStr = isStandardPort ? "" : `:${port}`;
-  
+
   localApiPrefix = `${protocol}://${host}${portStr}${prefix}`;
   return localApiPrefix;
 };

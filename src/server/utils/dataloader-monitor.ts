@@ -1,17 +1,20 @@
-import { DataLoaderContext, getDataLoaderStats } from '../dataloaders';
+import { DataLoaderContext, getDataLoaderStats } from "../dataloaders";
 
 /**
  * DataLoader 性能监控和调试工具
  */
 export class DataLoaderMonitor {
-  private static requestStats = new Map<string, {
-    totalRequests: number;
-    batchRequests: number;
-    cacheHits: number;
-    cacheMisses: number;
-    averageBatchSize: number;
-    lastActivity: Date;
-  }>();
+  private static requestStats = new Map<
+    string,
+    {
+      totalRequests: number;
+      batchRequests: number;
+      cacheHits: number;
+      cacheMisses: number;
+      averageBatchSize: number;
+      lastActivity: Date;
+    }
+  >();
 
   /**
    * 记录 DataLoader 请求统计
@@ -58,7 +61,7 @@ export class DataLoaderMonitor {
    */
   static getAllStats() {
     const stats = Object.fromEntries(this.requestStats);
-    
+
     return {
       summary: {
         totalLoaders: this.requestStats.size,
@@ -77,12 +80,12 @@ export class DataLoaderMonitor {
    */
   static getCacheEfficiencyReport() {
     const report: any[] = [];
-    
+
     this.requestStats.forEach((stats, loaderName) => {
       const totalCacheRequests = stats.cacheHits + stats.cacheMisses;
-      const hitRate = totalCacheRequests > 0 ? (stats.cacheHits / totalCacheRequests * 100) : 0;
-      const batchEfficiency = stats.totalRequests > 0 ? (stats.batchRequests / stats.totalRequests * 100) : 0;
-      
+      const hitRate = totalCacheRequests > 0 ? (stats.cacheHits / totalCacheRequests) * 100 : 0;
+      const batchEfficiency = stats.totalRequests > 0 ? (stats.batchRequests / stats.totalRequests) * 100 : 0;
+
       report.push({
         loader: loaderName,
         hitRate: `${hitRate.toFixed(2)}%`,
@@ -101,7 +104,7 @@ export class DataLoaderMonitor {
    */
   static resetStats() {
     this.requestStats.clear();
-    console.log('📊 DataLoader 统计信息已重置');
+    console.log("📊 DataLoader 统计信息已重置");
   }
 
   /**
@@ -110,29 +113,32 @@ export class DataLoaderMonitor {
   static printPerformanceReport() {
     const stats = this.getAllStats();
     const efficiency = this.getCacheEfficiencyReport();
-    
-    console.log('\n📊 DataLoader 性能报告');
-    console.log('========================');
+
+    console.log("\n📊 DataLoader 性能报告");
+    console.log("========================");
     console.log(`总加载器数量: ${stats.summary.totalLoaders}`);
     console.log(`总请求数: ${stats.summary.totalRequests}`);
     console.log(`批量请求数: ${stats.summary.totalBatchRequests}`);
     console.log(`缓存命中数: ${stats.summary.totalCacheHits}`);
     console.log(`缓存未命中数: ${stats.summary.totalCacheMisses}`);
-    
+
     if (stats.summary.totalCacheHits + stats.summary.totalCacheMisses > 0) {
-      const overallHitRate = (stats.summary.totalCacheHits / (stats.summary.totalCacheHits + stats.summary.totalCacheMisses) * 100).toFixed(2);
+      const overallHitRate = (
+        (stats.summary.totalCacheHits / (stats.summary.totalCacheHits + stats.summary.totalCacheMisses)) *
+        100
+      ).toFixed(2);
       console.log(`总体缓存命中率: ${overallHitRate}%`);
     }
-    
-    console.log('\n各加载器效率:');
-    efficiency.forEach(loader => {
+
+    console.log("\n各加载器效率:");
+    efficiency.forEach((loader) => {
       console.log(`  ${loader.loader}:`);
       console.log(`    缓存命中率: ${loader.hitRate}`);
       console.log(`    批量效率: ${loader.batchEfficiency}`);
       console.log(`    平均批量大小: ${loader.averageBatchSize}`);
       console.log(`    总请求数: ${loader.totalRequests}`);
     });
-    console.log('========================\n');
+    console.log("========================\n");
   }
 }
 
@@ -142,18 +148,18 @@ export class DataLoaderMonitor {
 export function createDataLoaderPerformanceMiddleware() {
   return (req: any, res: any, next: any) => {
     const startTime = Date.now();
-    
+
     // 在响应结束时记录性能数据
-    res.on('finish', () => {
+    res.on("finish", () => {
       const duration = Date.now() - startTime;
-      
+
       if (req.body?.query) {
-        const isQuery = req.body.query.trim().toLowerCase().startsWith('query');
-        const isMutation = req.body.query.trim().toLowerCase().startsWith('mutation');
-        
+        const isQuery = req.body.query.trim().toLowerCase().startsWith("query");
+        const isMutation = req.body.query.trim().toLowerCase().startsWith("mutation");
+
         if (isQuery || isMutation) {
-          console.log(`🚀 GraphQL ${isQuery ? 'Query' : 'Mutation'} 执行时间: ${duration}ms`);
-          
+          console.log(`🚀 GraphQL ${isQuery ? "Query" : "Mutation"} 执行时间: ${duration}ms`);
+
           // 每10个请求打印一次性能报告
           if (Math.random() < 0.1) {
             DataLoaderMonitor.printPerformanceReport();
@@ -161,7 +167,7 @@ export function createDataLoaderPerformanceMiddleware() {
         }
       }
     });
-    
+
     next();
   };
 }
@@ -172,27 +178,27 @@ export function createDataLoaderPerformanceMiddleware() {
 export function getDataLoaderHealth(context?: DataLoaderContext) {
   const stats = DataLoaderMonitor.getAllStats();
   const efficiency = DataLoaderMonitor.getCacheEfficiencyReport();
-  
+
   // 计算健康分数
   let healthScore = 100;
-  
-  efficiency.forEach(loader => {
+
+  efficiency.forEach((loader) => {
     const hitRate = parseFloat(loader.hitRate);
     const batchEfficiency = parseFloat(loader.batchEfficiency);
-    
+
     // 缓存命中率低于50%扣分
     if (hitRate < 50) {
       healthScore -= 10;
     }
-    
+
     // 批量效率低于30%扣分
     if (batchEfficiency < 30) {
       healthScore -= 15;
     }
   });
-  
-  const status = healthScore >= 80 ? 'healthy' : healthScore >= 60 ? 'warning' : 'critical';
-  
+
+  const status = healthScore >= 80 ? "healthy" : healthScore >= 60 ? "warning" : "critical";
+
   return {
     status,
     score: Math.max(0, healthScore),
@@ -208,27 +214,27 @@ export function getDataLoaderHealth(context?: DataLoaderContext) {
  */
 function generateRecommendations(efficiency: any[]): string[] {
   const recommendations: string[] = [];
-  
-  efficiency.forEach(loader => {
+
+  efficiency.forEach((loader) => {
     const hitRate = parseFloat(loader.hitRate);
     const batchEfficiency = parseFloat(loader.batchEfficiency);
-    
+
     if (hitRate < 50) {
       recommendations.push(`${loader.loader}: 考虑增加缓存时间或优化查询模式以提高缓存命中率`);
     }
-    
+
     if (batchEfficiency < 30) {
       recommendations.push(`${loader.loader}: 考虑调整 batchScheduleFn 延迟时间以提高批量效率`);
     }
-    
+
     if (parseFloat(loader.averageBatchSize) < 2) {
       recommendations.push(`${loader.loader}: 批量大小较小，可能需要优化查询时机`);
     }
   });
-  
+
   if (recommendations.length === 0) {
-    recommendations.push('DataLoader 性能表现良好，无需优化');
+    recommendations.push("DataLoader 性能表现良好，无需优化");
   }
-  
+
   return recommendations;
 }

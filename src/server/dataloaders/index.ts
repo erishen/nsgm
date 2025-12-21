@@ -1,4 +1,4 @@
-import { TemplateDataLoader, createTemplateDataLoader } from './template-dataloader';
+import { TemplateDataLoader, createTemplateDataLoader } from "./template-dataloader";
 
 /**
  * DataLoader 上下文接口
@@ -17,7 +17,7 @@ export function createDataLoaderContext(): DataLoaderContext {
   return {
     dataloaders: {
       template: createTemplateDataLoader(),
-    }
+    },
   };
 }
 
@@ -36,5 +36,5 @@ export function getDataLoaderStats(context: DataLoaderContext) {
  */
 export function clearAllDataLoaderCache(context: DataLoaderContext): void {
   context.dataloaders.template.clearAll();
-  console.log('🧹 所有 DataLoader 缓存已清空');
+  console.log("🧹 所有 DataLoader 缓存已清空");
 }

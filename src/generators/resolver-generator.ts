@@ -400,7 +400,7 @@ ${this.generateUpdateValidation(insertFields)}
   private generateDataLoaderSearchLogic(searchableFields: any[]): string {
     if (searchableFields.length === 0) return "";
 
-    const nameField = searchableFields.find(f => f.name === 'name');
+    const nameField = searchableFields.find((f) => f.name === "name");
     if (!nameField) return "";
 
     return `// 如果有名称搜索，尝试使用 DataLoader 搜索缓存

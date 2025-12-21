@@ -202,11 +202,11 @@ const handler = (command: string) => {
     // 为每个请求创建新的 DataLoader 上下文，确保请求隔离和缓存正确性
     context: (_req: any, _params: any) => {
       const context = createDataLoaderContext();
-      
+
       if (command === "dev") {
         console.log("🚀 GraphQL DataLoader 上下文已创建");
       }
-      
+
       return context as any;
     },
   });
