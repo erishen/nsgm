@@ -32,6 +32,7 @@ import { ResolverGenerator } from "./generators/resolver-generator";
 import { ServiceGenerator } from "./generators/service-generator";
 import { PageGenerator } from "./generators/page-generator";
 import { FileGenerator } from "./generators/file-generator";
+import { DataLoaderGenerator } from "./generators/dataloader-generator";
 
 /**
  * 文件生成器 - 重构后的清晰架构
@@ -252,6 +253,7 @@ const generateDynamicFiles = (
   const resolverGenerator = new ResolverGenerator(controller, action, fields);
   const serviceGenerator = new ServiceGenerator(controller, action, fields);
   const pageGenerator = new PageGenerator(controller, action, fields);
+  const dataLoaderGenerator = new DataLoaderGenerator(controller, action, fields);
 
   // 根据 dictionary 确定文件生成器的项目路径
   const projectPath = !dictionary || dictionary === "." ? "." : path.join(destFolder, dictionary);
@@ -263,6 +265,13 @@ const generateDynamicFiles = (
   fs.writeFileSync(paths.destServerModulesResolver, resolverGenerator.generate());
   fs.writeFileSync(paths.destClientAction, serviceGenerator.generate());
   fs.writeFileSync(paths.destPagesAction, pageGenerator.generate());
+
+  // 生成 DataLoader 文件
+  const dataLoaderPath = resolve(`${projectPath}/server/dataloaders/${controller}-dataloader.ts`);
+  mkdirSync(path.dirname(dataLoaderPath));
+  fs.writeFileSync(dataLoaderPath, dataLoaderGenerator.generate());
+  
+  console.log(`🚀 已生成 DataLoader 文件: ${dataLoaderPath}`);
 
   // 生成多语言文件
   fileGenerator.generateI18nFiles(controller, action, fields);
@@ -366,6 +375,8 @@ export const createFiles = (controller: string, action: string, dictionary?: str
       paths.destClientServiceController,
       paths.destClientStyledController,
       paths.destServerModulesController,
+      // 添加 DataLoader 目录
+      resolve(`${getDestPath(destServerPath)}/dataloaders`),
     ];
 
     createDirectoryStructure(basePaths);

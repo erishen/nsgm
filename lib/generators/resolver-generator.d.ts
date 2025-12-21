@@ -10,5 +10,6 @@ export declare class ResolverGenerator extends BaseGenerator {
     private generateUpdateValidation;
     private generateUpdateValues;
     private generateBatchReturnObject;
-    private generateBatchInsertValues;
+    private generateDataLoaderSearchLogic;
+    private generateNewRecordObject;
 }

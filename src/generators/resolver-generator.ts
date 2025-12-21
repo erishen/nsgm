@@ -46,34 +46,58 @@ module.exports = {
         }
     },
 
-    // 根据ID获取${this.controller}
-    ${this.controller}Get: async ({ id }) => {
+    // 根据ID获取${this.controller} - 使用 DataLoader 优化
+    ${this.controller}Get: async ({ id }, context) => {
         try {
             const validId = validateId(id);
             
-            const sql = 'SELECT ${selectFields} FROM ${this.controller} WHERE id = ?';
-            const values = [validId];
-
-            console.log('根据ID查询${this.controller}:', { sql, values });
+            console.log('🚀 使用 DataLoader 根据ID查询${this.controller}:', { id: validId });
             
-            const results = await executeQuery(sql, values);
+            // 使用 DataLoader 批量加载，自动去重和缓存
+            const result = await context.dataloaders.${this.controller}.byId.load(validId);
             
-            if (results.length === 0) {
+            if (!result) {
                 throw new Error(\`ID为 \${validId} 的${this.controller}不存在\`);
             }
             
-            return results[0];
+            return result;
         } catch (error) {
             console.error('获取${this.controller}失败:', error.message);
             throw error;
         }
     },
 
-    // 搜索${this.controller}（分页）
-    ${this.controller}Search: async ({ page = 0, pageSize = 10, data = {} }) => {
+    // 批量获取${this.controller} - 新增方法，展示 DataLoader 批量能力
+    ${this.controller}BatchGet: async ({ ids }, context) => {
+        try {
+            if (!Array.isArray(ids) || ids.length === 0) {
+                throw new Error('ID列表不能为空');
+            }
+            
+            // 验证所有ID
+            const validIds = ids.map(id => validateId(id));
+            
+            console.log('🚀 使用 DataLoader 批量查询${this.controller}:', { ids: validIds });
+            
+            // DataLoader 自动批量处理，一次查询获取所有数据
+            const results = await context.dataloaders.${this.controller}.byId.loadMany(validIds);
+            
+            // 过滤掉 null 结果（未找到的记录）
+            return results.filter(result => result !== null && !(result instanceof Error));
+        } catch (error) {
+            console.error('批量获取${this.controller}失败:', error.message);
+            throw error;
+        }
+    },
+
+    // 搜索${this.controller}（分页）- 使用 DataLoader 优化搜索
+    ${this.controller}Search: async ({ page = 0, pageSize = 10, data = {} }, context) => {
         try {
             const { page: validPage, pageSize: validPageSize } = validatePagination(page, pageSize);
             
+            ${this.generateDataLoaderSearchLogic(searchableFields)}
+            
+            // 原始查询方式（作为备用）
             const values = [];
             const countValues = [];
             
@@ -85,7 +109,7 @@ ${searchConditions}
             
             values.push(validPageSize, validPage * validPageSize);
             
-            console.log('搜索${this.controller}:', { sql, values, countSql, countValues });
+            console.log('搜索${this.controller}（备用查询）:', { sql, values, countSql, countValues });
             
             return await executePaginatedQuery(sql, countSql, values, countValues);
         } catch (error) {
@@ -94,8 +118,8 @@ ${searchConditions}
         }
     },
 
-    // 添加${this.controller}
-    ${this.controller}Add: async ({ data }) => {
+    // 添加${this.controller} - 添加 DataLoader 缓存预加载
+    ${this.controller}Add: async ({ data }, context) => {
         try {
 ${this.generateNewValidationCalls(insertFields)}
             
@@ -105,7 +129,16 @@ ${this.generateNewValidationCalls(insertFields)}
             console.log('添加${this.controller}:', { sql, values });
             
             const results = await executeQuery(sql, values);
-            return results.insertId;
+            const insertId = results.insertId;
+            
+            // 预加载新数据到 DataLoader 缓存
+            if (insertId && context?.dataloaders?.${this.controller}) {
+                const newRecord = { id: insertId, ${this.generateNewRecordObject(insertFields)} };
+                context.dataloaders.${this.controller}.prime(insertId, newRecord);
+                console.log('🚀 新${this.controller}已预加载到 DataLoader 缓存:', newRecord);
+            }
+            
+            return insertId;
         } catch (error) {
             console.error('添加${this.controller}失败:', error.message);
             throw error;
@@ -131,7 +164,7 @@ ${this.generateBatchValidation(insertFields)}
             
             const placeholders = validatedDatas.map(() => '(${insertPlaceholders})').join(',');
             const sql = \`INSERT INTO ${this.controller} (${insertFieldNames}) VALUES \${placeholders}\`;
-            const values = validatedDatas.flatMap(data => [${this.generateBatchInsertValues(insertFields)}]);
+            const values = validatedDatas.flatMap(data => [${insertFields.map((f) => `data.${f.name}`).join(", ")}]);
             
             console.log('批量添加${this.controller}:', { sql, values });
             
@@ -143,8 +176,8 @@ ${this.generateBatchValidation(insertFields)}
         }
     },
 
-    // 更新${this.controller}
-    ${this.controller}Update: async ({ id, data }) => {
+    // 更新${this.controller} - 添加 DataLoader 缓存清理
+    ${this.controller}Update: async ({ id, data }, context) => {
         try {
             const validId = validateId(id);
             
@@ -165,6 +198,12 @@ ${this.generateUpdateValidation(insertFields)}
                 throw new Error(\`ID为 \${validId} 的${this.controller}不存在\`);
             }
             
+            // 清除 DataLoader 缓存，确保下次查询获取最新数据
+            if (context?.dataloaders?.${this.controller}) {
+                context.dataloaders.${this.controller}.clearById(validId);
+                console.log('🧹 已清除 DataLoader 缓存:', { id: validId });
+            }
+            
             return true;
         } catch (error) {
             console.error('更新${this.controller}失败:', error.message);
@@ -172,8 +211,8 @@ ${this.generateUpdateValidation(insertFields)}
         }
     },
 
-    // 删除${this.controller}
-    ${this.controller}Delete: async ({ id }) => {
+    // 删除${this.controller} - 添加 DataLoader 缓存清理
+    ${this.controller}Delete: async ({ id }, context) => {
         try {
             const validId = validateId(id);
             
@@ -188,6 +227,12 @@ ${this.generateUpdateValidation(insertFields)}
                 throw new Error(\`ID为 \${validId} 的${this.controller}不存在\`);
             }
             
+            // 清除 DataLoader 缓存
+            if (context?.dataloaders?.${this.controller}) {
+                context.dataloaders.${this.controller}.clearById(validId);
+                console.log('🧹 已清除 DataLoader 缓存:', { id: validId });
+            }
+            
             return true;
         } catch (error) {
             console.error('删除${this.controller}失败:', error.message);
@@ -195,8 +240,8 @@ ${this.generateUpdateValidation(insertFields)}
         }
     },
 
-    // 批量删除${this.controller}
-    ${this.controller}BatchDelete: async ({ ids }) => {
+    // 批量删除${this.controller} - 添加 DataLoader 缓存清理
+    ${this.controller}BatchDelete: async ({ ids }, context) => {
         try {
             if (!Array.isArray(ids) || ids.length === 0) {
                 throw new Error('批量删除的ID列表不能为空');
@@ -220,6 +265,14 @@ ${this.generateUpdateValidation(insertFields)}
             
             if (results.affectedRows === 0) {
                 throw new Error('没有找到要删除的${this.controller}');
+            }
+            
+            // 批量清除 DataLoader 缓存
+            if (context?.dataloaders?.${this.controller}) {
+                validIds.forEach(id => {
+                    context.dataloaders.${this.controller}.clearById(id);
+                });
+                console.log('🧹 已批量清除 DataLoader 缓存:', { ids: validIds });
             }
             
             return true;
@@ -340,7 +393,49 @@ ${this.generateUpdateValidation(insertFields)}
       .join(", ");
   }
 
-  private generateBatchInsertValues(insertFields: any[]): string {
-    return insertFields.map((f) => `data.${f.name}`).join(", ");
+  // private generateBatchInsertValues(insertFields: any[]): string {
+  //   return insertFields.map((f) => `data.${f.name}`).join(", ");
+  // }
+
+  private generateDataLoaderSearchLogic(searchableFields: any[]): string {
+    if (searchableFields.length === 0) return "";
+
+    const nameField = searchableFields.find(f => f.name === 'name');
+    if (!nameField) return "";
+
+    return `// 如果有名称搜索，尝试使用 DataLoader 搜索缓存
+            if (data.name && data.name.trim() !== '') {
+                console.log('🚀 使用 DataLoader 搜索${this.controller}:', { searchTerm: data.name.trim() });
+                
+                try {
+                    // 使用 DataLoader 进行搜索（这里会缓存搜索结果）
+                    const searchResults = await context.dataloaders.${this.controller}.searchByName.load(data.name.trim());
+                    
+                    // 手动分页处理
+                    const totalCounts = searchResults.length;
+                    const startIndex = validPage * validPageSize;
+                    const endIndex = startIndex + validPageSize;
+                    const items = searchResults.slice(startIndex, endIndex);
+                    
+                    return {
+                        totalCounts,
+                        items
+                    };
+                } catch (dataLoaderError) {
+                    console.warn('DataLoader 搜索失败，回退到直接查询:', dataLoaderError.message);
+                    // 如果 DataLoader 失败，回退到原始查询方式
+                }
+            }`;
+  }
+
+  private generateNewRecordObject(insertFields: any[]): string {
+    return insertFields
+      .map((f) => {
+        if (f.type === "integer") {
+          return `${f.name}: valid${f.name.charAt(0).toUpperCase() + f.name.slice(1)}`;
+        }
+        return `${f.name}: data.${f.name}`;
+      })
+      .join(", ");
   }
 }

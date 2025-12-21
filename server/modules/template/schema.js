@@ -2,6 +2,7 @@ module.exports = {
     query: `
         template(page: Int, pageSize: Int): Templates
         templateGet(id: Int): Template
+        templateBatchGet(ids: [Int]): [Template]
         templateSearch(page: Int, pageSize: Int, data: TemplateSearchInput): Templates
     `,
     mutation: `

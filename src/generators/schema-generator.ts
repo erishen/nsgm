@@ -26,6 +26,7 @@ export class SchemaGenerator extends BaseGenerator {
     query: \`
         ${this.controller}(page: Int, pageSize: Int): ${pluralTypeName}
         ${this.controller}Get(id: Int): ${capitalizedTypeName}
+        ${this.controller}BatchGet(ids: [Int]): [${capitalizedTypeName}]
         ${this.controller}Search(page: Int, pageSize: Int, data: ${capitalizedTypeName}SearchInput): ${pluralTypeName}
     \`,
     mutation: \`

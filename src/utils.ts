@@ -17,7 +17,7 @@ export const firstUpperCase = (word: string) => {
 export const mkdirSync = (dirPath: string) => {
   if (mkdirFlag) {
     if (!fs.existsSync(dirPath)) {
-      fs.mkdirSync(dirPath);
+      fs.mkdirSync(dirPath, { recursive: true });
     }
   }
 };

@@ -4,6 +4,7 @@ import fs from "fs";
 import _ from "lodash";
 import { resolve } from "path";
 import datePlugins from "./plugins/date";
+import { createDataLoaderContext } from "./dataloaders";
 
 // 缓存已生成的 schema 和 resolvers
 let cachedSchema: string | null = null;
@@ -198,6 +199,16 @@ const handler = (command: string) => {
   return createHandler({
     schema: buildSchema(schemaStr),
     rootValue: resolversV,
+    // 为每个请求创建新的 DataLoader 上下文，确保请求隔离和缓存正确性
+    context: (_req: any, _params: any) => {
+      const context = createDataLoaderContext();
+      
+      if (command === "dev") {
+        console.log("🚀 GraphQL DataLoader 上下文已创建");
+      }
+      
+      return context as any;
+    },
   });
 };
 
