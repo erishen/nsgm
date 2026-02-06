@@ -83,6 +83,8 @@ const deleteModuleFiles = (paths: DeletePaths): void => {
 
   directoriesToDelete.forEach((dir) => rmdirSync(dir));
   filesToDelete.forEach((file) => rmFileSync(file));
+
+  console.log(`✅ 已删除 ${directoriesToDelete.length} 个目录和 ${filesToDelete.length} 个文件`);
 };
 
 /**
@@ -106,17 +108,19 @@ const cleanupReducers = (controller: string, reducersPath: string): void => {
 
   // 标准化空行
   shell.sed("-i", /\n\s*\n\s*\n/g, "\n\n", reducersPath);
+
+  console.log(`✅ 已清理 reducers 配置: ${controller}`);
 };
 
 /**
  * 清理菜单配置
  */
 const cleanupMenu = (controller: string, menuPath: string): void => {
-  // 删除所有匹配的菜单项
+  // 删除所有匹配的菜单项（匹配多行结构）
   shell.sed(
     "-i",
     new RegExp(
-      `,?\\s*\\{\\s*//\\s*${controller}_\\w+_start[\\s\\S]*?//\\s*${controller}_\\w+_end\\s*\\n\\s*\\}\\s*,?`,
+      `,?\\s*\\{\\s*//\\s*${controller}_\\w+_start[\\s\\S]*?//\\s*${controller}_\\w+_end[\\s\\S]*?\\n\\s*\\}\\s*,?`,
       "gm"
     ),
     "",
@@ -140,6 +144,8 @@ const cleanupMenu = (controller: string, menuPath: string): void => {
   shell.sed("-i", /^[ ]{0,4}icon:/gm, "      icon:", menuPath);
   shell.sed("-i", /^[ ]{0,4}subMenus:/gm, "      subMenus:", menuPath);
   shell.sed("-i", /^[ ]{0,2}\}\*\//gm, "    }*/", menuPath);
+
+  console.log(`✅ 已清理菜单配置: ${controller}`);
 };
 
 /**
@@ -156,6 +162,8 @@ const cleanupRestApi = (controller: string, restPath: string): void => {
     "",
     restPath
   );
+
+  console.log(`✅ 已清理 REST API 配置: ${controller}`);
 };
 
 /**
@@ -327,33 +335,34 @@ export const deleteConfigCommand: Command = {
         Console.highlight(
           `🗑️ 删除模块 ${successCount + failureCount + 1}/${targetModules.length}: ${module.controller}`
         );
+        Console.newLine();
 
         try {
-          const spinner = Console.spinner("正在删除文件...", "red");
-          spinner.start();
-
           // 生成删除路径
           const paths = generateDeletePaths(module.controller, module.dictionary);
 
           // 1. 删除文件和目录
+          Console.info("📁 正在删除文件和目录...");
           deleteModuleFiles(paths);
 
           // 2. 清理配置文件
+          Console.info("🔧 正在清理配置文件...");
           cleanupReducers(module.controller, paths.destClientReduxReducersAllPath);
           cleanupRestApi(module.controller, paths.destServerRestPath);
           cleanupMenu(module.controller, paths.destClientUtilsMenuPath);
 
           // 3. 删除数据库表（如果指定）
           if (options.db) {
+            Console.info("💾 正在删除数据库表...");
             dropDatabaseTable(module.controller);
           }
 
-          spinner.succeed("删除完成!");
-          successCount++;
+          Console.success(`✅ ${module.controller} 删除完成!`);
           Console.newLine();
+          successCount++;
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : String(error);
-          Console.error(`错误: ${errorMessage}`);
+          Console.error(`❌ 错误: ${errorMessage}`);
           failures.push({ module: module.controller, error: errorMessage });
           failureCount++;
           Console.newLine();
