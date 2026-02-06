@@ -32,10 +32,11 @@
 
 ### 代码生成命令
 
-| 命令             | 说明         |
-| ---------------- | ------------ |
-| `npm run create` | 创建模板页面 |
-| `npm run delete` | 删除模板页面 |
+| 命令                    | 说明                  |
+| ----------------------- | --------------------- |
+| `npm run create`        | 创建模板页面          |
+| `npm run delete`        | 删除模板页面          |
+| `npm run create-config` | 从配置文件批量创建模块 |
 
 ### 项目维护命令
 
@@ -187,6 +188,98 @@ module.exports = {
 - 不要在代码中硬编码密码
 - 不要将 `.env` 文件提交到版本控制系统
 - 定期更换登录密码
+
+## 配置文件批量创建模块
+
+项目支持从 JSON 配置文件批量创建模块，提高开发效率。
+
+### 配置文件位置
+
+配置文件应放置在 `config/` 目录下，例如 `config/modules.json`。
+
+### 配置文件格式
+
+#### 单模块配置
+
+```json
+{
+  "controller": "product",
+  "action": "manage",
+  "dictionary": ".",
+  "fields": [
+    {
+      "name": "name",
+      "type": "varchar",
+      "length": 255,
+      "required": true,
+      "comment": "商品名称",
+      "showInList": true,
+      "showInForm": true,
+      "searchable": true
+    }
+  ]
+}
+```
+
+#### 多模块配置
+
+```json
+[
+  {
+    "controller": "category",
+    "action": "manage",
+    "dictionary": ".",
+    "fields": [...]
+  },
+  {
+    "controller": "product",
+    "action": "manage",
+    "dictionary": ".",
+    "fields": [...]
+  }
+]
+```
+
+项目已提供示例配置文件 `config/modules.json`，包含 `category` 和 `product` 两个模块。
+
+### 使用方法
+
+```bash
+# 创建所有模块
+npm run create-config config/modules.json
+
+# 创建指定模块
+npm run create-config config/modules.json --module category
+
+# 预览模式（不实际创建）
+npm run create-config config/modules.json --dry-run
+```
+
+### 字段命名规范
+
+**始终使用蛇形命名（snake_case）**：
+
+```json
+{
+  "name": "user_id",        // ✅ 正确
+  "name": "category_id",     // ✅ 正确
+  "name": "total_amount",    // ✅ 正确
+  "name": "create_date",     // ✅ 正确
+  "name": "update_date"      // ✅ 正确
+}
+```
+
+避免驼峰命名：
+
+```json
+{
+  "name": "userId",         // ❌ 不推荐
+  "name": "categoryId",      // ❌ 不推荐
+  "name": "totalAmount",    // ❌ 不推荐
+}
+```
+
+更多详细信息，请参考项目中的示例配置文件 `config/modules.json`。
 
 ## 开发指南
 

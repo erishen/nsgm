@@ -7,6 +7,7 @@ export * from "./registry";
 export * from "./app";
 export * from "./commands/build";
 export * from "./commands/create";
+export * from "./commands/create-config";
 export * from "./commands/delete";
 export * from "./commands/export";
 export * from "./commands/help";

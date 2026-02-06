@@ -1,6 +1,7 @@
 import { Command } from "./types";
 import { buildCommand } from "./commands/build";
 import { createCommand } from "./commands/create";
+import { createConfigCommand } from "./commands/create-config";
 import { deleteCommand, deleteDbCommand } from "./commands/delete";
 import { exportCommand } from "./commands/export";
 import { helpCommand } from "./commands/help";
@@ -27,6 +28,7 @@ export class CommandRegistry {
     const commands = [
       buildCommand,
       createCommand,
+      createConfigCommand,
       deleteCommand,
       deleteDbCommand,
       exportCommand,

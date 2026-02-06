@@ -13,6 +13,7 @@
     "create": "nsgm create",
     "delete": "nsgm delete",
     "deletedb": "nsgm deletedb",
+    "create-config": "nsgm create-config",
     "generate-password": "node scripts/generate-password-hash.js",
     "postversion": "git push && git push --tags",
     "test": "jest",
