@@ -503,7 +503,7 @@ export default Page`;
       .join(",\n");
   }
   private generateTableColumns(fields: any[]): string {
-    const columns = fields.map((field, index) => {
+    const columns = fields.map((field) => {
       let column = `    {\n      title: t('${this.controller}:${this.controller}.fields.${field.name}'),\n      dataIndex: '${field.name}',\n      key: '${field.name}'`;
 
       // 添加排序功能
@@ -527,9 +527,9 @@ export default Page`;
 
       // 设置宽度
       if (field.name === "id") {
-        column += `,\n      width: '15%',\n      align: 'center' as const`;
-      } else if (index === fields.length - 1) {
-        column += `,\n      width: '60%',\n      ellipsis: true`;
+        column += `,\n      width: 80,\n      align: 'center' as const`;
+      } else if (field.type === "integer" || field.type === "decimal") {
+        column += `,\n      width: 100`;
       }
 
       column += "\n    }";
@@ -540,8 +540,9 @@ export default Page`;
     const actionColumn = `    {
       title: t('${this.controller}:${this.controller}.fields.actions'),
       dataIndex: '',
-      width: '25%',
+      width: 140,
       align: 'center' as const,
+      fixed: 'right',
       render: (_: any, record: any) => {
         return (
           <Space size="small">

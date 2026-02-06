@@ -264,8 +264,6 @@ export const StyledTable = styled(Table)`
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border-bottom: 1px solid #f0f0f0;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 
   .ant-table-tbody > tr:last-child > td {
