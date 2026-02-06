@@ -1,7 +1,10 @@
 import { Command, CommandOptions } from "../types";
 import { Console, Prompt } from "../utils";
-import { deleteFiles } from "../../generate";
 import fs from "fs";
+import path from "path";
+import shell from "shelljs";
+import { rmdirSync, rmFileSync } from "../../utils";
+import { mysqlUser, mysqlPassword, mysqlHost, mysqlPort } from "../../constants";
 
 /**
  * 模块配置接口
@@ -12,6 +15,163 @@ interface ModuleConfig {
   dictionary?: string;
   fields: any[];
 }
+
+/**
+ * 删除路径接口
+ */
+interface DeletePaths {
+  destPagesController: string;
+  destClientReduxController: string;
+  destClientServiceController: string;
+  destClientStyledController: string;
+  destServerModulesController: string;
+  destServerApisController: string;
+  destServerSqlController: string;
+  destServerDataLoader: string;
+  destClientReduxReducersAllPath: string;
+  destServerRestPath: string;
+  destClientUtilsMenuPath: string;
+  destI18nZhCN: string;
+  destI18nEnUS: string;
+  destI18nJaJP: string;
+}
+
+/**
+ * 生成删除路径
+ */
+const generateDeletePaths = (controller: string, dictionary?: string): DeletePaths => {
+  const basePath = dictionary || process.cwd();
+
+  return {
+    destPagesController: path.join(basePath, "pages", controller),
+    destClientReduxController: path.join(basePath, "client", "redux", controller),
+    destClientServiceController: path.join(basePath, "client", "service", controller),
+    destClientStyledController: path.join(basePath, "client", "styled", controller),
+    destServerModulesController: path.join(basePath, "server", "modules", controller),
+    destServerApisController: path.join(basePath, "server", "apis", `${controller}.js`),
+    destServerSqlController: path.join(basePath, "server", "sql", `${controller}.sql`),
+    destServerDataLoader: path.join(basePath, "server", "dataloaders", `${controller}-dataloader.ts`),
+    destClientReduxReducersAllPath: path.join(basePath, "client", "redux", "reducers.ts"),
+    destServerRestPath: path.join(basePath, "server", "rest.js"),
+    destClientUtilsMenuPath: path.join(basePath, "client", "utils", "menu.tsx"),
+    destI18nZhCN: path.join(basePath, "public", "locales", "zh-CN", `${controller}.json`),
+    destI18nEnUS: path.join(basePath, "public", "locales", "en-US", `${controller}.json`),
+    destI18nJaJP: path.join(basePath, "public", "locales", "ja-JP", `${controller}.json`),
+  };
+};
+
+/**
+ * 删除文件和目录
+ */
+const deleteModuleFiles = (paths: DeletePaths): void => {
+  const directoriesToDelete = [
+    paths.destPagesController,
+    paths.destClientReduxController,
+    paths.destClientServiceController,
+    paths.destClientStyledController,
+    paths.destServerModulesController,
+  ];
+
+  const filesToDelete = [
+    paths.destServerApisController,
+    paths.destServerSqlController,
+    paths.destServerDataLoader,
+    paths.destI18nZhCN,
+    paths.destI18nEnUS,
+    paths.destI18nJaJP,
+  ];
+
+  directoriesToDelete.forEach((dir) => rmdirSync(dir));
+  filesToDelete.forEach((file) => rmFileSync(file));
+};
+
+/**
+ * 清理 reducers 配置
+ */
+const cleanupReducers = (controller: string, reducersPath: string): void => {
+  // 删除 import 语句
+  shell.sed("-i", new RegExp(`^.*import.*from.*['"].*\\/${controller}\\/.*['"].*$`, "gm"), "", reducersPath);
+
+  // 删除 export 对象中的属性行
+  shell.sed("-i", new RegExp(`^\\s*${controller}\\w*:\\s*${controller}\\w*Reducer,?\\s*$`, "gm"), "", reducersPath);
+
+  // 修复连续逗号
+  shell.sed("-i", /,,+/g, ",", reducersPath);
+
+  // 修复对象末尾的逗号
+  shell.sed("-i", /,(\s*\n\s*\})/, "$1", reducersPath);
+
+  // 移除空对象中的逗号
+  shell.sed("-i", /\{\s*,\s*\}/, "{}", reducersPath);
+
+  // 标准化空行
+  shell.sed("-i", /\n\s*\n\s*\n/g, "\n\n", reducersPath);
+};
+
+/**
+ * 清理菜单配置
+ */
+const cleanupMenu = (controller: string, menuPath: string): void => {
+  // 删除所有匹配的菜单项
+  shell.sed(
+    "-i",
+    new RegExp(
+      `,?\\s*\\{\\s*//\\s*${controller}_\\w+_start[\\s\\S]*?//\\s*${controller}_\\w+_end\\s*\\n\\s*\\}\\s*,?`,
+      "gm"
+    ),
+    "",
+    menuPath
+  );
+
+  // 修复连续逗号
+  shell.sed("-i", /,,+/g, ",", menuPath);
+
+  // 修复对象前多余的逗号
+  shell.sed("-i", /\n\s*,\s*\{/gm, "\n  {", menuPath);
+
+  // 修复数组中缺失的逗号
+  shell.sed("-i", /(\})\s*(\{)/gm, "$1,\n  $2", menuPath);
+
+  // 清理缩进问题
+  shell.sed("-i", /^[ ]{0,2}\/\*\{/gm, "    /*{", menuPath);
+  shell.sed("-i", /^[ ]{0,4}key:/gm, "      key:", menuPath);
+  shell.sed("-i", /^[ ]{0,4}text:/gm, "      text:", menuPath);
+  shell.sed("-i", /^[ ]{0,4}url:/gm, "      url:", menuPath);
+  shell.sed("-i", /^[ ]{0,4}icon:/gm, "      icon:", menuPath);
+  shell.sed("-i", /^[ ]{0,4}subMenus:/gm, "      subMenus:", menuPath);
+  shell.sed("-i", /^[ ]{0,2}\}\*\//gm, "    }*/", menuPath);
+};
+
+/**
+ * 清理 REST API 配置
+ */
+const cleanupRestApi = (controller: string, restPath: string): void => {
+  // 删除 require 语句
+  shell.sed("-i", new RegExp(`^const\\s+${controller}\\s*=\\s*require.*${controller}['"].*$`, "gm"), "", restPath);
+
+  // 删除 router.use 语句
+  shell.sed(
+    "-i",
+    new RegExp(`^router\\.use\\(['"]\\/${controller}['"]\\s*,\\s*${controller}\\)\\s*$`, "gm"),
+    "",
+    restPath
+  );
+};
+
+/**
+ * 删除数据库表
+ */
+const dropDatabaseTable = (controller: string): void => {
+  try {
+    // 创建临时的 DROP TABLE SQL
+    const dropSql = `DROP TABLE IF EXISTS \`${controller}\`;`;
+    const mysqlCommand = `mysql -u${mysqlUser} -p${mysqlPassword} -h${mysqlHost} -P${mysqlPort} -e "${dropSql}"`;
+    shell.exec(mysqlCommand);
+    Console.info(`已删除数据库表: ${controller}`);
+  } catch (error) {
+    Console.error(`删除数据库表失败: ${error}`);
+  }
+};
 
 /**
  * 从配置文件删除命令
@@ -172,8 +332,21 @@ export const deleteConfigCommand: Command = {
           const spinner = Console.spinner("正在删除文件...", "red");
           spinner.start();
 
-          // 调用核心删除函数
-          deleteFiles(module.controller, module.action || "manage", options.db === true, module.dictionary || ".");
+          // 生成删除路径
+          const paths = generateDeletePaths(module.controller, module.dictionary);
+
+          // 1. 删除文件和目录
+          deleteModuleFiles(paths);
+
+          // 2. 清理配置文件
+          cleanupReducers(module.controller, paths.destClientReduxReducersAllPath);
+          cleanupRestApi(module.controller, paths.destServerRestPath);
+          cleanupMenu(module.controller, paths.destClientUtilsMenuPath);
+
+          // 3. 删除数据库表（如果指定）
+          if (options.db) {
+            dropDatabaseTable(module.controller);
+          }
 
           spinner.succeed("删除完成!");
           successCount++;

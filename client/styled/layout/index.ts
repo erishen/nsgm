@@ -55,7 +55,7 @@ export const SideMenu = styled(Menu)`
 `;
 
 export const ContentLayout = styled(Layout).withConfig({
-  shouldForwardProp: (prop) => prop !== 'collapsed',
+  shouldForwardProp: (prop) => prop !== "collapsed",
 })<{ collapsed?: boolean }>`
   display: flex;
   flex-direction: column;

@@ -35,7 +35,7 @@ interface MenuItem {
 // 安全获取 prefix 的辅助函数
 const getPrefix = () => {
   try {
-    if (typeof process !== "undefined" && process.env && process.env.NEXT_PUBLIC_PREFIX) {
+    if (typeof process !== "undefined" && process.env?.NEXT_PUBLIC_PREFIX) {
       return process.env.NEXT_PUBLIC_PREFIX;
     }
   } catch {

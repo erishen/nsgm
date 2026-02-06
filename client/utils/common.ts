@@ -4,7 +4,7 @@ export const getLocalEnv = () => {
   // 安全地访问 process.env，避免在浏览器中直接访问 process 对象
   let env = "uat";
   try {
-    if (typeof process !== "undefined" && process.env && process.env.NEXT_PUBLIC_ENV) {
+    if (typeof process !== "undefined" && process.env?.NEXT_PUBLIC_ENV) {
       env = process.env.NEXT_PUBLIC_ENV;
     }
   } catch {
@@ -20,7 +20,7 @@ export const getLocalApiPrefix = () => {
   let port = "3000";
   let prefix = "";
   let isExport = false;
-  
+
   try {
     if (typeof process !== "undefined" && process.env) {
       protocol = process.env.NEXT_PUBLIC_PROTOCOL || protocol;
