@@ -116,34 +116,35 @@ const cleanupReducers = (controller: string, reducersPath: string): void => {
  * 清理菜单配置
  */
 const cleanupMenu = (controller: string, menuPath: string): void => {
-  // 删除所有匹配的菜单项（匹配多行结构）
-  shell.sed(
-    "-i",
-    new RegExp(
-      `,?\\s*\\{\\s*//\\s*${controller}_\\w+_start[\\s\\S]*?//\\s*${controller}_\\w+_end[\\s\\S]*?\\n\\s*\\}\\s*,?`,
-      "gm"
-    ),
-    "",
-    menuPath
+  // 读取文件内容
+  let content = fs.readFileSync(menuPath, "utf8");
+
+  // 删除所有匹配的菜单项（使用与 generate_delete.ts 相同的正则）
+  content = content.replace(
+    new RegExp(`,?\\s*\\{\\s*//\\s*${controller}_.*_start[\\s\\S]*?//\\s*${controller}_.*_end\\s*\\}\\s*,?`, "gm"),
+    ""
   );
 
   // 修复连续逗号
-  shell.sed("-i", /,,+/g, ",", menuPath);
+  content = content.replace(/,,+/g, ",");
 
   // 修复对象前多余的逗号
-  shell.sed("-i", /\n\s*,\s*\{/gm, "\n  {", menuPath);
+  content = content.replace(/\n\s*,\s*\{/gm, "\n  {");
 
   // 修复数组中缺失的逗号
-  shell.sed("-i", /(\})\s*(\{)/gm, "$1,\n  $2", menuPath);
+  content = content.replace(/(\})\s*(\{)/gm, "$1,\n  $2");
 
   // 清理缩进问题
-  shell.sed("-i", /^[ ]{0,2}\/\*\{/gm, "    /*{", menuPath);
-  shell.sed("-i", /^[ ]{0,4}key:/gm, "      key:", menuPath);
-  shell.sed("-i", /^[ ]{0,4}text:/gm, "      text:", menuPath);
-  shell.sed("-i", /^[ ]{0,4}url:/gm, "      url:", menuPath);
-  shell.sed("-i", /^[ ]{0,4}icon:/gm, "      icon:", menuPath);
-  shell.sed("-i", /^[ ]{0,4}subMenus:/gm, "      subMenus:", menuPath);
-  shell.sed("-i", /^[ ]{0,2}\}\*\//gm, "    }*/", menuPath);
+  content = content.replace(/^[ ]{0,2}\/\*\{/gm, "    /*{");
+  content = content.replace(/^[ ]{0,4}key:/gm, "      key:");
+  content = content.replace(/^[ ]{0,4}text:/gm, "      text:");
+  content = content.replace(/^[ ]{0,4}url:/gm, "      url:");
+  content = content.replace(/^[ ]{0,4}icon:/gm, "      icon:");
+  content = content.replace(/^[ ]{0,4}subMenus:/gm, "      subMenus:");
+  content = content.replace(/^[ ]{0,2}\}\*\//gm, "    }*/");
+
+  // 写回文件
+  fs.writeFileSync(menuPath, content, "utf8");
 
   console.log(`✅ 已清理菜单配置: ${controller}`);
 };
