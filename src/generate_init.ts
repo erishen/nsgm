@@ -1,4 +1,5 @@
 import path, { resolve } from "path";
+import shell from "shelljs";
 import {
   sourceFolder,
   destFolder,
@@ -605,6 +606,16 @@ export const initRootFiles = (dictionary: string, newDestFolder: string): InitRe
 
     // 3. 复制文件
     copyMultipleFiles(fileMappings);
+
+    // 4. 替换 mysql.config.js 中的数据库名称为项目名称（中横线替换为下划线）
+    const destMysqlConfigPath = resolve(baseDestPath + ROOT_FILES.mysqlConfig);
+    if (existsSync(destMysqlConfigPath)) {
+      const projectName = path.basename(baseDestPath);
+      // 将中横线替换为下划线，生成数据库名称
+      const databaseName = projectName.replace(/-/g, "_").toLowerCase();
+      shell.sed("-i", /database: 'crm_demo'/, `database: '${databaseName}'`, destMysqlConfigPath);
+      console.log(`Database name set to: ${databaseName}`);
+    }
 
     console.log("Root files initialization completed");
 

@@ -3,10 +3,9 @@ import { setCookie, getCookie, delCookie } from "./cookie";
 import { getUrlParamByKey, getLocalApiPrefix, getLocalEnv, handleXSS } from "./common";
 import _ from "lodash";
 
-const env = getLocalEnv();
-
-const LOGIN_COOKIE_ID = `${env}_cas_nsgm`;
-const LOGIN_COOKIE_USER = `${env}_nsgm_user`;
+// 延迟初始化 cookie 名称，避免在模块加载时访问 process
+const getLoginCookieId = () => `${getLocalEnv()}_cas_nsgm`;
+const getLoginCookieUser = () => `${getLocalEnv()}_nsgm_user`;
 
 const getPrincipalUrl = () => {
   const url = `${getLocalApiPrefix()}/rest/sso/sessionCheck`;
@@ -67,8 +66,8 @@ const handleLocationHref = () => {
 };
 
 const jumpToLogin = () => {
-  delCookie(LOGIN_COOKIE_ID);
-  delCookie(LOGIN_COOKIE_USER);
+  delCookie(getLoginCookieId());
+  delCookie(getLoginCookieUser());
 
   if (typeof window !== "undefined") {
     window.location.href = `${window.location.origin}/login`;
@@ -115,7 +114,7 @@ const storeLoginUser = (userAttr: any, callback: any) => {
       "name",
       "sn",
     ]);
-    setCookie(LOGIN_COOKIE_USER, user, null);
+    setCookie(getLoginCookieUser(), user, null);
     callback?.(JSON.parse(user));
   } else {
     callback?.();
@@ -124,7 +123,7 @@ const storeLoginUser = (userAttr: any, callback: any) => {
 
 const storeLogin = (cookie: any, cookieExpire: any, userAttr: any, callback: any) => {
   if (cookie) {
-    setCookie(LOGIN_COOKIE_ID, cookie, cookieExpire);
+    setCookie(getLoginCookieId(), cookie, cookieExpire);
   }
 
   storeLoginUser(userAttr, callback);
@@ -166,7 +165,7 @@ const validateLogin = (ticket: string, name = "", callback: any) => {
 };
 
 export const login = (callback: any) => {
-  const cookieLoginValue = getCookie(LOGIN_COOKIE_ID);
+  const cookieLoginValue = getCookie(getLoginCookieId());
 
   if (typeof window !== "undefined") {
     const locationHref = window.location.href;

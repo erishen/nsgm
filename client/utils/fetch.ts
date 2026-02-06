@@ -32,9 +32,15 @@ export const GRAPHQL_CONFIG = {
     cookieName: "csrfToken",
   },
 
-  // 开发模式配置
-  development: {
-    enableDebugLogs: process.env.NODE_ENV === "development",
+  // 开发模式配置 - 使用 getter 延迟访问 process
+  get development() {
+    let enableDebugLogs = false;
+    try {
+      enableDebugLogs = typeof process !== "undefined" && process.env && process.env.NODE_ENV === "development";
+    } catch {
+      // 浏览器环境使用默认值
+    }
+    return { enableDebugLogs };
   },
 };
 

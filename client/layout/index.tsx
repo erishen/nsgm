@@ -32,8 +32,17 @@ interface MenuItem {
   subMenus?: SubMenuItem[];
 }
 
-// 从环境变量获取 prefix
-const prefix = process.env.NEXT_PUBLIC_PREFIX || "";
+// 安全获取 prefix 的辅助函数
+const getPrefix = () => {
+  try {
+    if (typeof process !== "undefined" && process.env && process.env.NEXT_PUBLIC_PREFIX) {
+      return process.env.NEXT_PUBLIC_PREFIX;
+    }
+  } catch {
+    // 浏览器环境使用空字符串
+  }
+  return "";
+};
 
 const getLocationKey = () => {
   const result = {
@@ -53,6 +62,7 @@ const getLocationKey = () => {
         const locationIndex = locationStr.indexOf("/");
         locationStr = locationStr.substring(locationIndex);
 
+        const prefix = getPrefix();
         if (prefix && locationStr.indexOf(prefix) !== -1) {
           locationStr = locationStr.split(prefix)[1];
         }
@@ -92,6 +102,7 @@ const getLocationKey = () => {
 
 const routerPush = (router: any, url: string) => {
   if (router && url && typeof window !== "undefined") {
+    const prefix = getPrefix();
     if (prefix && url.indexOf(prefix) === -1) {
       url = prefix + url;
     }

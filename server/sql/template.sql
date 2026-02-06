@@ -1,6 +1,8 @@
+CREATE DATABASE IF NOT EXISTS {{database}} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 use {{database}};
 
-CREATE TABLE `template` (
+CREATE TABLE IF NOT EXISTS `template` (
   `id` integer NOT NULL AUTO_INCREMENT COMMENT '主键',
   `name` varchar(100) DEFAULT '' COMMENT '名称',
   `create_date` TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建时间',

@@ -56,7 +56,7 @@ const MyDocument = (props) => {
               }
               
               // 在服务端抑制 useLayoutEffect 警告
-              if (typeof console !== 'undefined' && process.env.NODE_ENV === 'development') {
+              if (typeof console !== 'undefined' && typeof process !== 'undefined' && process.env && process.env.NODE_ENV === 'development') {
                 const originalError = console.error;
                 const originalWarn = console.warn;
                 

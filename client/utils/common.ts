@@ -1,17 +1,37 @@
 import _ from "lodash";
 
 export const getLocalEnv = () => {
-  let env = process.env.NEXT_PUBLIC_ENV || "uat";
-  env = env.toLowerCase();
-  return env;
+  // 安全地访问 process.env，避免在浏览器中直接访问 process 对象
+  let env = "uat";
+  try {
+    if (typeof process !== "undefined" && process.env && process.env.NEXT_PUBLIC_ENV) {
+      env = process.env.NEXT_PUBLIC_ENV;
+    }
+  } catch {
+    // 在浏览器环境中 process 可能未定义，使用默认值
+  }
+  return env.toLowerCase();
 };
 
 export const getLocalApiPrefix = () => {
-  let protocol = process.env.NEXT_PUBLIC_PROTOCOL || "http";
-  let host = process.env.NEXT_PUBLIC_HOST || "localhost";
-  let port = process.env.NEXT_PUBLIC_PORT || "3000";
-  const prefix = process.env.NEXT_PUBLIC_PREFIX || "";
-  const isExport = process.env.NEXT_PUBLIC_IS_EXPORT === "true";
+  // 安全地访问 process.env
+  let protocol = "http";
+  let host = "localhost";
+  let port = "3000";
+  let prefix = "";
+  let isExport = false;
+  
+  try {
+    if (typeof process !== "undefined" && process.env) {
+      protocol = process.env.NEXT_PUBLIC_PROTOCOL || protocol;
+      host = process.env.NEXT_PUBLIC_HOST || host;
+      port = process.env.NEXT_PUBLIC_PORT || port;
+      prefix = process.env.NEXT_PUBLIC_PREFIX || "";
+      isExport = process.env.NEXT_PUBLIC_IS_EXPORT === "true";
+    }
+  } catch {
+    // 在浏览器环境中 process 可能未定义，使用默认值
+  }
 
   let localApiPrefix = "";
 

@@ -578,16 +578,16 @@ export default Page`;
    */
   private generateClientValidation(): string {
     const integerFields = this.getFormFields().filter((field) => field.type === "integer");
+    const decimalFields = this.getFormFields().filter((field) => field.type === "decimal");
 
-    if (integerFields.length === 0) {
-      return "";
-    }
+    const validations: string[] = [];
 
-    const validations = integerFields.map((field) => {
+    // 生成 integer 字段验证
+    integerFields.forEach((field) => {
       const fieldName = field.name;
       const capitalizedName = fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
 
-      return `    // 验证${fieldName}
+      validations.push(`    // 验证${fieldName}
     const ${fieldName}Value = modalObj.${fieldName}
     if (${fieldName}Value !== undefined && ${fieldName}Value !== null && ${fieldName}Value !== '') {
       const parsed${capitalizedName} = parseInt(${fieldName}Value, 10)
@@ -596,8 +596,29 @@ export default Page`;
         return
       }
       modalObj.${fieldName} = parsed${capitalizedName}
-    }`;
+    }`);
     });
+
+    // 生成 decimal 字段验证
+    decimalFields.forEach((field) => {
+      const fieldName = field.name;
+      const capitalizedName = fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+      validations.push(`    // 验证${fieldName}
+    const ${fieldName}Value = modalObj.${fieldName}
+    if (${fieldName}Value !== undefined && ${fieldName}Value !== null && ${fieldName}Value !== '') {
+      const parsed${capitalizedName} = parseFloat(${fieldName}Value)
+      if (isNaN(parsed${capitalizedName})) {
+        message.error(\`${fieldName}必须是数字，当前值: "\${${fieldName}Value}"\`)
+        return
+      }
+      modalObj.${fieldName} = parsed${capitalizedName}
+    }`);
+    });
+
+    if (validations.length === 0) {
+      return "";
+    }
 
     return `${validations.join("\n\n")}\n\n`;
   }

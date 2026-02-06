@@ -29,11 +29,20 @@ const tempStore = configureStore({
 
 export type AppDispatch = typeof tempStore.dispatch;
 
+// 安全获取 NODE_ENV
+const isDevToolsEnabled = () => {
+  try {
+    return typeof process !== "undefined" && process.env && process.env.NODE_ENV !== "production";
+  } catch {
+    return false;
+  }
+};
+
 function initStore(initialState?: any): EnhancedStore {
   return configureStore({
     reducer: combineReducer,
     preloadedState: initialState,
-    devTools: process.env.NODE_ENV !== "production",
+    devTools: isDevToolsEnabled(),
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
         serializableCheck: {

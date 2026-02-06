@@ -66,9 +66,11 @@ export class SQLGenerator extends BaseGenerator {
     const primaryKey = primaryKeyField ? `  PRIMARY KEY (\`${primaryKeyField.name}\`)` : "";
     const databaseName = this.getDatabaseName();
 
-    return `use ${databaseName};
+    return `CREATE DATABASE IF NOT EXISTS ${databaseName} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-CREATE TABLE \`${this.controller}\` (
+use ${databaseName};
+
+CREATE TABLE IF NOT EXISTS \`${this.controller}\` (
 ${fieldDefinitions.join(",\n")},
 ${primaryKey}
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;`;
