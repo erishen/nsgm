@@ -119,20 +119,20 @@ const cleanupMenu = (controller: string, menuPath: string): void => {
   // 读取文件内容
   let content = fs.readFileSync(menuPath, "utf8");
 
-  // 删除所有匹配的菜单项（使用与 generate_delete.ts 相同的正则）
+  // 删除所有匹配的菜单项（使用与 generate_delete.ts 相同的正则，替换为逗号）
   content = content.replace(
     new RegExp(`,?\\s*\\{\\s*//\\s*${controller}_.*_start[\\s\\S]*?//\\s*${controller}_.*_end\\s*\\}\\s*,?`, "gm"),
-    ""
+    ","
   );
 
-  // 修复连续逗号
+  // 修复连续逗号（删除可能留下 ,,）
   content = content.replace(/,,+/g, ",");
 
-  // 修复对象前多余的逗号
-  content = content.replace(/\n\s*,\s*\{/gm, "\n  {");
+  // 修复数组开头多余的逗号 ([, { -> [ {)
+  content = content.replace(/\[\s*,\s*\{/gm, "[\n  {");
 
-  // 修复数组中缺失的逗号
-  content = content.replace(/(\})\s*(\{)/gm, "$1,\n  $2");
+  // 修复对象前多余的逗号（, { -> {）
+  content = content.replace(/\n\s*,\s*\{/gm, "\n  {");
 
   // 清理缩进问题
   content = content.replace(/^[ ]{0,2}\/\*\{/gm, "    /*{");
