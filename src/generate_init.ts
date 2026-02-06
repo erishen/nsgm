@@ -8,6 +8,7 @@ import {
   publicPath,
   scriptsPath,
   typesPath,
+  configPath,
   reduxPath,
   styledPath,
   styledLayoutPath,
@@ -28,6 +29,7 @@ import {
   sourcePagesPath,
   sourcePublicPath,
   sourceScriptsPath,
+  sourceConfigPath,
   destClientPath,
   destServerPath,
   destPagesPath,
@@ -675,6 +677,50 @@ export const initTestFiles = (dictionary: string, newDestFolder: string): void =
     console.log("Test files initialization completed");
   } catch (error) {
     console.error("Failed to initialize test files:", error);
+    throw error;
+  }
+};
+
+/**
+ * 初始化配置文件和目录
+ * @param dictionary 目标目录名称
+ * @param newDestFolder 新的目标文件夹路径
+ */
+export const initConfigFiles = (dictionary: string, newDestFolder: string): void => {
+  console.log("Initializing config files...");
+
+  try {
+    // 1. 确定目标路径
+    const baseDestPath = dictionary === "" ? destFolder : newDestFolder;
+    const configDestPath = path.join(baseDestPath, configPath);
+
+    // 2. 创建配置目录
+    createDirectoryStructure([configDestPath]);
+
+    // 3. 复制 config 目录下的所有文件
+    const sourceConfigDir = resolve(sourceConfigPath);
+    if (existsSync(sourceConfigDir)) {
+      const copyConfigRecursive = (sourceDir: string, destDir: string) => {
+        const items = readdirSync(sourceDir, { withFileTypes: true });
+        items.forEach((item) => {
+          const sourcePath = resolve(sourceDir, item.name);
+          const destPath = resolve(destDir, item.name);
+
+          if (item.isDirectory()) {
+            mkdirSync(destPath);
+            copyConfigRecursive(sourcePath, destPath);
+          } else {
+            copyFileSync(sourcePath, destPath, false);
+          }
+        });
+      };
+
+      copyConfigRecursive(sourceConfigDir, configDestPath);
+    }
+
+    console.log("Config files initialization completed");
+  } catch (error) {
+    console.error("Failed to initialize config files:", error);
     throw error;
   }
 };

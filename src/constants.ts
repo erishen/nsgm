@@ -29,6 +29,7 @@ const scriptsPathSource = "../scripts";
 const scriptsPath = "./scripts";
 const typesPathSource = "../types";
 const typesPath = "./types";
+const configPath = "./config";
 const reduxPath = "/redux";
 const servicePath = "/service";
 const styledPath = "/styled";
@@ -54,6 +55,7 @@ const sourcePagesPath = path.join(sourceFolder, pagesPathSource);
 const sourcePublicPath = path.join(sourceFolder, publicPathSource);
 const sourceScriptsPath = path.join(sourceFolder, scriptsPathSource);
 const sourceTypesPath = path.join(sourceFolder, typesPathSource);
+const sourceConfigPath = path.join(sourceGenerationPath, configPath);
 
 const destClientPath = path.join(destFolder, clientPath);
 const destClientReduxPath = resolve(destClientPath + reduxPath);
@@ -71,6 +73,7 @@ const destPagesPath = path.join(destFolder, pagesPath);
 const destPublicPath = path.join(destFolder, publicPath);
 const destScriptsPath = path.join(destFolder, scriptsPath);
 const destTypesPath = path.join(destFolder, typesPath);
+const destConfigPath = path.join(destFolder, configPath);
 
 const destClientUtilsMenuPath = resolve(destClientUtilsPath + utilsMenuPath);
 const destClientReduxReducersAllPath = resolve(destClientReduxPath + reduxReducersPath);
@@ -95,6 +98,7 @@ export {
   scriptsPath,
   typesPathSource,
   typesPath,
+  configPath,
   reduxPath,
   servicePath,
   styledPath,
@@ -119,6 +123,7 @@ export {
   sourcePublicPath,
   sourceScriptsPath,
   sourceTypesPath,
+  sourceConfigPath,
   destClientPath,
   destClientReduxPath,
   destClientServicePath,
@@ -135,6 +140,7 @@ export {
   destPublicPath,
   destScriptsPath,
   destTypesPath,
+  destConfigPath,
   destClientUtilsMenuPath,
   destClientReduxReducersAllPath,
   destPublicHealthCheckPath,
