@@ -38,9 +38,12 @@ export const getLocalApiPrefix = () => {
   return localApiPrefix;
 };
 
-export const handleXSS = (content: string) => {
-  content = content || "";
-  return content.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#x27;");
+export const handleXSS = (content: any) => {
+  if (content === null || content === undefined) {
+    return "";
+  }
+  const str = String(content);
+  return str.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#x27;");
 };
 
 export const checkModalObj = (modalObj: {}, ignoreKeys: any = []) => {
