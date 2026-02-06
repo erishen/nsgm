@@ -39,6 +39,7 @@ NSGM CLI is a comprehensive full-stack development framework that combines the p
 ### ⚡ **Rapid Development**
 
 - **Code Generation**: Automatic CRUD operations, API endpoints, and database schemas
+- **Config-Based Generation**: Batch create multiple modules from JSON configuration files
 - **Hot Reload**: Instant development feedback
 - **Type Safety**: Full TypeScript support throughout the stack
 
@@ -139,20 +140,26 @@ Your application will be available at `http://localhost:3000` with:
 
 ### Core Commands
 
-| Command       | Description                   | Mode            | Example               |
-| ------------- | ----------------------------- | --------------- | --------------------- |
-| `nsgm init`   | Initialize new project        | Interactive/CLI | `nsgm init blog-app`  |
-| `nsgm create` | Generate controller with CRUD | Interactive/CLI | `nsgm create user`    |
-| `nsgm delete` | Remove controller and files   | Interactive/CLI | `nsgm delete product` |
-| `nsgm dev`    | Start development server      | CLI             | `nsgm dev`            |
-| `nsgm build`  | Build for production          | CLI             | `nsgm build`          |
-| `nsgm start`  | Start production server       | CLI             | `nsgm start`          |
+| Command           | Description                     | Mode            | Example                       |
+| ---------------- | ------------------------------- | --------------- | ----------------------------- |
+| `nsgm init`      | Initialize new project          | Interactive/CLI | `nsgm init blog-app`         |
+| `nsgm create`    | Generate controller with CRUD   | Interactive/CLI | `nsgm create user`           |
+| `nsgm delete`    | Remove controller and files     | Interactive/CLI | `nsgm delete product`        |
+| `nsgm create-config` | Batch create from config file | CLI             | `nsgm create-config config/modules.json` |
+| `nsgm dev`       | Start development server        | CLI             | `nsgm dev`                   |
+| `nsgm build`     | Build for production           | CLI             | `nsgm build`                 |
+| `nsgm start`     | Start production server        | CLI             | `nsgm start`                 |
 
 ### Advanced Commands
 
 ```bash
 # Database operations
 nsgm deletedb user           # Delete controller + database table
+
+# Batch module creation
+nsgm create-config config/modules.json              # Create all modules from config
+nsgm create-config config/modules.json --module category  # Create specific module
+nsgm create-config config/modules.json --dry-run        # Preview without creating
 
 # Project maintenance
 nsgm upgrade                 # Upgrade project base files
@@ -455,9 +462,102 @@ npm run tsbuild
 ## 📖 Documentation
 
 - [Security Guide](SECURITY.md) - Security best practices
+- [Config-Based Generation Guide](docs/CONFIG-CMD-IMPLEMENTATION.md) - Batch module creation from config files
 - [API Reference](docs/api.md) - Complete API documentation
 - [Migration Guide](docs/migration.md) - Upgrade instructions
 - [Troubleshooting](docs/troubleshooting.md) - Common issues and solutions
+
+## 📋 Configuration File-Based Generation
+
+NSGM CLI supports batch module creation from JSON configuration files, making it easy to generate multiple modules at once.
+
+### Configuration File Format
+
+Create a JSON file (e.g., `config/modules.json`) with your module definitions:
+
+```json
+[
+  {
+    "controller": "category",
+    "action": "manage",
+    "dictionary": ".",
+    "fields": [
+      {
+        "name": "id",
+        "type": "integer",
+        "required": true,
+        "comment": "Primary key",
+        "isPrimaryKey": true,
+        "isAutoIncrement": true
+      },
+      {
+        "name": "name",
+        "type": "varchar",
+        "length": 100,
+        "required": true,
+        "comment": "Category name",
+        "showInList": true,
+        "showInForm": true,
+        "searchable": true
+      }
+    ]
+  }
+]
+```
+
+### Usage Examples
+
+```bash
+# Create all modules from config
+nsgm create-config config/modules.json
+
+# Or use npm script with default config
+npm run create-config
+
+# Create specific module
+nsgm create-config config/modules.json --module category
+
+# Preview mode (dry-run)
+nsgm create-config config/modules.json --dry-run
+```
+
+### Field Naming Convention
+
+**Always use snake_case for field names:**
+
+```json
+{
+  "name": "user_id",        // ✅ Correct
+  "name": "category_id",     // ✅ Correct
+  "name": "total_amount",    // ✅ Correct
+  "name": "create_date",     // ✅ Correct
+  "name": "update_date"      // ✅ Correct
+}
+```
+
+Avoid camelCase:
+
+```json
+{
+  "name": "userId",         // ❌ Not recommended
+  "name": "categoryId",      // ❌ Not recommended
+  "name": "totalAmount",    // ❌ Not recommended
+}
+```
+
+### Configuration File Location
+
+Generated projects include a `config/` directory with example configuration files:
+
+```
+project/
+├── config/
+│   ├── modules.json          # Default module configuration
+└── your-custom-config.json # Your custom configurations
+├── server/
+├── client/
+└── ...
+```
 
 ## 🐛 Troubleshooting
 

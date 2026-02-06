@@ -245,14 +245,20 @@ module.exports = {
 ### 使用方法
 
 ```bash
-# 创建所有模块
-npm run create-config config/modules.json
+# 创建所有模块（使用默认配置文件 config/modules.json）
+npm run create-config
+
+# 或指定配置文件路径
+nsgm create-config config/modules.json
 
 # 创建指定模块
-npm run create-config config/modules.json --module category
+npm run create-config --module category
 
 # 预览模式（不实际创建）
-npm run create-config config/modules.json --dry-run
+npm run create-config --dry-run
+
+# 使用自定义配置文件
+nsgm create-config path/to/your-config.json
 ```
 
 ### 字段命名规范

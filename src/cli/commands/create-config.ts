@@ -50,7 +50,16 @@ export const createConfigCommand: Command = {
     try {
       // 获取配置文件路径
       const args = process.argv.slice(2);
-      if (args.length === 0 || args[0].startsWith("-")) {
+
+      // 跳过命令名和别名
+      let configPathIndex = 0;
+      const commandNames = ["create-config", "-cc", "--create-config"];
+
+      while (configPathIndex < args.length && commandNames.includes(args[configPathIndex])) {
+        configPathIndex++;
+      }
+
+      if (configPathIndex >= args.length || args[configPathIndex].startsWith("-")) {
         Console.error("请指定配置文件路径");
         Console.info("使用方法:");
         Console.info("  nsgm create-config <config-file> [--module <name>]");
@@ -63,7 +72,7 @@ export const createConfigCommand: Command = {
         process.exit(1);
       }
 
-      const configPath = args[0];
+      const configPath = args[configPathIndex];
 
       // 检查配置文件是否存在
       if (!fs.existsSync(configPath)) {
