@@ -3,6 +3,7 @@ import { buildCommand } from "./commands/build";
 import { createCommand } from "./commands/create";
 import { createConfigCommand } from "./commands/create-config";
 import { deleteCommand, deleteDbCommand } from "./commands/delete";
+import { deleteConfigCommand } from "./commands/delete-config";
 import { exportCommand } from "./commands/export";
 import { helpCommand } from "./commands/help";
 import { initCommand } from "./commands/init";
@@ -31,6 +32,7 @@ export class CommandRegistry {
       createConfigCommand,
       deleteCommand,
       deleteDbCommand,
+      deleteConfigCommand,
       exportCommand,
       helpCommand,
       initCommand,

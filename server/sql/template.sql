@@ -1,4 +1,4 @@
-use crm_demo;
+use {{database}};
 
 CREATE TABLE `template` (
   `id` integer NOT NULL AUTO_INCREMENT COMMENT '主键',

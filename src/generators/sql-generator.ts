@@ -1,10 +1,31 @@
 import { BaseGenerator } from "./base-generator";
+import * as path from "path";
+import * as fs from "fs";
 
 /**
  * SQL生成器
  * 专门负责生成数据库表结构
  */
 export class SQLGenerator extends BaseGenerator {
+  /**
+   * 从目标项目的 mysql.config.js 读取数据库名称
+   */
+  private getDatabaseName(): string {
+    try {
+      // 尝试从目标项目读取配置文件
+      const configPath = path.join(process.cwd(), "mysql.config.js");
+      if (fs.existsSync(configPath)) {
+        const config = require(configPath);
+        if (config?.mysqlOptions?.database) {
+          return config.mysqlOptions.database;
+        }
+      }
+    } catch {
+      // 读取失败时使用默认值
+    }
+    return "crm_demo";
+  }
+
   generate(): string {
     const fieldDefinitions = this.fields.map((field) => {
       let sql = `  \`${field.name}\``;
@@ -43,8 +64,9 @@ export class SQLGenerator extends BaseGenerator {
 
     const primaryKeyField = this.fields.find((f) => f.isPrimaryKey);
     const primaryKey = primaryKeyField ? `  PRIMARY KEY (\`${primaryKeyField.name}\`)` : "";
+    const databaseName = this.getDatabaseName();
 
-    return `use crm_demo;
+    return `use ${databaseName};
 
 CREATE TABLE \`${this.controller}\` (
 ${fieldDefinitions.join(",\n")},

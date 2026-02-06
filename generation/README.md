@@ -37,6 +37,7 @@
 | `npm run create`        | 创建模板页面          |
 | `npm run delete`        | 删除模板页面          |
 | `npm run create-config` | 从配置文件批量创建模块 |
+| `npm run delete-config` | 从配置文件批量删除模块 |
 
 ### 项目维护命令
 

@@ -146,6 +146,7 @@ Your application will be available at `http://localhost:3000` with:
 | `nsgm create`    | Generate controller with CRUD   | Interactive/CLI | `nsgm create user`           |
 | `nsgm delete`    | Remove controller and files     | Interactive/CLI | `nsgm delete product`        |
 | `nsgm create-config` | Batch create from config file | CLI             | `nsgm create-config config/modules.json` |
+| `nsgm delete-config` | Batch delete from config file | CLI             | `nsgm delete-config config/modules.json` |
 | `nsgm dev`       | Start development server        | CLI             | `nsgm dev`                   |
 | `nsgm build`     | Build for production           | CLI             | `nsgm build`                 |
 | `nsgm start`     | Start production server        | CLI             | `nsgm start`                 |
@@ -160,6 +161,12 @@ nsgm deletedb user           # Delete controller + database table
 nsgm create-config config/modules.json              # Create all modules from config
 nsgm create-config config/modules.json --module category  # Create specific module
 nsgm create-config config/modules.json --dry-run        # Preview without creating
+
+# Batch module deletion
+nsgm delete-config config/modules.json              # Delete all modules from config
+nsgm delete-config config/modules.json --module category  # Delete specific module
+nsgm delete-config config/modules.json --db             # Delete modules + database tables
+nsgm delete-config config/modules.json --dry-run        # Preview without deleting
 
 # Project maintenance
 nsgm upgrade                 # Upgrade project base files
