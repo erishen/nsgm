@@ -62,6 +62,25 @@ export const formatDate = (date: Date | string, locale = "zh-CN") => {
   }).format(dateObj);
 };
 
+// Format date and time as YYYY-MM-DD HH:mm:ss
+export const formatDateTime = (date: Date | string) => {
+  const dateObj = typeof date === "string" ? new Date(date) : date;
+
+  // Check if date is valid
+  if (isNaN(dateObj.getTime())) {
+    return "";
+  }
+
+  const year = dateObj.getFullYear();
+  const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+  const day = String(dateObj.getDate()).padStart(2, "0");
+  const hours = String(dateObj.getHours()).padStart(2, "0");
+  const minutes = String(dateObj.getMinutes()).padStart(2, "0");
+  const seconds = String(dateObj.getSeconds()).padStart(2, "0");
+
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+};
+
 // Format number based on locale
 export const formatNumber = (number: number, locale = "zh-CN") => {
   return new Intl.NumberFormat(locale).format(number);

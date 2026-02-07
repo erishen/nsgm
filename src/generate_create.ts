@@ -266,8 +266,8 @@ const generateDynamicFiles = (
   fs.writeFileSync(paths.destClientAction, serviceGenerator.generate());
   fs.writeFileSync(paths.destPagesAction, pageGenerator.generate());
 
-  // 生成 DataLoader 文件
-  const dataLoaderPath = resolve(`${projectPath}/server/dataloaders/${controller}-dataloader.ts`);
+  // 生成 DataLoader 文件 (JavaScript)
+  const dataLoaderPath = resolve(`${projectPath}/server/dataloaders/${controller}-dataloader.js`);
   mkdirSync(path.dirname(dataLoaderPath));
   fs.writeFileSync(dataLoaderPath, dataLoaderGenerator.generate());
 

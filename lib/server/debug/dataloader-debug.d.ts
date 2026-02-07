@@ -19,23 +19,7 @@ export declare const dataLoaderStatsResolver: {
         };
         loaders: any[];
         recommendations: string[];
-        contextStats: {
-            template: {
-                byId: {
-                    cacheMap: any;
-                    name: string;
-                };
-                byName: {
-                    cacheMap: any;
-                    name: string;
-                };
-                searchByName: {
-                    cacheMap: any;
-                    name: string;
-                };
-            };
-            timestamp: string;
-        } | null;
+        contextStats: Record<string, any> | null;
         timestamp: string;
     }>;
     resetDataLoaderStats: () => Promise<{

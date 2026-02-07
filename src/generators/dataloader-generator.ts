@@ -2,35 +2,25 @@ import { BaseGenerator } from "./base-generator";
 
 /**
  * DataLoader生成器
- * 自动生成对应的 DataLoader 文件
+ * 自动生成对应的 DataLoader JavaScript 文件
  */
 export class DataLoaderGenerator extends BaseGenerator {
   generate(): string {
     const capitalizedController = this.getCapitalizedController();
     const selectFields = this.fields.map((f) => f.name).join(", ");
-    // const searchableFields = this.getSearchableFields(); // 暂时注释掉未使用的变量
 
-    return `import DataLoader from 'dataloader';
-import { executeQuery } from '../utils/common';
+    return `const DataLoader = require('dataloader');
+const { executeQuery } = require('../utils/common');
 
 /**
  * ${capitalizedController} DataLoader
  * 针对 ${this.controller} 表的批量数据加载器，解决 N+1 查询问题
  */
-export class ${capitalizedController}DataLoader {
-  // 按 ID 批量加载 ${this.controller}
-  public readonly byId: DataLoader<number, any>;
-  
-  // 按名称批量加载 ${this.controller}  
-  public readonly byName: DataLoader<string, any>;
-  
-  // 按名称模糊搜索 ${this.controller}
-  public readonly searchByName: DataLoader<string, any[]>;
-
+class ${capitalizedController}DataLoader {
   constructor() {
     // 按 ID 批量加载
     this.byId = new DataLoader(
-      async (ids: readonly number[]) => {
+      async (ids) => {
         try {
           console.log(\`🔍 DataLoader: 批量加载 \${ids.length} 个 ${this.controller} by ID\`);
           
@@ -41,7 +31,7 @@ export class ${capitalizedController}DataLoader {
           
           // 确保返回顺序与输入 keys 一致，未找到的返回 null
           return ids.map(id => 
-            results.find((row: any) => row.id === id) || null
+            results.find((row) => row.id === id) || null
           );
         } catch (error) {
           console.error('DataLoader byId 批量加载失败:', error);
@@ -57,7 +47,7 @@ export class ${capitalizedController}DataLoader {
 
     // 按名称批量加载
     this.byName = new DataLoader(
-      async (names: readonly string[]) => {
+      async (names) => {
         try {
           console.log(\`🔍 DataLoader: 批量加载 \${names.length} 个 ${this.controller} by name\`);
           
@@ -68,7 +58,7 @@ export class ${capitalizedController}DataLoader {
           
           // 确保返回顺序与输入 keys 一致
           return names.map(name => 
-            results.find((row: any) => row.name === name) || null
+            results.find((row) => row.name === name) || null
           );
         } catch (error) {
           console.error('DataLoader byName 批量加载失败:', error);
@@ -84,7 +74,7 @@ export class ${capitalizedController}DataLoader {
 
     // 按名称模糊搜索（返回数组）
     this.searchByName = new DataLoader(
-      async (searchTerms: readonly string[]) => {
+      async (searchTerms) => {
         try {
           console.log(\`🔍 DataLoader: 批量搜索 \${searchTerms.length} 个关键词\`);
           
@@ -115,7 +105,7 @@ export class ${capitalizedController}DataLoader {
   /**
    * 清除所有缓存
    */
-  clearAll(): void {
+  clearAll() {
     this.byId.clearAll();
     this.byName.clearAll();
     this.searchByName.clearAll();
@@ -125,21 +115,21 @@ export class ${capitalizedController}DataLoader {
   /**
    * 清除特定 ID 的缓存
    */
-  clearById(id: number): void {
+  clearById(id) {
     this.byId.clear(id);
   }
 
   /**
    * 清除特定名称的缓存
    */
-  clearByName(name: string): void {
+  clearByName(name) {
     this.byName.clear(name);
   }
 
   /**
    * 预加载数据到缓存
    */
-  prime(id: number, data: any): void {
+  prime(id, data) {
     this.byId.prime(id, data);
     if (data && data.name) {
       this.byName.prime(data.name, data);
@@ -170,9 +160,11 @@ export class ${capitalizedController}DataLoader {
 /**
  * 创建 ${capitalizedController} DataLoader 实例
  */
-export function create${capitalizedController}DataLoader(): ${capitalizedController}DataLoader {
+function create${capitalizedController}DataLoader() {
   return new ${capitalizedController}DataLoader();
-}`;
+}
+
+module.exports = { ${capitalizedController}DataLoader, create${capitalizedController}DataLoader };`;
   }
 
   /**
@@ -193,7 +185,7 @@ export function create${capitalizedController}DataLoader(): ${capitalizedControl
         return `
     // 按 ${fk.name} 批量加载相关的 ${this.controller}
     this.by${capitalizedRelated}Id = new DataLoader(
-      async (${fk.name}s: readonly number[]) => {
+      async (${fk.name}s) => {
         try {
           console.log(\`🔍 DataLoader: 批量加载 \${${fk.name}s.length} 个 ${this.controller} by ${fk.name}\`);
           
@@ -204,7 +196,7 @@ export function create${capitalizedController}DataLoader(): ${capitalizedControl
           
           // 按外键分组
           return ${fk.name}s.map(${fk.name} => 
-            results.filter((row: any) => row.${fk.name} === ${fk.name})
+            results.filter((row) => row.${fk.name} === ${fk.name})
           );
         } catch (error) {
           console.error('DataLoader by${capitalizedRelated}Id 批量加载失败:', error);

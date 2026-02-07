@@ -1,11 +1,8 @@
-import { TemplateDataLoader } from "./template-dataloader";
 /**
  * DataLoader 上下文接口
  */
 export interface DataLoaderContext extends Record<string, unknown> {
-    dataloaders: {
-        template: TemplateDataLoader;
-    };
+    dataloaders: Record<string, any>;
 }
 /**
  * 创建 DataLoader 上下文
@@ -15,23 +12,7 @@ export declare function createDataLoaderContext(): DataLoaderContext;
 /**
  * DataLoader 统计信息
  */
-export declare function getDataLoaderStats(context: DataLoaderContext): {
-    template: {
-        byId: {
-            cacheMap: any;
-            name: string;
-        };
-        byName: {
-            cacheMap: any;
-            name: string;
-        };
-        searchByName: {
-            cacheMap: any;
-            name: string;
-        };
-    };
-    timestamp: string;
-};
+export declare function getDataLoaderStats(context: DataLoaderContext): Record<string, any>;
 /**
  * 清除所有 DataLoader 缓存
  */

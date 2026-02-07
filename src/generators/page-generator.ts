@@ -51,7 +51,7 @@ import { get${capitalizedController}Service } from '@/service/${this.controller}
 import { RootState, AppDispatch } from '@/redux/store'
 import _ from 'lodash'
 import { useTranslation } from 'next-i18next'
-import { getAntdLocale } from '@/utils/i18n'
+import { getAntdLocale, formatDateTime } from '@/utils/i18n'
 import { useRouter } from 'next/router'
 import { handleXSS, checkModalObj } from '@/utils/common'
 import { UploadOutlined } from '@ant-design/icons'
@@ -520,7 +520,7 @@ export default Page`;
 
       // 根据字段类型设置特定属性
       if (field.type === "timestamp" || field.type === "date" || field.type === "datetime") {
-        column += `,\n      render: (text: string) => text ? new Date(text).toLocaleString() : '-'`;
+        column += `,\n      render: (text: string) => text ? formatDateTime(text) : '-'`;
       } else if (field.type === "integer" || field.type === "decimal") {
         column += `,\n      align: 'center' as const`;
       }
