@@ -4,12 +4,21 @@ import { BaseGenerator } from "./base-generator";
  * Resolver生成器
  */
 export class ResolverGenerator extends BaseGenerator {
+  // 获取带反引号的表名（防止 MySQL 保留关键字冲突）
+  private getQuotedTableName(): string {
+    return `\`${this.controller}\``;
+  }
+
   generate(): string {
+    // @ts-ignore - Variable is used in generated template string
     const selectFields = this.fields.map((f) => f.name).join(", ");
     const insertFields = this.getFormFields();
     const searchableFields = this.getSearchableFields();
-
+    // @ts-ignore - Variable is used in generated template string
+    const quotedTableName = this.getQuotedTableName();
+    // @ts-ignore - Variable is used in generated template string
     const insertFieldNames = insertFields.map((f) => f.name).join(", ");
+    // @ts-ignore - Variable is used in generated template string
     const insertPlaceholders = insertFields.map(() => "?").join(", ");
     const insertValues = insertFields
       .map((f) => {
@@ -22,6 +31,7 @@ export class ResolverGenerator extends BaseGenerator {
 
     const searchConditions = this.generateSearchConditions(searchableFields);
 
+    // @ts-ignore - Variable is used in generated template string
     const updateFields = insertFields.map((f) => `${f.name} = ?`).join(", ");
 
     return `const { executeQuery, executePaginatedQuery } = require('../../utils/common')
@@ -32,13 +42,13 @@ module.exports = {
     ${this.controller}: async ({ page = 0, pageSize = 10 }) => {
         try {
             const { page: validPage, pageSize: validPageSize } = validatePagination(page, pageSize);
-            
-            const sql = 'SELECT ${selectFields} FROM ${this.controller} LIMIT ? OFFSET ?';
-            const countSql = 'SELECT COUNT(*) as counts FROM ${this.controller}';
+
+            const sql = \`SELECT \${selectFields} FROM \${quotedTableName} LIMIT ? OFFSET ?\`;
+            const countSql = \`SELECT COUNT(*) as counts FROM \${quotedTableName}\`;
             const values = [validPageSize, validPage * validPageSize];
 
             console.log('执行分页查询:', { sql, values, countSql });
-            
+
             return await executePaginatedQuery(sql, countSql, values);
         } catch (error) {
             console.error('获取${this.controller}列表失败:', error.message);
@@ -50,16 +60,16 @@ module.exports = {
     ${this.controller}Get: async ({ id }, context) => {
         try {
             const validId = validateId(id);
-            
+
             console.log('🚀 使用 DataLoader 根据ID查询${this.controller}:', { id: validId });
-            
+
             // 使用 DataLoader 批量加载，自动去重和缓存
             const result = await context.dataloaders.${this.controller}.byId.load(validId);
-            
+
             if (!result) {
                 throw new Error(\`ID为 \${validId} 的${this.controller}不存在\`);
             }
-            
+
             return result;
         } catch (error) {
             console.error('获取${this.controller}失败:', error.message);
@@ -73,15 +83,15 @@ module.exports = {
             if (!Array.isArray(ids) || ids.length === 0) {
                 throw new Error('ID列表不能为空');
             }
-            
+
             // 验证所有ID
             const validIds = ids.map(id => validateId(id));
-            
+
             console.log('🚀 使用 DataLoader 批量查询${this.controller}:', { ids: validIds });
-            
+
             // DataLoader 自动批量处理，一次查询获取所有数据
             const results = await context.dataloaders.${this.controller}.byId.loadMany(validIds);
-            
+
             // 过滤掉 null 结果（未找到的记录）
             return results.filter(result => result !== null && !(result instanceof Error));
         } catch (error) {
@@ -94,23 +104,23 @@ module.exports = {
     ${this.controller}Search: async ({ page = 0, pageSize = 10, data = {} }, context) => {
         try {
             const { page: validPage, pageSize: validPageSize } = validatePagination(page, pageSize);
-            
+
             ${this.generateDataLoaderSearchLogic(searchableFields)}
-            
+
             // 原始查询方式（作为备用）
             const values = [];
             const countValues = [];
-            
+
             let whereSql = '';
 ${searchConditions}
 
-            const sql = \`SELECT ${selectFields} FROM ${this.controller} WHERE 1=1\${whereSql} LIMIT ? OFFSET ?\`;
-            const countSql = \`SELECT COUNT(*) as counts FROM ${this.controller} WHERE 1=1\${whereSql}\`;
-            
+            const sql = \`SELECT \${selectFields} FROM \${quotedTableName} WHERE 1=1\${whereSql} LIMIT ? OFFSET ?\`;
+            const countSql = \`SELECT COUNT(*) as counts FROM \${quotedTableName} WHERE 1=1\${whereSql}\`;
+
             values.push(validPageSize, validPage * validPageSize);
-            
+
             console.log('搜索${this.controller}（备用查询）:', { sql, values, countSql, countValues });
-            
+
             return await executePaginatedQuery(sql, countSql, values, countValues);
         } catch (error) {
             console.error('搜索${this.controller}失败:', error.message);
@@ -122,22 +132,22 @@ ${searchConditions}
     ${this.controller}Add: async ({ data }, context) => {
         try {
 ${this.generateNewValidationCalls(insertFields)}
-            
-            const sql = 'INSERT INTO ${this.controller} (${insertFieldNames}) VALUES (${insertPlaceholders})';
+
+            const sql = \`INSERT INTO \${quotedTableName} (\${insertFieldNames}) VALUES (\${insertPlaceholders})\`;
             const values = [${insertValues}];
-            
+
             console.log('添加${this.controller}:', { sql, values });
-            
+
             const results = await executeQuery(sql, values);
             const insertId = results.insertId;
-            
+
             // 预加载新数据到 DataLoader 缓存
             if (insertId && context?.dataloaders?.${this.controller}) {
                 const newRecord = { id: insertId, ${this.generateNewRecordObject(insertFields)} };
                 context.dataloaders.${this.controller}.prime(insertId, newRecord);
                 console.log('🚀 新${this.controller}已预加载到 DataLoader 缓存:', newRecord);
             }
-            
+
             return insertId;
         } catch (error) {
             console.error('添加${this.controller}失败:', error.message);
@@ -151,7 +161,7 @@ ${this.generateNewValidationCalls(insertFields)}
             if (!Array.isArray(datas) || datas.length === 0) {
                 throw new Error('批量添加数据不能为空');
             }
-            
+
             // 验证所有数据并转换
             const validatedDatas = datas.map((data, index) => {
                 try {
@@ -161,10 +171,10 @@ ${this.generateBatchValidation(insertFields)}
                     throw new Error(\`第 \${index + 1} 条数据验证失败: \${error.message}\`);
                 }
             });
-            
-            const placeholders = validatedDatas.map(() => '(${insertPlaceholders})').join(',');
-            const sql = \`INSERT INTO ${this.controller} (${insertFieldNames}) VALUES \${placeholders}\`;
-            const values = validatedDatas.flatMap(data => [${insertFields.map((f) => `data.${f.name}`).join(", ")}]);
+
+            const placeholders = validatedDatas.map(() => \`(\${insertPlaceholders})\`).join(',');
+            const sql = \`INSERT INTO \${quotedTableName} (\${insertFieldNames}) VALUES \${placeholders}\`;
+            const values = validatedDatas.flatMap(data => [${this.generateBatchInsertValues(insertFields)}]);
             
             console.log('批量添加${this.controller}:', { sql, values });
             
@@ -187,7 +197,7 @@ ${this.generateBatchValidation(insertFields)}
             
 ${this.generateUpdateValidation(insertFields)}
             
-            const sql = 'UPDATE ${this.controller} SET ${updateFields} WHERE id = ?';
+            const sql = \`UPDATE \${quotedTableName} SET \${updateFields} WHERE id = ?\`;
             const values = [${this.generateUpdateValues(insertFields)}, validId];
             
             console.log('更新${this.controller}:', { sql, values });
@@ -216,7 +226,7 @@ ${this.generateUpdateValidation(insertFields)}
         try {
             const validId = validateId(id);
             
-            const sql = 'DELETE FROM ${this.controller} WHERE id = ?';
+            const sql = \`DELETE FROM \${quotedTableName} WHERE id = ?\`;
             const values = [validId];
             
             console.log('删除${this.controller}:', { sql, values });
@@ -257,7 +267,7 @@ ${this.generateUpdateValidation(insertFields)}
             });
             
             const placeholders = validIds.map(() => '?').join(',');
-            const sql = \`DELETE FROM ${this.controller} WHERE id IN (\${placeholders})\`;
+            const sql = \`DELETE FROM \${quotedTableName} WHERE id IN (\${placeholders})\`;
             
             console.log('批量删除${this.controller}:', { sql, values: validIds });
             
@@ -393,9 +403,9 @@ ${this.generateUpdateValidation(insertFields)}
       .join(", ");
   }
 
-  // private generateBatchInsertValues(insertFields: any[]): string {
-  //   return insertFields.map((f) => `data.${f.name}`).join(", ");
-  // }
+  private generateBatchInsertValues(insertFields: any[]): string {
+    return insertFields.map((f) => `data.${f.name}`).join(", ");
+  }
 
   private generateDataLoaderSearchLogic(searchableFields: any[]): string {
     if (searchableFields.length === 0) return "";

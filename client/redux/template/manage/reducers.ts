@@ -10,7 +10,7 @@ const initialState = {
 };
 
 export const templateManageReducer = (state = initialState, { type, payload }) => {
-  const { template } = state;
+  const template = state.template || { totalCounts: 0, items: [] };
   const { totalCounts, items } = template;
   let newItems: any = [];
 

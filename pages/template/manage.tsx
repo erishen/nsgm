@@ -86,7 +86,9 @@ const Page = ({ template }) => {
     template = templateManage.template;
   }
 
-  const { totalCounts, items: templateItems } = _.cloneDeep(template);
+  // 确保 template 不为 null，提供默认值
+  const safeTemplate = template || { totalCounts: 0, items: [] };
+  const { totalCounts, items: templateItems } = _.cloneDeep(safeTemplate);
 
   _.each(templateItems, (item) => {
     const { id } = item;
