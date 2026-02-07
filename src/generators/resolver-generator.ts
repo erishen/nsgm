@@ -10,16 +10,17 @@ export class ResolverGenerator extends BaseGenerator {
   }
 
   generate(): string {
+    // Variables used in generated template string (prefixed with _ to satisfy ESLint)
     // @ts-ignore - Variable is used in generated template string
-    const selectFields = this.fields.map((f) => f.name).join(", ");
+    const _selectFields = this.fields.map((f) => f.name).join(", ");
     const insertFields = this.getFormFields();
     const searchableFields = this.getSearchableFields();
     // @ts-ignore - Variable is used in generated template string
-    const quotedTableName = this.getQuotedTableName();
+    const _quotedTableName = this.getQuotedTableName();
     // @ts-ignore - Variable is used in generated template string
-    const insertFieldNames = insertFields.map((f) => f.name).join(", ");
+    const _insertFieldNames = insertFields.map((f) => f.name).join(", ");
     // @ts-ignore - Variable is used in generated template string
-    const insertPlaceholders = insertFields.map(() => "?").join(", ");
+    const _insertPlaceholders = insertFields.map(() => "?").join(", ");
     const insertValues = insertFields
       .map((f) => {
         if (f.type === "integer") {
@@ -30,9 +31,8 @@ export class ResolverGenerator extends BaseGenerator {
       .join(", ");
 
     const searchConditions = this.generateSearchConditions(searchableFields);
-
     // @ts-ignore - Variable is used in generated template string
-    const updateFields = insertFields.map((f) => `${f.name} = ?`).join(", ");
+    const _updateFields = insertFields.map((f) => `${f.name} = ?`).join(", ");
 
     return `const { executeQuery, executePaginatedQuery } = require('../../utils/common')
 const { validateInteger, validatePagination, validateId } = require('../../utils/validation')
@@ -43,8 +43,8 @@ module.exports = {
         try {
             const { page: validPage, pageSize: validPageSize } = validatePagination(page, pageSize);
 
-            const sql = \`SELECT \${selectFields} FROM \${quotedTableName} LIMIT ? OFFSET ?\`;
-            const countSql = \`SELECT COUNT(*) as counts FROM \${quotedTableName}\`;
+            const sql = \`SELECT \${_selectFields} FROM \${_quotedTableName} LIMIT ? OFFSET ?\`;
+            const countSql = \`SELECT COUNT(*) as counts FROM \${_quotedTableName}\`;
             const values = [validPageSize, validPage * validPageSize];
 
             console.log('执行分页查询:', { sql, values, countSql });
@@ -114,8 +114,8 @@ module.exports = {
             let whereSql = '';
 ${searchConditions}
 
-            const sql = \`SELECT \${selectFields} FROM \${quotedTableName} WHERE 1=1\${whereSql} LIMIT ? OFFSET ?\`;
-            const countSql = \`SELECT COUNT(*) as counts FROM \${quotedTableName} WHERE 1=1\${whereSql}\`;
+            const sql = \`SELECT \${_selectFields} FROM \${_quotedTableName} WHERE 1=1\${whereSql} LIMIT ? OFFSET ?\`;
+            const countSql = \`SELECT COUNT(*) as counts FROM \${_quotedTableName} WHERE 1=1\${whereSql}\`;
 
             values.push(validPageSize, validPage * validPageSize);
 
@@ -133,7 +133,7 @@ ${searchConditions}
         try {
 ${this.generateNewValidationCalls(insertFields)}
 
-            const sql = \`INSERT INTO \${quotedTableName} (\${insertFieldNames}) VALUES (\${insertPlaceholders})\`;
+            const sql = \`INSERT INTO \${_quotedTableName} (\${_insertFieldNames}) VALUES (\${_insertPlaceholders})\`;
             const values = [${insertValues}];
 
             console.log('添加${this.controller}:', { sql, values });
@@ -172,8 +172,8 @@ ${this.generateBatchValidation(insertFields)}
                 }
             });
 
-            const placeholders = validatedDatas.map(() => \`(\${insertPlaceholders})\`).join(',');
-            const sql = \`INSERT INTO \${quotedTableName} (\${insertFieldNames}) VALUES \${placeholders}\`;
+            const placeholders = validatedDatas.map(() => \`(\${_insertPlaceholders})\`).join(',');
+            const sql = \`INSERT INTO \${_quotedTableName} (\${_insertFieldNames}) VALUES \${placeholders}\`;
             const values = validatedDatas.flatMap(data => [${this.generateBatchInsertValues(insertFields)}]);
             
             console.log('批量添加${this.controller}:', { sql, values });
@@ -197,7 +197,7 @@ ${this.generateBatchValidation(insertFields)}
             
 ${this.generateUpdateValidation(insertFields)}
             
-            const sql = \`UPDATE \${quotedTableName} SET \${updateFields} WHERE id = ?\`;
+            const sql = \`UPDATE \${_quotedTableName} SET \${_updateFields} WHERE id = ?\`;
             const values = [${this.generateUpdateValues(insertFields)}, validId];
             
             console.log('更新${this.controller}:', { sql, values });
@@ -226,7 +226,7 @@ ${this.generateUpdateValidation(insertFields)}
         try {
             const validId = validateId(id);
             
-            const sql = \`DELETE FROM \${quotedTableName} WHERE id = ?\`;
+            const sql = \`DELETE FROM \${_quotedTableName} WHERE id = ?\`;
             const values = [validId];
             
             console.log('删除${this.controller}:', { sql, values });
@@ -267,7 +267,7 @@ ${this.generateUpdateValidation(insertFields)}
             });
             
             const placeholders = validIds.map(() => '?').join(',');
-            const sql = \`DELETE FROM \${quotedTableName} WHERE id IN (\${placeholders})\`;
+            const sql = \`DELETE FROM \${_quotedTableName} WHERE id IN (\${placeholders})\`;
             
             console.log('批量删除${this.controller}:', { sql, values: validIds });
             
