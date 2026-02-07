@@ -27,7 +27,7 @@ function loadProjectDataLoaders(): Record<string, any> {
 
     files.forEach((file) => {
       // 只加载 JavaScript dataloader 文件：*-dataloader.js
-      const match = file.match(/^([a-z_]+)-?_dataloader\.js$/i);
+      const match = file.match(/^([a-z_-]+)-dataloader\.js$/i);
       if (match) {
         const moduleName = match[1]; // 提取模块名，如 'product'
         const filePath = join(projectDataLoadersPath, file);
