@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, ReactNode } from "react";
 import { Layout, Menu, Dropdown, Space } from "antd";
 import {
   Container,
@@ -28,7 +28,7 @@ interface MenuItem {
   key: string;
   text: string;
   url: string;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   subMenus?: SubMenuItem[];
 }
 

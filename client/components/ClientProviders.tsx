@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, ReactNode, FC } from "react";
 import { ThemeProvider } from "styled-components";
 import { GlobalStyle } from "@/styled/common";
 
 interface ClientProvidersProps {
-  children: React.ReactNode;
+  children: ReactNode;
   theme: any;
   whiteColor?: boolean;
 }
 
-const ClientProviders: React.FC<ClientProvidersProps> = ({ children, theme, whiteColor = true }) => {
+const ClientProviders: FC<ClientProvidersProps> = ({ children, theme, whiteColor = true }) => {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {

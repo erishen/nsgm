@@ -5,14 +5,70 @@ import { BaseGenerator } from "./base-generator";
  * 自动生成对应的 DataLoader JavaScript 文件
  */
 export class DataLoaderGenerator extends BaseGenerator {
+  /**
+   * 可能的 JSON 字段名（需要自动解析）
+   */
+  private jsonFieldNames = [
+    "images",
+    "photos",
+    "gallery",
+    "metadata",
+    "attributes",
+    "specs",
+    "options",
+    "settings",
+    "config",
+    "extra",
+    "data",
+    "json",
+    "params",
+  ];
+
+  /**
+   * 获取可能是 JSON 的字段
+   */
+  private getJsonFields(): string[] {
+    return this.fields
+      .filter((f) => this.jsonFieldNames.some((jsonName) => f.name.toLowerCase().includes(jsonName)))
+      .map((f) => f.name);
+  }
+
   generate(): string {
     const capitalizedController = this.getCapitalizedController();
     const selectFields = this.fields.map((f) => f.name).join(", ");
+    const jsonFields = this.getJsonFields();
+    const hasJsonFields = jsonFields.length > 0;
 
     return `const DataLoader = require('dataloader');
 const { executeQuery } = require('../utils/common');
 
-/**
+${
+  hasJsonFields
+    ? `/**
+ * 处理 ${this.controller} 行数据，将 JSON 字符串解析为对象
+ */
+function process${capitalizedController}Row(row) {
+  if (!row) return row;
+  
+${jsonFields
+  .map(
+    (field) => `  // 处理 ${field} 字段（JSON 字符串转对象）
+  if (row.${field} && typeof row.${field} === 'string') {
+    try {
+      row.${field} = JSON.parse(row.${field});
+    } catch (e) {
+      row.${field} = ${field === "images" || field === "photos" || field === "gallery" ? "[]" : "{}"};
+    }
+  }`
+  )
+  .join(",\n  ")}
+  
+  return row;
+}
+
+`
+    : ""
+}/**
  * ${capitalizedController} DataLoader
  * 针对 ${this.controller} 表的批量数据加载器，解决 N+1 查询问题
  */
@@ -30,9 +86,7 @@ class ${capitalizedController}DataLoader {
           const results = await executeQuery(sql, [...ids]);
           
           // 确保返回顺序与输入 keys 一致，未找到的返回 null
-          return ids.map(id => 
-            results.find((row) => row.id === id) || null
-          );
+          return ids.map(id => ${hasJsonFields ? `process${capitalizedController}Row(results.find((row) => row.id === id) || null)` : `results.find((row) => row.id === id) || null`});
         } catch (error) {
           console.error('DataLoader byId 批量加载失败:', error);
           throw error;
@@ -57,9 +111,7 @@ class ${capitalizedController}DataLoader {
           const results = await executeQuery(sql, [...names]);
           
           // 确保返回顺序与输入 keys 一致
-          return names.map(name => 
-            results.find((row) => row.name === name) || null
-          );
+          return names.map(name => ${hasJsonFields ? `process${capitalizedController}Row(results.find((row) => row.name === name) || null)` : `results.find((row) => row.name === name) || null`});
         } catch (error) {
           console.error('DataLoader byName 批量加载失败:', error);
           throw error;
@@ -82,7 +134,8 @@ class ${capitalizedController}DataLoader {
           const results = await Promise.all(
             searchTerms.map(async (term) => {
               const sql = 'SELECT ${selectFields} FROM ${this.controller} WHERE name LIKE ?';
-              return executeQuery(sql, [\`%\${term}%\`]);
+              const rows = await executeQuery(sql, [\`%\${term}%\`]);
+              ${hasJsonFields ? `return rows.map(process${capitalizedController}Row);` : "return rows;"}
             })
           );
           
@@ -99,7 +152,7 @@ class ${capitalizedController}DataLoader {
       }
     );
 
-    ${this.generateForeignKeyLoaders()}
+    ${this.generateForeignKeyLoaders(hasJsonFields, capitalizedController)}
   }
 
   /**
@@ -170,7 +223,7 @@ module.exports = { ${capitalizedController}DataLoader, create${capitalizedContro
   /**
    * 生成外键 DataLoader
    */
-  private generateForeignKeyLoaders(): string {
+  private generateForeignKeyLoaders(hasJsonFields: boolean, capitalizedController: string): string {
     const foreignKeys = this.fields.filter((f) => f.name.endsWith("_id") && f.name !== "id");
 
     if (foreignKeys.length === 0) {
@@ -196,7 +249,9 @@ module.exports = { ${capitalizedController}DataLoader, create${capitalizedContro
           
           // 按外键分组
           return ${fk.name}s.map(${fk.name} => 
-            results.filter((row) => row.${fk.name} === ${fk.name})
+            results
+              .filter((row) => row.${fk.name} === ${fk.name})
+              ${hasJsonFields ? `.map(process${capitalizedController}Row)` : ""}
           );
         } catch (error) {
           console.error('DataLoader by${capitalizedRelated}Id 批量加载失败:', error);

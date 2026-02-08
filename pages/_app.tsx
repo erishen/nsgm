@@ -97,9 +97,15 @@ const App = ({ Component, pageProps }) => {
       setLoginChecked(true);
     });
 
-    setTimeout(() => {
+    // 特殊页面（如模板页等）跳过延迟，普通页面保留延迟
+    const isTemplatePage = router.pathname.startsWith("/template");
+    if (isTemplatePage) {
       setPageLoad(true);
-    }, 100);
+    } else {
+      setTimeout(() => {
+        setPageLoad(true);
+      }, 100);
+    }
   }, [mounted, isSpecialPage]);
 
   return (

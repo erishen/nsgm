@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, CSSProperties, FC } from "react";
 import { Select } from "antd";
 import { useRouter } from "next/router";
 import { GlobalOutlined } from "@ant-design/icons";
@@ -6,11 +6,11 @@ import { GlobalOutlined } from "@ant-design/icons";
 const { Option } = Select;
 
 interface LanguageSwitcherProps {
-  style?: React.CSSProperties;
+  style?: CSSProperties;
   size?: "small" | "middle" | "large";
 }
 
-const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ style, size = "middle" }) => {
+const LanguageSwitcher: FC<LanguageSwitcherProps> = ({ style, size = "middle" }) => {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [currentLocale, setCurrentLocale] = useState("zh-CN");
