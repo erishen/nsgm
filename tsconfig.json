@@ -6,6 +6,8 @@
     "declaration": true,
     "outDir": "./lib",
     "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
     "lib": [
       "dom",
       "ES2022"

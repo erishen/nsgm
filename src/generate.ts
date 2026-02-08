@@ -20,7 +20,7 @@ import { createFiles as generateCreateFiles } from "./generate_create";
 import { deleteFiles as generateDeleteFiles } from "./generate_delete";
 
 // 常量提取
-const PNPM_INSTALL_FLAGS = "--legacy-peer-deps";
+const PNPM_INSTALL_FLAGS = "--strict-peer-dependencies false";
 
 // 类型定义
 type DirectoryInput = string | undefined | null;

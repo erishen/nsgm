@@ -1,7 +1,7 @@
 import { createHandler } from "graphql-http/lib/use/express";
 import { buildSchema } from "graphql";
 import fs from "fs";
-import _ from "lodash";
+import * as _ from "lodash";
 import { resolve } from "path";
 import datePlugins from "./plugins/date";
 import { createDataLoaderContext } from "./dataloaders";

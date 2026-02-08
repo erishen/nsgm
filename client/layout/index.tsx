@@ -11,7 +11,7 @@ import {
   StyledContent,
 } from "@/styled/layout";
 import { useRouter } from "next/router";
-import _ from "lodash";
+import * as _ from "lodash";
 import menuConfig, { getMenuConfig } from "@/utils/menu";
 import { LogoutOutlined } from "@ant-design/icons";
 import LanguageSwitcher from "@/components/LanguageSwitcher";

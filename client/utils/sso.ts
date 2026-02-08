@@ -1,7 +1,7 @@
 import axios from "axios";
 import { setCookie, getCookie, delCookie } from "./cookie";
 import { getUrlParamByKey, getLocalApiPrefix, getLocalEnv, handleXSS } from "./common";
-import _ from "lodash";
+import * as _ from "lodash";
 
 // 延迟初始化 cookie 名称，避免在模块加载时访问 process
 const getLoginCookieId = () => `${getLocalEnv()}_cas_nsgm`;

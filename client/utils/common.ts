@@ -1,4 +1,4 @@
-import _ from "lodash";
+import * as _ from "lodash";
 
 export const getLocalEnv = () => {
   // 安全地访问 process.env，避免在浏览器中直接访问 process 对象

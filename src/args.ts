@@ -1,4 +1,4 @@
-import _ from "lodash";
+import * as _ from "lodash";
 
 export const getProcessArgvs = (removeItems = 2) => {
   const args = process.argv.slice(removeItems);

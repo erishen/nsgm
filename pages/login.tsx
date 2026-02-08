@@ -1,5 +1,5 @@
 import MarkdownIt from "markdown-it";
-import _ from "lodash";
+import * as _ from "lodash";
 import { LoginContainer } from "../client/styled/common";
 // import getConfig from 'next/config'
 import { useState, useEffect } from "react";

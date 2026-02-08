@@ -1,5 +1,5 @@
 import { getLocalGraphql } from "@/utils/fetch";
-import _ from "lodash";
+import * as _ from "lodash";
 
 export const getTemplateService = (page = 0, pageSize = 10) => {
   const getTemplateQuery = `query ($page: Int, $pageSize: Int) { template(page: $page, pageSize: $pageSize) { 

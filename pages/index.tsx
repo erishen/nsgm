@@ -1,4 +1,4 @@
-import _ from "lodash";
+import * as _ from "lodash";
 import { Container } from "../client/styled/common";
 import { Card, Typography, Divider, Row, Col, Tag } from "antd";
 import { CodeOutlined, BookOutlined, DatabaseOutlined, SettingOutlined } from "@ant-design/icons";

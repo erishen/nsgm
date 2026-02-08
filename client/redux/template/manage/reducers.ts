@@ -1,5 +1,5 @@
 import * as types from "./types";
-import _ from "lodash";
+import * as _ from "lodash";
 
 const initialState = {
   firstLoadFlag: true,

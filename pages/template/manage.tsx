@@ -24,7 +24,7 @@ import {
 } from "@/redux/template/manage/actions";
 import { getTemplateService } from "@/service/template/manage";
 import { RootState, AppDispatch } from "@/redux/store";
-import _ from "lodash";
+import * as _ from "lodash";
 import { useTranslation } from "next-i18next";
 import { getAntdLocale } from "@/utils/i18n";
 import { useRouter } from "next/router";
