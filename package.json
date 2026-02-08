@@ -1,6 +1,6 @@
 {
   "name": "nsgm-cli",
-  "version": "2.1.46",
+  "version": "2.1.47",
   "packageManager": "npm@11.9.0",
   "description": "A CLI tool to run Next/Style-components and Graphql/Mysql fullstack project",
   "main": "index.js",
