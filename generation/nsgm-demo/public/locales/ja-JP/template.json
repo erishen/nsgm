@@ -1,0 +1,42 @@
+{
+  "template": {
+    "title": "テンプレート管理",
+    "fields": {
+      "id": "ID",
+      "name": "名前",
+      "actions": "操作"
+    },
+    "buttons": {
+      "add": "追加",
+      "edit": "編集",
+      "delete": "削除",
+      "search": "検索",
+      "export": "エクスポート",
+      "import": "インポート",
+      "batchDelete": "一括削除",
+      "confirm": "確認",
+      "cancel": "キャンセル"
+    },
+    "placeholders": {
+      "enterName": "名前を入力して検索",
+      "inputName": "名前を入力"
+    },
+    "messages": {
+      "confirmDelete": "削除してもよろしいですか？",
+      "confirmBatchDelete": "一括削除してもよろしいですか？",
+      "uploadSuccess": "ファイルのアップロードが成功しました",
+      "uploadFailed": "ファイルのアップロードに失敗しました",
+      "onlyExcel": "Excelファイルのみアップロード可能です！",
+      "fileSizeLimit": "ファイルサイズは2MBを超えることはできません！",
+      "noData": "エクスポートするデータがありません",
+      "noDataBatchDelete": "一括削除するデータがありません"
+    },
+    "modal": {
+      "addTitle": "テンプレート追加",
+      "editTitle": "テンプレート編集"
+    },
+    "pagination": {
+      "total": "合計 {{total}} 件"
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "page": {
+    "title": "NSGM CLI",
+    "description": "フルスタックアーキテクチャ、コードテンプレート生成、迅速な開発",
+    "sections": {
+      "database": {
+        "title": "データベース設定",
+        "description": "データベースはMysqlを使用、設定はmysql.config.jsを参照"
+      },
+      "project": {
+        "title": "プロジェクト設定",
+        "description": "プロジェクト設定はproject.config.jsを参照"
+      },
+      "framework": {
+        "title": "フレームワーク設定",
+        "description": "Nextフレームワーク設定はnext.config.jsを参照"
+      }
+    },
+    "commands": {
+      "title": "コマンド",
+      "categories": {
+        "projectManagement": {
+          "title": "プロジェクト管理",
+          "items": {
+            "init": "プロジェクトを初期化",
+            "upgrade": "プロジェクト基盤ファイルをアップグレード"
+          }
+        },
+        "templateOperations": {
+          "title": "テンプレート操作",
+          "items": {
+            "create": "テンプレートページを作成",
+            "delete": "テンプレートページを削除",
+            "deletedb": "テンプレートページとデータベーステーブルを削除"
+          }
+        },
+        "runBuild": {
+          "title": "実行とビルド",
+          "items": {
+            "dev": "開発モード",
+            "start": "本番モード",
+            "build": "ビルド",
+            "export": "静的ページをエクスポート"
+          }
+        }
+      }
+    },
+    "parameters": {
+      "title": "パラメータ",
+      "items": {
+        "dictionary": "export/initで使用、デフォルトはwebapp",
+        "controller": "create/deleteで使用時は必須",
+        "action": "create/deleteで使用、デフォルトはmanage"
+      }
+    }
+  }
+}

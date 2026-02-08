@@ -1,0 +1,42 @@
+{
+  "template": {
+    "title": "Template Management",
+    "fields": {
+      "id": "ID",
+      "name": "Name",
+      "actions": "Actions"
+    },
+    "buttons": {
+      "add": "Add",
+      "edit": "Edit",
+      "delete": "Delete",
+      "search": "Search",
+      "export": "Export",
+      "import": "Import",
+      "batchDelete": "Batch Delete",
+      "confirm": "Confirm",
+      "cancel": "Cancel"
+    },
+    "placeholders": {
+      "enterName": "Enter name to search",
+      "inputName": "Enter name"
+    },
+    "messages": {
+      "confirmDelete": "Are you sure to delete?",
+      "confirmBatchDelete": "Are you sure to batch delete?",
+      "uploadSuccess": "File uploaded successfully",
+      "uploadFailed": "File upload failed",
+      "onlyExcel": "Only Excel files are allowed!",
+      "fileSizeLimit": "File size cannot exceed 2MB!",
+      "noData": "No data to export",
+      "noDataBatchDelete": "No data to batch delete"
+    },
+    "modal": {
+      "addTitle": "Add Template",
+      "editTitle": "Edit Template"
+    },
+    "pagination": {
+      "total": "Total {{total}} records"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "login": {
+    "title": "系统登录",
+    "username": "用户名",
+    "password": "密码",
+    "loginButton": "登录",
+    "errors": {
+      "usernameRequired": "请输入用户名",
+      "passwordRequired": "请输入密码",
+      "loginFailed": "登录失败"
+    }
+  }
+}

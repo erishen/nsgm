@@ -1,0 +1,163 @@
+[
+  {
+    "controller": "category",
+    "action": "manage",
+    "dictionary": ".",
+    "fields": [
+      {
+        "name": "id",
+        "type": "integer",
+        "required": true,
+        "comment": "主键",
+        "isPrimaryKey": true,
+        "isAutoIncrement": true
+      },
+      {
+        "name": "name",
+        "type": "varchar",
+        "length": 100,
+        "required": true,
+        "comment": "分类名称",
+        "showInList": true,
+        "showInForm": true,
+        "searchable": true
+      },
+      {
+        "name": "description",
+        "type": "text",
+        "required": false,
+        "comment": "分类描述",
+        "showInList": false,
+        "showInForm": true
+      },
+      {
+        "name": "parent_id",
+        "type": "integer",
+        "required": false,
+        "comment": "父分类ID",
+        "showInList": true,
+        "showInForm": true
+      },
+      {
+        "name": "sort_order",
+        "type": "integer",
+        "required": true,
+        "comment": "排序",
+        "showInList": true,
+        "showInForm": true
+      },
+      {
+        "name": "status",
+        "type": "varchar",
+        "length": 20,
+        "required": true,
+        "comment": "状态",
+        "showInList": true,
+        "showInForm": true
+      },
+      {
+        "name": "create_date",
+        "type": "timestamp",
+        "required": true,
+        "comment": "创建时间",
+        "isSystemField": true
+      },
+      {
+        "name": "update_date",
+        "type": "timestamp",
+        "required": true,
+        "comment": "更新时间",
+        "isSystemField": true
+      }
+    ]
+  },
+  {
+    "controller": "product",
+    "action": "manage",
+    "dictionary": ".",
+    "fields": [
+      {
+        "name": "id",
+        "type": "integer",
+        "required": true,
+        "comment": "主键",
+        "isPrimaryKey": true,
+        "isAutoIncrement": true
+      },
+      {
+        "name": "name",
+        "type": "varchar",
+        "length": 255,
+        "required": true,
+        "comment": "商品名称",
+        "showInList": true,
+        "showInForm": true,
+        "searchable": true
+      },
+      {
+        "name": "description",
+        "type": "text",
+        "required": false,
+        "comment": "商品描述",
+        "showInList": false,
+        "showInForm": true
+      },
+      {
+        "name": "price",
+        "type": "decimal",
+        "required": true,
+        "comment": "商品价格",
+        "showInList": true,
+        "showInForm": true
+      },
+      {
+        "name": "category_id",
+        "type": "integer",
+        "required": false,
+        "comment": "分类ID",
+        "showInList": true,
+        "showInForm": true
+      },
+      {
+        "name": "stock",
+        "type": "integer",
+        "required": true,
+        "comment": "库存数量",
+        "showInList": true,
+        "showInForm": true
+      },
+      {
+        "name": "image_url",
+        "type": "varchar",
+        "length": 500,
+        "required": false,
+        "comment": "商品图片URL",
+        "showInList": true,
+        "showInForm": true
+      },
+      {
+        "name": "status",
+        "type": "varchar",
+        "length": 20,
+        "required": true,
+        "comment": "状态",
+        "showInList": true,
+        "showInForm": true
+      },
+      {
+        "name": "create_date",
+        "type": "timestamp",
+        "required": true,
+        "comment": "创建时间",
+        "isSystemField": true
+      },
+      {
+        "name": "update_date",
+        "type": "timestamp",
+        "required": true,
+        "comment": "更新时间",
+        "isSystemField": true
+      }
+    ]
+  }
+]

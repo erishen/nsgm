@@ -1,0 +1,42 @@
+{
+  "template": {
+    "title": "Template 管理",
+    "fields": {
+      "id": "ID",
+      "name": "名称",
+      "actions": "操作"
+    },
+    "buttons": {
+      "add": "新增",
+      "edit": "修改",
+      "delete": "删除",
+      "search": "搜索",
+      "export": "导出",
+      "import": "导入",
+      "batchDelete": "批量删除",
+      "confirm": "确认",
+      "cancel": "取消"
+    },
+    "placeholders": {
+      "enterName": "请输入名称搜索",
+      "inputName": "请输入名称"
+    },
+    "messages": {
+      "confirmDelete": "确认删除吗",
+      "confirmBatchDelete": "确认批量删除吗",
+      "uploadSuccess": "文件上传成功",
+      "uploadFailed": "文件上传失败",
+      "onlyExcel": "只能上传 Excel 文件!",
+      "fileSizeLimit": "文件大小不能超过 2MB!",
+      "noData": "没有数据无需导出",
+      "noDataBatchDelete": "没有数据不能批量删除"
+    },
+    "modal": {
+      "addTitle": "新增 Template",
+      "editTitle": "修改 Template"
+    },
+    "pagination": {
+      "total": "共 {{total}} 条记录"
+    }
+  }
+}

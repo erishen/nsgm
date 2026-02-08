@@ -1,0 +1,57 @@
+{
+  "page": {
+    "title": "NSGM CLI",
+    "description": "Full-stack architecture, code template generation, rapid development",
+    "sections": {
+      "database": {
+        "title": "Database Configuration",
+        "description": "Database uses Mysql, see mysql.config.js for configuration"
+      },
+      "project": {
+        "title": "Project Configuration",
+        "description": "See project.config.js for project configuration"
+      },
+      "framework": {
+        "title": "Framework Configuration",
+        "description": "See next.config.js for Next framework configuration"
+      }
+    },
+    "commands": {
+      "title": "Commands",
+      "categories": {
+        "projectManagement": {
+          "title": "Project Management",
+          "items": {
+            "init": "Initialize project",
+            "upgrade": "Upgrade project base files"
+          }
+        },
+        "templateOperations": {
+          "title": "Template Operations",
+          "items": {
+            "create": "Create template page",
+            "delete": "Delete template page",
+            "deletedb": "Delete template page and database table"
+          }
+        },
+        "runBuild": {
+          "title": "Run & Build",
+          "items": {
+            "dev": "Development mode",
+            "start": "Production mode",
+            "build": "Build",
+            "export": "Export static pages"
+          }
+        }
+      }
+    },
+    "parameters": {
+      "title": "Parameters",
+      "items": {
+        "dictionary": "Used in export/init, default webapp",
+        "controller": "Required when using create/delete",
+        "action": "Used in create/delete, default manage"
+      }
+    }
+  }
+}

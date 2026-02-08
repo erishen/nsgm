@@ -1,0 +1,13 @@
+{
+  "login": {
+    "title": "System Login",
+    "username": "Username",
+    "password": "Password",
+    "loginButton": "Login",
+    "errors": {
+      "usernameRequired": "Please enter username",
+      "passwordRequired": "Please enter password",
+      "loginFailed": "Login failed"
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "jsx": "preserve",
+    "target": "ES2022",
+    "module": "esnext",
+    "declaration": true,
+    "strict": true,
+    "lib": ["dom", "ES2022"],
+    "esModuleInterop": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": false,
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noImplicitAny": false,
+    "incremental": true,
+    "paths": {
+      "@/*": ["./client/*"]
+    },
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["client/**/*", "pages/**/*"],
+  "exclude": ["node_modules", "**/__tests__/*", ".next", "lib"]
+}

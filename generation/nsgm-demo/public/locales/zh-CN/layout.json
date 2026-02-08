@@ -1,0 +1,22 @@
+{
+  "layout": {
+    "userActions": {
+      "logout": "退出登录",
+      "profile": "个人中心",
+      "settings": "账户设置",
+      "notifications": "通知",
+      "user": "用户"
+    },
+    "navigation": {
+      "home": "首页",
+      "dashboard": "仪表板",
+      "management": "管理",
+      "system": "系统"
+    },
+    "menu": {
+      "introduction": "介绍",
+      "template": "模板",
+      "template1": "模板1"
+    }
+  }
+}

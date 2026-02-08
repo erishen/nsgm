@@ -1,0 +1,13 @@
+{
+  "login": {
+    "title": "システムログイン",
+    "username": "ユーザー名",
+    "password": "パスワード",
+    "loginButton": "ログイン",
+    "errors": {
+      "usernameRequired": "ユーザー名を入力してください",
+      "passwordRequired": "パスワードを入力してください",
+      "loginFailed": "ログインに失敗しました"
+    }
+  }
+}
