@@ -1,7 +1,7 @@
 {
   "name": "nsgm-cli-project",
   "version": "1.0.0",
-  "packageManager": "pnpm@10.28.0",
+  "packageManager": "npm@11.9.0",
   "description": "",
   "main": "app.js",
   "scripts": {

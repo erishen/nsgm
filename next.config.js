@@ -82,7 +82,7 @@ module.exports = (phase, defaultConfig, options) => {
     ],
     // Bundle 优化配置
     experimental: {
-      optimizeCss: true, // 启用 CSS 优化（已安装 critters 依赖）
+      // optimizeCss: true, // 启用 CSS 优化（需要 critters 依赖，已禁用以避免兼容性问题）
       esmExternals: true, // 支持 ESM 外部依赖
     },
     compiler: {
