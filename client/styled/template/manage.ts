@@ -195,11 +195,13 @@ export const StyledTable: any = styled(Table)`
   .ant-table-container {
     position: relative;
     border-radius: 12px 12px 0 0;
-    overflow: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
   }
 
   .ant-table-content {
-    overflow: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
   }
 
   .ant-table-thead > tr > th {
@@ -401,6 +403,7 @@ export const StyledTable: any = styled(Table)`
   /* 横向滚动条样式 */
   .ant-table-body {
     overflow-x: auto !important;
+    overflow-y: hidden !important;
 
     &::-webkit-scrollbar {
       height: 8px;
