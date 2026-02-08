@@ -291,6 +291,11 @@ export const StyledTable: any = styled(Table)`
     box-shadow: -2px 0 8px rgba(0, 0, 0, 0.08);
   }
 
+  /* 确保操作列在悬停时保持实色背景 */
+  .ant-table-tbody > tr:hover > .ant-table-cell-fix-right {
+    background: linear-gradient(135deg, #f0f5ff 0%, #e6f4ff 100%) !important;
+  }
+
   .ant-table-pagination.ant-pagination {
     margin: 20px 16px !important;
     padding: 12px 20px;
