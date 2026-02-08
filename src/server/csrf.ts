@@ -69,7 +69,7 @@ export const getCSRFToken = (req: Request, res: Response) => {
     if (!csrfToken) {
       // 如果没有 token，先生成一个
       lusca.csrf(luscaConfig.csrf)(req, res, () => {
-        const newToken = req.session._csrf || req.session[luscaConfig.csrf.key] || req.csrfToken?.();
+        const newToken = req.session._csrf || req.session[luscaConfig.csrf.key] || (req as any).csrfToken?.();
         res.json({
           csrfToken: newToken,
         });
@@ -89,7 +89,7 @@ export const getCSRFToken = (req: Request, res: Response) => {
 };
 
 // Lusca 安全中间件配置
-export const securityMiddleware = {
+export const securityMiddleware: { basicHeaders: any } = {
   // 基本的安全头
   basicHeaders: lusca({
     xframe: luscaConfig.xframe,
@@ -100,6 +100,6 @@ export const securityMiddleware = {
 };
 
 // CSP 中间件
-export const createCSPMiddleware = () => {
+export const createCSPMiddleware = (): any => {
   return lusca.csp(luscaConfig.csp);
 };

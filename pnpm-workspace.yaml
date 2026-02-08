@@ -1,0 +1,5 @@
+onlyBuiltDependencies:
+  - bcrypt
+  - core-js
+  - sharp
+  - unrs-resolver

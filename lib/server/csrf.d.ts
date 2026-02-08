@@ -12,6 +12,6 @@ declare module "express-serve-static-core" {
 export declare const csrfProtection: (req: Request, res: Response, next: NextFunction) => unknown;
 export declare const getCSRFToken: (req: Request, res: Response) => void;
 export declare const securityMiddleware: {
-    basicHeaders: import("express").RequestHandler<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>;
+    basicHeaders: any;
 };
-export declare const createCSPMiddleware: () => import("express").RequestHandler<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>;
+export declare const createCSPMiddleware: () => any;

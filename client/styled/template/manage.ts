@@ -171,7 +171,7 @@ export const StyledInput = styled(Input)`
   box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
 `;
 
-export const StyledTable = styled(Table)`
+export const StyledTable: any = styled(Table)`
   margin-top: 16px;
   border-radius: 12px;
   overflow: hidden;

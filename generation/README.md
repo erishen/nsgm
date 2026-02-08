@@ -17,27 +17,27 @@
 
 | 命令             | 说明         |
 | ---------------- | ------------ |
-| `npm run dev`    | 开发模式     |
-| `npm run start`  | 生产模式     |
-| `npm run build`  | 编译项目     |
-| `npm run export` | 导出静态页面 |
+| `pnpm run dev`    | 开发模式     |
+| `pnpm run start`  | 生产模式     |
+| `pnpm run build`  | 编译项目     |
+| `pnpm run export` | 导出静态页面 |
 
 ### 测试命令
 
 | 命令                    | 说明             |
 | ----------------------- | ---------------- |
-| `npm test`              | 运行所有测试     |
-| `npm run test:watch`    | 监视模式运行测试 |
-| `npm run test:coverage` | 生成覆盖率报告   |
+| `pnpm test`              | 运行所有测试     |
+| `pnpm run test:watch`    | 监视模式运行测试 |
+| `pnpm run test:coverage` | 生成覆盖率报告   |
 
 ### 代码生成命令
 
 | 命令                    | 说明                  |
 | ----------------------- | --------------------- |
-| `npm run create`        | 创建模板页面          |
-| `npm run delete`        | 删除模板页面          |
-| `npm run create-config` | 从配置文件批量创建模块 |
-| `npm run delete-config` | 从配置文件批量删除模块 |
+| `pnpm run create`        | 创建模板页面          |
+| `pnpm run delete`        | 删除模板页面          |
+| `pnpm run create-config` | 从配置文件批量创建模块 |
+| `pnpm run delete-config` | 从配置文件批量删除模块 |
 
 ### 项目维护命令
 

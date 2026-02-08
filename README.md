@@ -113,7 +113,7 @@ cp .env.example .env
 
 ```bash
 # Generate secure password hash
-npm run generate-password yourNewPassword
+pnpm run generate-password yourNewPassword
 
 # Edit .env file with generated hash
 nano .env
@@ -123,10 +123,10 @@ nano .env
 
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Start development server
-npm run dev
+pnpm run dev
 ```
 
 Your application will be available at `http://localhost:3000` with:
@@ -173,9 +173,9 @@ nsgm upgrade                 # Upgrade project base files
 nsgm export                  # Export static pages
 
 # Development tools
-npm run lint                 # Code linting
-npm run test                 # Run tests
-npm run test:coverage        # Test coverage report
+pnpm run lint                 # Code linting
+pnpm run test                 # Run tests
+pnpm run test:coverage        # Test coverage report
 ```
 
 ## 🎨 Generated Controller Features

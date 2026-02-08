@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Provider } from "react-redux";
 import { Spin } from "antd";
 import { appWithTranslation } from "next-i18next";
+import { AppProps } from "next/app";
 import { useRouter } from "next/router";
 import { useStore } from "@/redux/store";
 import { Loading } from "@/styled/common";
@@ -23,7 +24,7 @@ const theme = {
   },
 };
 
-const App = ({ Component, pageProps }) => {
+const App = ({ Component, pageProps }: AppProps) => {
   const store = useStore(pageProps.initialReduxState);
   const router = useRouter();
   const [ssoUser, setSsoUser] = useState(null);
@@ -142,4 +143,4 @@ const App = ({ Component, pageProps }) => {
 };
 
 // appWithTranslation 会自动从 next.config.js 读取 i18n 配置
-export default appWithTranslation(App);
+export default appWithTranslation(App) as any;

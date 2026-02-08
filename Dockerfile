@@ -12,8 +12,8 @@ RUN npm ci --legacy-peer-deps
 COPY . .
 
 # 构建项目
-RUN npm run tsbuild
-RUN npm run build
+RUN pnpm run tsbuild
+RUN pnpm run build
 
 # 暴露端口
 EXPOSE 8080

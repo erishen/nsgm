@@ -20,7 +20,7 @@ import { createFiles as generateCreateFiles } from "./generate_create";
 import { deleteFiles as generateDeleteFiles } from "./generate_delete";
 
 // 常量提取
-const NPM_INSTALL_FLAGS = "--legacy-peer-deps";
+const PNPM_INSTALL_FLAGS = "--legacy-peer-deps";
 
 // 类型定义
 type DirectoryInput = string | undefined | null;
@@ -39,11 +39,11 @@ const installNpmPackages = (targetDir?: string): boolean => {
     const prefix = targetDir ? `cd ${targetDir} && ` : "";
 
     console.log("Installing all dependencies from package.json...");
-    const installResult = shell.exec(`${prefix}npm install ${NPM_INSTALL_FLAGS}`);
+    const installResult = shell.exec(`${prefix}pnpm install ${PNPM_INSTALL_FLAGS}`);
 
     return installResult.code === 0;
   } catch (error) {
-    console.error("Failed to install npm packages:", error);
+    console.error("Failed to install pnpm packages:", error);
     return false;
   }
 };
