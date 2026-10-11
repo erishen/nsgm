@@ -195,7 +195,7 @@ const performBasicReplacements = (
 const performAdvancedReplacements = (
   controller: string,
   action: string,
-  paths: ReturnType<typeof generateFilePaths>
+  paths: ReturnType<typeof generateFilePaths>,
   type: string = "all"
 ): void => {
   const isFrontend = type === "page" || type === "component" || type === "all";
