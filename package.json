@@ -25,7 +25,7 @@
     "check-deps": "npm outdated",
     "update-deps": "npm update",
     "audit-fix": "npm audit fix",
-    "prepublishOnly": "npm run lint:check",
+    "prepublishOnly": "npm run lint:check && npm run tsbuild",
     "preversion": "npm run lint:check",
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags",

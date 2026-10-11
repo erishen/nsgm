@@ -76,7 +76,7 @@ pnpm add -g nsgm-cli
 
 ```bash
 nsgm --version
-# Should output: 2.1.13
+# Should output: 2.1.47
 ```
 
 ## 🚀 Quick Start

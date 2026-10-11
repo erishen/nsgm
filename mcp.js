@@ -73,15 +73,15 @@ async function main() {
           throw new Error('必须设置 MCP_PROJECT_ROOT 环境变量');
         }
 
-        // 这里可以调用你现有的创建逻辑
-        // 例如：await createComponent(name, type, createPath);
-        
-        return {
-          content: [{
-            type: "text",
-            text: `${type} "${name}" 创建成功${createPath ? ` 在路径: ${createPath}` : ''}`
-          }]
-        };
+        // 此工具此前是空壳，直接返回“创建成功”的假结果，会骗过 MCP 客户端。
+        // lib/generate.js 的 createFiles 写入的是 CLI 自身的 destFolder，
+        // 而非 MCP_PROJECT_ROOT 指向的项目目录，盲目调用会写错位置。
+        // 在 createFiles 支持显式目标目录前，明确报错而不是假成功。
+        throw new Error(
+          `MCP create 尚未接通：nsgm 的 createFiles 写入 CLI 自身的 destFolder，` +
+          `而非 MCP_PROJECT_ROOT 指向的项目目录，无法安全生成。` +
+          `请在你的项目目录中直接运行 \`nsgm create ${name}\`。`
+        );
       } catch (err) {
         return {
           content: [{
@@ -118,15 +118,14 @@ async function main() {
           throw new Error('必须设置 MCP_PROJECT_ROOT 环境变量');
         }
 
-        // 这里可以调用你现有的删除逻辑
-        // 例如：await deleteComponent(name, type);
-        
-        return {
-          content: [{
-            type: "text",
-            text: `${type} "${name}" 删除成功`
-          }]
-        };
+        // 与 create 同理：lib/generate.js 的 deleteFiles 作用于 CLI 自身的
+        // destFolder，而非 MCP_PROJECT_ROOT 指向的项目目录，盲目调用会删错位置。
+        // 明确报错而不是假成功。
+        throw new Error(
+          `MCP delete 尚未接通：nsgm 的 deleteFiles 作用于 CLI 自身的 destFolder，` +
+          `而非 MCP_PROJECT_ROOT 指向的项目目录，无法安全删除。` +
+          `请在你的项目目录中直接运行 \`nsgm delete ${name}\`。`
+        );
       } catch (err) {
         return {
           content: [{
