@@ -1,0 +1,5 @@
+allowBuilds:
+  bcrypt: true
+  core-js: true
+  sharp: true
+  unrs-resolver: true
