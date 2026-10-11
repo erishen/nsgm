@@ -14,7 +14,7 @@ export declare const initFiles: (dictionary: string, upgradeFlag?: boolean, proj
  * @param dictionary 目标目录名称，空字符串表示当前目录
  * @param fields 字段定义数组
  */
-export declare const createFiles: (controller: string, action: string, dictionary?: string, fields?: FieldDefinition[]) => void;
+export declare const createFiles: (controller: string, action: string, dictionary?: string, fields?: FieldDefinition[], type?: string) => void;
 /**
  * 删除控制器相关文件
  * @param controller 控制器名称

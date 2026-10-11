@@ -143,8 +143,30 @@ const generateFilePaths = (controller: string, action: string, dictionary = ".")
 const performBasicReplacements = (
   controller: string,
   action: string,
-  paths: ReturnType<typeof generateFilePaths>
+  paths: ReturnType<typeof generateFilePaths>,
+  type: string = "all"
 ): void => {
+  const isFrontend = type === "page" || type === "component" || type === "all";
+  const isBackend = type === "module" || type === "api" || type === "all";
+
+  // 前端组路径与后端组路径，用于按 type 过滤，避免对未生成的文件做替换导致崩溃
+  const fePaths = new Set([
+    paths.destPagesAction,
+    paths.destClientAction,
+    paths.destClientReduxActions,
+    paths.destClientReduxReducers,
+    paths.destClientReduxTypes,
+  ]);
+  const bePaths = new Set([
+    paths.destServerModulesResolver,
+    paths.destServerModulesSchema,
+    paths.destServerApisController,
+  ]);
+
+  // 仅保留属于当前激活分组的路径
+  const active = (p: string): boolean =>
+    (fePaths.has(p) && isFrontend) || (bePaths.has(p) && isBackend);
+
   const replacements: ReplaceRule[] = [
     {
       regex: "template",
@@ -157,7 +179,7 @@ const performBasicReplacements = (
         paths.destServerModulesResolver,
         paths.destServerModulesSchema,
         paths.destServerApisController,
-      ],
+      ].filter(active),
     },
     {
       regex: "Template",
@@ -168,27 +190,27 @@ const performBasicReplacements = (
         paths.destClientReduxActions,
         paths.destServerModulesSchema,
         paths.destServerApisController,
-      ],
+      ].filter(active),
     },
     {
       regex: "TEMPLATE",
       replacement: controller.toUpperCase(),
-      paths: [paths.destClientReduxActions, paths.destClientReduxReducers, paths.destClientReduxTypes],
+      paths: [paths.destClientReduxActions, paths.destClientReduxReducers, paths.destClientReduxTypes].filter(active),
     },
     {
       regex: "manage",
       replacement: action,
-      paths: [paths.destPagesAction, paths.destClientReduxActions],
+      paths: [paths.destPagesAction, paths.destClientReduxActions].filter(active),
     },
     {
       regex: "Manage",
       replacement: firstUpperCase(action),
-      paths: [paths.destPagesAction, paths.destClientReduxReducers],
+      paths: [paths.destPagesAction, paths.destClientReduxReducers].filter(active),
     },
   ];
 
   replacements.forEach((rule) => {
-    handleReplace(rule);
+    if (rule.paths.length) handleReplace(rule);
   });
 };
 
@@ -324,7 +346,7 @@ const copyAndCustomizeTemplateFiles = (
   type: string = "all"
 ): void => {
   const isFrontend = type === "page" || type === "component" || type === "all";
-  const isApi = type === "api" || type === "all";
+  const isBackend = type === "module" || type === "api" || type === "all";
 
   // 只复制与当前类型相关的模板文件，其他文件已经动态生成
   const fileMappings: Array<[string, string]> = [];
@@ -336,7 +358,7 @@ const copyAndCustomizeTemplateFiles = (
       [paths.sourceClientStyledAction, paths.destClientStyledAction],
     );
   }
-  if (isApi) {
+  if (isBackend) {
     fileMappings.push([paths.sourceServerApisController, paths.destServerApisController]);
   }
 
@@ -443,7 +465,7 @@ export const createFiles = (controller: string, action: string, dictionary?: str
     console.log("Template files processed");
 
     // 6. 执行基本替换
-    performBasicReplacements(controller, action, paths);
+    performBasicReplacements(controller, action, paths, type);
     console.log("Basic replacements completed");
 
     // 7. 执行高级替换

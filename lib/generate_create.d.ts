@@ -6,4 +6,4 @@ import { FieldDefinition } from "./cli/utils/prompt";
  * @param dictionary 目标目录路径（可选，默认为当前目录）
  * @param fields 字段定义数组（可选）
  */
-export declare const createFiles: (controller: string, action: string, dictionary?: string, fields?: FieldDefinition[]) => void;
+export declare const createFiles: (controller: string, action: string, dictionary?: string, fields?: FieldDefinition[], type?: string) => void;
