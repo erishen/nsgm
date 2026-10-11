@@ -273,7 +273,7 @@ module.exports = {
 
 ```bash
 # Generate secure hash for custom password
-npm run generate-password yourNewPassword
+pnpm run generate-password yourNewPassword
 
 # Add to .env file
 LOGIN_PASSWORD_HASH=your_generated_hash_here
@@ -303,19 +303,19 @@ app.use(
 
 ```bash
 # Run all tests
-npm test
+pnpm test
 
 # Watch mode
-npm run test:watch
+pnpm run test:watch
 
 # Coverage report
-npm run test:coverage
+pnpm run test:coverage
 
 # Lint code
-npm run lint
+pnpm run lint
 
 # Format code
-npm run format
+pnpm run format
 ```
 
 ## 📚 Examples
@@ -333,7 +333,7 @@ nsgm create category
 nsgm create user
 
 # 3. Start development
-npm run dev
+pnpm run dev
 ```
 
 ### Adding Custom API Endpoint
@@ -386,13 +386,13 @@ module.exports = {
 
 ```bash
 # Production build
-npm run build
+pnpm run build
 
 # Analyze bundle size
-npm run analyze
+pnpm run analyze
 
 # Export static site
-npm run export
+pnpm run export
 ```
 
 ### Production Deployment
@@ -401,10 +401,10 @@ npm run export
 
 ```bash
 # Start production server
-npm start
+pnpm start
 
 # Or use PM2
-pm2 start npm --name "nsgm-app" -- start
+pm2 start pnpm --name "nsgm-app" -- start
 ```
 
 #### Vercel Deployment (Recommended)
@@ -442,7 +442,7 @@ DATABASE_URL=mysql://...
 **获取密码哈希：**
 
 ```bash
-npm run generate-password yourPassword
+pnpm run generate-password yourPassword
 ```
 
 ## 🤝 Contributing
@@ -457,13 +457,13 @@ git clone https://github.com/erishen/nsgm.git
 cd nsgm
 
 # Install dependencies
-npm install
+pnpm install
 
 # Run tests
-npm test
+pnpm test
 
 # Build CLI
-npm run tsbuild
+pnpm run tsbuild
 ```
 
 ## 📖 Documentation
@@ -519,7 +519,7 @@ Create a JSON file (e.g., `config/modules.json`) with your module definitions:
 nsgm create-config config/modules.json
 
 # Or use npm script with default config
-npm run create-config
+pnpm run create-config
 
 # Create specific module
 nsgm create-config config/modules.json --module category
@@ -577,7 +577,7 @@ project/
 lsof -ti:3000 | xargs kill -9
 
 # Or use different port
-PORT=3001 npm run dev
+PORT=3001 pnpm run dev
 ```
 
 **Database connection failed**

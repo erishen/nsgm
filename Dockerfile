@@ -2,11 +2,12 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# 复制package.json和package-lock.json
-COPY package*.json ./
+# 复制 package.json 和 pnpm-lock.yaml
+COPY package.json pnpm-lock.yaml ./
 
-# 安装所有依赖（包括开发依赖）
-RUN npm ci --legacy-peer-deps
+# 引导 pnpm 并安装依赖（含开发依赖）
+RUN npm i -g pnpm@9.15.9
+RUN pnpm install --frozen-lockfile
 
 # 复制项目文件
 COPY . .
@@ -22,4 +23,4 @@ EXPOSE 8080
 ENV NODE_ENV=production
 
 # 启动应用
-CMD ["npm", "start"]
+CMD ["pnpm", "start"]

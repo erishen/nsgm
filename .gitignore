@@ -16,3 +16,6 @@ coverage
 .env.vercel
 *.log
 .serena
+
+# npm 锁文件（已迁移到 pnpm；generation/ 模板自带锁仍保留跟踪）
+/package-lock.json

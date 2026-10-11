@@ -1,7 +1,10 @@
 {
   "name": "nsgm-cli",
   "version": "2.1.47",
-  "packageManager": "npm@11.9.0",
+  "packageManager": "pnpm@9.15.9",
+  "engines": {
+    "node": ">=20"
+  },
   "description": "A CLI tool to run Next/Style-components and Graphql/Mysql fullstack project",
   "main": "index.js",
   "scripts": {
@@ -22,9 +25,9 @@
     "lint": "eslint \"src/**/*.{ts,tsx}\" \"client/**/*.{ts,tsx}\" \"pages/**/*.{ts,tsx}\" --fix",
     "lint:check": "eslint \"src/**/*.{ts,tsx}\" \"client/**/*.{ts,tsx}\" \"pages/**/*.{ts,tsx}\"",
     "format": "prettier --write \"src/**/*.{ts,tsx}\" \"client/**/*.{ts,tsx}\" \"pages/**/*.{ts,tsx}\"",
-    "check-deps": "npm outdated",
-    "update-deps": "npm update",
-    "audit-fix": "npm audit fix",
+    "check-deps": "pnpm outdated",
+    "update-deps": "pnpm update",
+    "audit-fix": "pnpm audit --fix",
     "prepublishOnly": "npm run lint:check && npm run tsbuild",
     "preversion": "npm run lint:check",
     "version": "npm run format && git add -A src",
