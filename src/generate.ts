@@ -175,9 +175,9 @@ export const initFiles = (dictionary: string, upgradeFlag = false, projectConfig
  * @param dictionary 目标目录名称，空字符串表示当前目录
  * @param fields 字段定义数组
  */
-export const createFiles = (controller: string, action: string, dictionary = "", fields?: FieldDefinition[]) => {
+export const createFiles = (controller: string, action: string, dictionary = "", fields?: FieldDefinition[], type: string = "all") => {
   const normalizedDictionary = normalizeDirectory(dictionary);
-  generateCreateFiles(controller, action, normalizedDictionary, fields);
+  generateCreateFiles(controller, action, normalizedDictionary, fields, type);
 };
 
 /**

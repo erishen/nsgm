@@ -65,8 +65,18 @@ const TEMPLATE_FILES = {
 const MYSQL_TIMEOUT = 1000;
 
 // 辅助函数
-const createDirectoryStructure = (basePaths: string[]): void => {
-  basePaths.forEach((path) => mkdirSync(path));
+const createDirectoryStructure = (basePaths: string[], type: string = "all"): void => {
+  const isFrontend = type === "page" || type === "component" || type === "all";
+  const isBackend = type === "module" || type === "api" || type === "all";
+  const allowed = basePaths.filter((p) => {
+    const isFrontendPath =
+      p.includes("/client/") || p.includes("/pages/") || p.endsWith("/client") || p.endsWith("/pages");
+    const isBackendPath = p.includes("/server/") || p.endsWith("/server");
+    if (isFrontendPath && !isFrontend) return false;
+    if (isBackendPath && !isBackend) return false;
+    return true;
+  });
+  allowed.forEach((p) => mkdirSync(p));
 };
 
 const generateFilePaths = (controller: string, action: string, dictionary = ".") => {
@@ -186,42 +196,58 @@ const performAdvancedReplacements = (
   controller: string,
   action: string,
   paths: ReturnType<typeof generateFilePaths>
+  type: string = "all"
 ): void => {
-  const optionsArr = [
-    {
-      from: /\n\s*\n/,
-      to: `\nimport { ${controller}${firstUpperCase(action)}Reducer } from './${controller}/${action}/reducers'\n\n`,
-      files: [paths.destClientReduxReducersAllPath],
-    },
-    {
-      from: /Reducer,?\s*\n/,
-      to: `Reducer,\n  ${controller}${firstUpperCase(action)}: ${controller}${firstUpperCase(action)}Reducer,\n`,
-      files: [paths.destClientReduxReducersAllPath],
-    },
-    {
-      from: /'(.\/apis\/template.*?)'\)\s*\n/,
-      to: `'./apis/template')\nconst ${controller} = require('./apis/${controller}')\n`,
-      files: [paths.destServerRestPath],
-    },
-    {
-      from: /template\)\s*\n/,
-      to: `template)\nrouter.use('/${controller}', ${controller})\n`,
-      files: [paths.destServerRestPath],
-    },
-    {
-      from: /\/\*\{\s*\n\s*key: \(\+\+key\)\.toString\(\),/,
-      to:
-        `{\n    // ${controller}_${action}_start\n    key: (++key).toString(),\n    text: '${
-          controller
-        }',\n    url: '/${controller}/${action}',\n    icon: <SolutionOutlined rev={undefined} />,\n    ` +
-        `subMenus: [\n      {\n        key: \`\${key}_1\`,\n        text: '${action}',\n        url: '/${controller}/${
-          action
-        }'\n      }\n    ]\n    // ${controller}_${action}_end\n  },\n  /*{\n    key: (++key).toString(),`,
-      files: [paths.destClientUtilsMenuPath],
-    },
-  ];
+  const isFrontend = type === "page" || type === "component" || type === "all";
+  const isBackend = type === "module" || type === "api" || type === "all";
+  const isApi = type === "api" || type === "all";
 
-  if (isLocal) {
+  const optionsArr: any[] = [];
+
+  // 前端集成：reducers 注册 + 菜单项
+  if (isFrontend) {
+    optionsArr.push(
+      {
+        from: /\n\s*\n/,
+        to: `\nimport { ${controller}${firstUpperCase(action)}Reducer } from './${controller}/${action}/reducers'\n\n`,
+        files: [paths.destClientReduxReducersAllPath],
+      },
+      {
+        from: /Reducer,?\s*\n/,
+        to: `Reducer,\n  ${controller}${firstUpperCase(action)}: ${controller}${firstUpperCase(action)}Reducer,\n`,
+        files: [paths.destClientReduxReducersAllPath],
+      },
+      {
+        from: /\/\*\{\s*\n\s*key: \(\+\+key\)\.toString\(\),/,
+        to:
+          `{\n    // ${controller}_${action}_start\n    key: (++key).toString(),\n    text: '${
+            controller
+          }',\n    url: '/${controller}/${action}',\n    icon: <SolutionOutlined rev={undefined} />,\n    ` +
+          `subMenus: [\n      {\n        key: \`\${key}_1\`,\n        text: '${action}',\n        url: '/${controller}/${
+            action
+          }'\n      }\n    ]\n    // ${controller}_${action}_end\n  },\n  /*{\n    key: (++key).toString(),`,
+        files: [paths.destClientUtilsMenuPath],
+      },
+    );
+  }
+
+  // 后端接口集成：rest 路由注册
+  if (isApi) {
+    optionsArr.push(
+      {
+        from: /'(.\/apis\/template.*?)'\)\s*\n/,
+        to: `'./apis/template')\nconst ${controller} = require('./apis/${controller}')\n`,
+        files: [paths.destServerRestPath],
+      },
+      {
+        from: /template\)\s*\n/,
+        to: `template)\nrouter.use('/${controller}', ${controller})\n`,
+        files: [paths.destServerRestPath],
+      },
+    );
+  }
+
+  if (isLocal && isBackend) {
     optionsArr.push({
       from: /'nsgm-cli'\)/,
       to: "'../../../index')",
@@ -230,8 +256,12 @@ const performAdvancedReplacements = (
   }
 
   // 清理之前的配置
-  shell.sed("-i", /.*${controller}${firstUpperCase(action)}Reducer.*/, "", paths.destClientReduxReducersAllPath);
-  shell.sed("-i", /.*${controller}.*/, "", paths.destServerRestPath);
+  if (isFrontend) {
+    shell.sed("-i", /.*${controller}${firstUpperCase(action)}Reducer.*/, "", paths.destClientReduxReducersAllPath);
+  }
+  if (isApi) {
+    shell.sed("-i", /.*${controller}.*/, "", paths.destServerRestPath);
+  }
 
   setTimeout(() => {
     replaceInFileAll(optionsArr, 0, () => {
@@ -245,7 +275,8 @@ const generateDynamicFiles = (
   action: string,
   paths: ReturnType<typeof generateFilePaths>,
   fields: FieldDefinition[],
-  dictionary?: string
+  dictionary?: string,
+  type: string = "all"
 ): void => {
   // 创建生成器实例
   const sqlGenerator = new SQLGenerator(controller, action, fields);
@@ -259,22 +290,29 @@ const generateDynamicFiles = (
   const projectPath = !dictionary || dictionary === "." ? "." : path.join(destFolder, dictionary);
   const fileGenerator = new FileGenerator(projectPath);
 
-  // 生成并写入文件
-  fs.writeFileSync(paths.destServerSqlController, sqlGenerator.generate());
-  fs.writeFileSync(paths.destServerModulesSchema, schemaGenerator.generate());
-  fs.writeFileSync(paths.destServerModulesResolver, resolverGenerator.generate());
-  fs.writeFileSync(paths.destClientAction, serviceGenerator.generate());
-  fs.writeFileSync(paths.destPagesAction, pageGenerator.generate());
+  const isFrontend = type === "page" || type === "component" || type === "all";
+  const isBackend = type === "module" || type === "api" || type === "all";
 
-  // 生成 DataLoader 文件 (JavaScript)
-  const dataLoaderPath = resolve(`${projectPath}/server/dataloaders/${controller}-dataloader.js`);
-  mkdirSync(path.dirname(dataLoaderPath));
-  fs.writeFileSync(dataLoaderPath, dataLoaderGenerator.generate());
+  // 生成并写入文件（后端组：sql / resolver / schema / dataloader）
+  if (isBackend) {
+    fs.writeFileSync(paths.destServerSqlController, sqlGenerator.generate());
+    fs.writeFileSync(paths.destServerModulesSchema, schemaGenerator.generate());
+    fs.writeFileSync(paths.destServerModulesResolver, resolverGenerator.generate());
 
-  console.log(`🚀 已生成 DataLoader 文件: ${dataLoaderPath}`);
+    // 生成 DataLoader 文件 (JavaScript)
+    const dataLoaderPath = resolve(`${projectPath}/server/dataloaders/${controller}-dataloader.js`);
+    mkdirSync(path.dirname(dataLoaderPath));
+    fs.writeFileSync(dataLoaderPath, dataLoaderGenerator.generate());
+    console.log(`🚀 已生成 DataLoader 文件: ${dataLoaderPath}`);
+  }
 
-  // 生成多语言文件
-  fileGenerator.generateI18nFiles(controller, action, fields);
+  // 生成并写入文件（前端组：service / page / i18n）
+  if (isFrontend) {
+    fs.writeFileSync(paths.destClientAction, serviceGenerator.generate());
+    fs.writeFileSync(paths.destPagesAction, pageGenerator.generate());
+    // 生成多语言文件
+    fileGenerator.generateI18nFiles(controller, action, fields);
+  }
 };
 
 /**
@@ -282,16 +320,25 @@ const generateDynamicFiles = (
  */
 const copyAndCustomizeTemplateFiles = (
   paths: ReturnType<typeof generateFilePaths>,
-  _fields: FieldDefinition[]
+  _fields: FieldDefinition[],
+  type: string = "all"
 ): void => {
-  // 只复制 Redux 相关的模板文件，其他文件已经动态生成
-  const fileMappings: Array<[string, string]> = [
-    [paths.sourceClientReduxActions, paths.destClientReduxActions],
-    [paths.sourceClientReduxReducers, paths.destClientReduxReducers],
-    [paths.sourceClientReduxTypes, paths.destClientReduxTypes],
-    [paths.sourceClientStyledAction, paths.destClientStyledAction],
-    [paths.sourceServerApisController, paths.destServerApisController],
-  ];
+  const isFrontend = type === "page" || type === "component" || type === "all";
+  const isApi = type === "api" || type === "all";
+
+  // 只复制与当前类型相关的模板文件，其他文件已经动态生成
+  const fileMappings: Array<[string, string]> = [];
+  if (isFrontend) {
+    fileMappings.push(
+      [paths.sourceClientReduxActions, paths.destClientReduxActions],
+      [paths.sourceClientReduxReducers, paths.destClientReduxReducers],
+      [paths.sourceClientReduxTypes, paths.destClientReduxTypes],
+      [paths.sourceClientStyledAction, paths.destClientStyledAction],
+    );
+  }
+  if (isApi) {
+    fileMappings.push([paths.sourceServerApisController, paths.destServerApisController]);
+  }
 
   fileMappings.forEach(([source, dest]) => {
     copyFileSync(source, dest);
@@ -304,8 +351,13 @@ const copyAndCustomizeTemplateFiles = (
 const setupDynamicDatabase = (
   _controller: string,
   paths: ReturnType<typeof generateFilePaths>,
-  _fields: FieldDefinition[]
+  _fields: FieldDefinition[],
+  type: string = "all"
 ): void => {
+  const isBackend = type === "module" || type === "api" || type === "all";
+  if (!isBackend) {
+    return;
+  }
   // SQL 文件已经在 generateDynamicFiles 中生成，这里直接执行
   const mysqlCommand = `mysql -u${mysqlUser} -p${mysqlPassword} -h${mysqlHost} -P${mysqlPort} < ${paths.destServerSqlController}`;
 
@@ -324,7 +376,7 @@ const setupDynamicDatabase = (
  * @param dictionary 目标目录路径（可选，默认为当前目录）
  * @param fields 字段定义数组（可选）
  */
-export const createFiles = (controller: string, action: string, dictionary?: string, fields?: FieldDefinition[]) => {
+export const createFiles = (controller: string, action: string, dictionary?: string, fields?: FieldDefinition[], type: string = "all") => {
   console.log("createFiles", sourceFolder, destFolder, isLocal, controller, action, dictionary);
 
   try {
@@ -379,15 +431,15 @@ export const createFiles = (controller: string, action: string, dictionary?: str
       resolve(`${getDestPath(destServerPath)}/dataloaders`),
     ];
 
-    createDirectoryStructure(basePaths);
+    createDirectoryStructure(basePaths, type);
     console.log("Directory structure created");
 
     // 4. 生成动态文件内容
-    generateDynamicFiles(controller, action, paths, finalFields, dictionary);
+    generateDynamicFiles(controller, action, paths, finalFields, dictionary, type);
     console.log("Dynamic files generated");
 
     // 5. 复制并自定义模板文件
-    copyAndCustomizeTemplateFiles(paths, finalFields);
+    copyAndCustomizeTemplateFiles(paths, finalFields, type);
     console.log("Template files processed");
 
     // 6. 执行基本替换
@@ -395,11 +447,11 @@ export const createFiles = (controller: string, action: string, dictionary?: str
     console.log("Basic replacements completed");
 
     // 7. 执行高级替换
-    performAdvancedReplacements(controller, action, paths);
+    performAdvancedReplacements(controller, action, paths, type);
     console.log("Advanced replacements initiated");
 
     // 8. 设置数据库
-    setupDynamicDatabase(controller, paths, finalFields);
+    setupDynamicDatabase(controller, paths, finalFields, type);
 
     console.log("createFiles completed successfully");
   } catch (error) {

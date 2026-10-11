@@ -93,11 +93,12 @@ async function main() {
           targetDir = resolved;
         }
 
-        // 底层 generate.createFiles(controller, action, dictionary, fields)：
-        // name -> controller，type -> action（资源下的动作名），
-        // targetDir -> dictionary（绝对路径，底层靠 path.join 绝对路径覆盖落到此处）。
-        // fields 不传时使用默认 CRUD 字段。
-        createFiles(name, type, targetDir);
+        // 底层 generate.createFiles(controller, action, dictionary, fields, type)：
+        // name -> controller，type -> action（动作名，出现在 page/module 文件名中），
+        // targetDir -> dictionary（绝对路径，靠 path.join 绝对路径覆盖落到项目），
+        // 末尾 type -> 分层过滤（page/component=前端组，module/api=后端组，api 额外注入 rest 路由）。
+        // 默认 CRUD 字段由底层提供（不传 fields）。
+        createFiles(name, type, targetDir, undefined, type);
 
         return {
           content: [{
