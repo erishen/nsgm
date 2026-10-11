@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-const { McpServer } = require("./node_modules/@modelcontextprotocol/sdk/dist/cjs/server/mcp.js");
-const { StdioServerTransport } = require("./node_modules/@modelcontextprotocol/sdk/dist/cjs/server/stdio.js");
+const { McpServer } = require("@modelcontextprotocol/sdk/dist/cjs/server/mcp.js");
+const { StdioServerTransport } = require("@modelcontextprotocol/sdk/dist/cjs/server/stdio.js");
 const { initFiles } = require("./lib/generate.js");
 const { z } = require("zod");
 const path = require('path');

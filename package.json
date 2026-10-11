@@ -1,7 +1,7 @@
 {
   "name": "nsgm-cli",
   "version": "2.1.47",
-  "packageManager": "pnpm@9.15.9",
+  "packageManager": "pnpm@12.11.2+sha512.25a51652a196785af5f28bda6dfe8dc582ebefa4ac1d180221ce1390231c5fb76637822ea4b6e4633ce74acdcb0a77f725af11bad38177fdeddaee818a955cb9",
   "engines": {
     "node": ">=20"
   },
@@ -9,10 +9,10 @@
   "main": "index.js",
   "scripts": {
     "help": "node ./lib/index.js",
-    "dev": "npm run tsbuild && node ./lib/index.js dev",
+    "dev": "pnpm run tsbuild && node ./lib/index.js dev",
     "tsbuild": "rimraf lib && tsc --build tsconfig.build.json",
     "build": "node ./lib/index.js build",
-    "analyze": "cross-env ANALYZE=true npm run build",
+    "analyze": "cross-env ANALYZE=true pnpm run build",
     "tsv": "node ./lib/index.js version",
     "start": "node ./lib/index.js start",
     "export": "node ./lib/index.js export",
@@ -28,18 +28,18 @@
     "check-deps": "pnpm outdated",
     "update-deps": "pnpm update",
     "audit-fix": "pnpm audit --fix",
-    "prepublishOnly": "npm run lint:check && npm run tsbuild",
-    "preversion": "npm run lint:check",
-    "version": "npm run format && git add -A src",
+    "prepublishOnly": "pnpm run lint:check && pnpm run tsbuild",
+    "preversion": "pnpm run lint:check",
+    "version": "pnpm run format && git add -A src",
     "postversion": "git push && git push --tags",
-    "release": "npm run clean && npm run lint && npm run format && npm run tsbuild && npm run build",
+    "release": "pnpm run clean && pnpm run lint && pnpm run format && pnpm run tsbuild && pnpm run build",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch",
     "performance": "./scripts/performance-check.sh",
     "generate-password": "node scripts/generate-password-hash.js",
-    "vercel-build": "npm run tsbuild && npm run build",
-    "vercel-dev": "npm run tsbuild && npm run dev"
+    "vercel-build": "pnpm run tsbuild && pnpm run build",
+    "vercel-dev": "pnpm run tsbuild && pnpm run dev"
   },
   "repository": {
     "type": "git",
