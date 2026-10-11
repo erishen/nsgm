@@ -2,11 +2,15 @@
 
 const { McpServer } = require("@modelcontextprotocol/sdk/dist/cjs/server/mcp.js");
 const { StdioServerTransport } = require("@modelcontextprotocol/sdk/dist/cjs/server/stdio.js");
-const { initFiles } = require("./lib/generate.js");
+const { initFiles, createFiles, deleteFiles } = require("./lib/generate.js");
 const { z } = require("zod");
 const path = require('path');
 
 async function main() {
+  // nsgm generate 内部大量 console.log 直接写到 stdout，
+  // 会污染 MCP 的 stdio JSON-RPC 协议流。整体重定向到 stderr。
+  console.log = (...args) => console.error(...args);
+
   const server = new McpServer({
     name: "nsgm-mcp-server",
     version: "1.0.0"
@@ -72,16 +76,39 @@ async function main() {
         if (!PROJECT_ROOT) {
           throw new Error('必须设置 MCP_PROJECT_ROOT 环境变量');
         }
+        if (PROJECT_ROOT === '/' || PROJECT_ROOT.startsWith('/readonly')) {
+          throw new Error('不允许在根目录或只读目录下生成文件，请设置 MCP_PROJECT_ROOT 环境变量');
+        }
 
-        // 此工具此前是空壳，直接返回“创建成功”的假结果，会骗过 MCP 客户端。
-        // lib/generate.js 的 createFiles 写入的是 CLI 自身的 destFolder，
-        // 而非 MCP_PROJECT_ROOT 指向的项目目录，盲目调用会写错位置。
-        // 在 createFiles 支持显式目标目录前，明确报错而不是假成功。
-        throw new Error(
-          `MCP create 尚未接通：nsgm 的 createFiles 写入 CLI 自身的 destFolder，` +
-          `而非 MCP_PROJECT_ROOT 指向的项目目录，无法安全生成。` +
-          `请在你的项目目录中直接运行 \`nsgm create ${name}\`。`
-        );
+        // 计算目标目录：PROJECT_ROOT 为基底，createPath 仅允许相对子目录
+        let targetDir = PROJECT_ROOT;
+        if (createPath) {
+          if (path.isAbsolute(createPath)) {
+            throw new Error('path 只能是相对路径，不能是绝对路径');
+          }
+          const resolved = path.resolve(PROJECT_ROOT, createPath);
+          if (!resolved.startsWith(PROJECT_ROOT)) {
+            throw new Error('不允许越出 PROJECT_ROOT 目录');
+          }
+          targetDir = resolved;
+        }
+
+        // 底层 generate.createFiles(controller, action, dictionary, fields)：
+        // name -> controller，type -> action（资源下的动作名），
+        // targetDir -> dictionary（绝对路径，底层靠 path.join 绝对路径覆盖落到此处）。
+        // fields 不传时使用默认 CRUD 字段。
+        createFiles(name, type, targetDir);
+
+        return {
+          content: [{
+            type: "text",
+            text:
+              `已在 ${targetDir} 为资源 "${name}" 生成动作 "${type}" 的 CRUD 脚手架` +
+              `（pages / client/redux / client/service / server/modules / server/sql 等）。\n` +
+              `注：底层会按 nsgm 的 MySQL 配置尝试执行建表 SQL，如未配置本地 MySQL 或不想自动建表，` +
+              `该步骤会报错但不影响文件生成，可手动执行生成的 server/sql/${name}.sql。`
+          }]
+        };
       } catch (err) {
         return {
           content: [{
@@ -117,15 +144,21 @@ async function main() {
         if (!PROJECT_ROOT) {
           throw new Error('必须设置 MCP_PROJECT_ROOT 环境变量');
         }
+        if (PROJECT_ROOT === '/' || PROJECT_ROOT.startsWith('/readonly')) {
+          throw new Error('不允许在根目录或只读目录下删除文件，请设置 MCP_PROJECT_ROOT 环境变量');
+        }
 
-        // 与 create 同理：lib/generate.js 的 deleteFiles 作用于 CLI 自身的
-        // destFolder，而非 MCP_PROJECT_ROOT 指向的项目目录，盲目调用会删错位置。
-        // 明确报错而不是假成功。
-        throw new Error(
-          `MCP delete 尚未接通：nsgm 的 deleteFiles 作用于 CLI 自身的 destFolder，` +
-          `而非 MCP_PROJECT_ROOT 指向的项目目录，无法安全删除。` +
-          `请在你的项目目录中直接运行 \`nsgm delete ${name}\`。`
-        );
+        // 底层 generate.deleteFiles(controller, action, deleteDBFlag, dictionary)：
+        // name -> controller，type -> action，PROJECT_ROOT -> dictionary（绝对路径）。
+        // deleteDBFlag 传 false：MCP 场景不自动 DROP 表，避免意外破坏数据库。
+        deleteFiles(name, type, false, PROJECT_ROOT);
+
+        return {
+          content: [{
+            type: "text",
+            text: `已在 ${PROJECT_ROOT} 删除资源 "${name}" 的动作 "${type}" 相关文件（pages / client / server 等）。`
+          }]
+        };
       } catch (err) {
         return {
           content: [{
