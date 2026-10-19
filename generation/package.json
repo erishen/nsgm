@@ -23,7 +23,7 @@
     "test:coverage": "jest --coverage"
   },
   "author": "",
-  "license": "ISC",
+  "license": "UNLICENSED",
   "dependencies": {
     "nsgm-cli": "^2"
   },
