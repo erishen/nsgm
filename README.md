@@ -602,7 +602,9 @@ npm config set prefix '~/.local'
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Licensed under the **Apache License, Version 2.0** — see [LICENSE](LICENSE) for the full text and [NOTICE](NOTICE) for the attribution notices that must be preserved when redistributing this software.
+
+> History: `package.json` used to declare `MIT` while the bundled `LICENSE` file has always been Apache-2.0. The declaration was corrected to Apache-2.0 on 2026-10-19; releases published before that fix still carry `MIT` in their npm metadata, so the LICENSE file shipped in those tarballs is the authoritative text.
 
 ## 🙏 Acknowledgments
 

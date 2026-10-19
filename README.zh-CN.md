@@ -583,7 +583,9 @@ npm config set prefix '~/.local'
 
 ## 📄 许可证
 
-许可证条款以仓库根目录的 [LICENSE](LICENSE) 文件为准。
+本项目以 **Apache License, Version 2.0** 授权 —— 完整条款见 [LICENSE](LICENSE)，再分发本软件时需保留的署名声明见 [NOTICE](NOTICE)。
+
+> 沿革：`package.json` 此前声明为 `MIT`，而随包的 `LICENSE` 文件自始至终是 Apache-2.0。2026-10-19 已将声明统一回 Apache-2.0；在此之前发布的 npm 版本，其包元数据仍写着 `MIT`，那些版本请以 tarball 内的 LICENSE 文件为准。
 
 ## 🙏 致谢
 

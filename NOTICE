@@ -1,0 +1,22 @@
+nsgm-cli
+Copyright 2023-2026 erishen
+
+This product includes software developed as part of the NSGM CLI project:
+https://github.com/erishen/nsgm
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this file except in compliance with the License. You may obtain a copy of
+the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations under
+the License.
+
+This product bundles third-party open source components. Their names and
+license terms are declared in package.json dependencies and pinned in
+pnpm-lock.yaml; each third-party component remains under its own license, and
+nothing in this NOTICE file re-licenses them.

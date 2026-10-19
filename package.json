@@ -59,7 +59,7 @@
     "name": "Erishen Sun",
     "email": "leisun8309@gmail.com"
   },
-  "license": "MIT",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/erishen/nsgm/issues"
   },
@@ -78,7 +78,8 @@
     "*.config.js",
     ".babelrc",
     "next-env.d.ts",
-    "next-i18next.config.js"
+    "next-i18next.config.js",
+    "NOTICE"
   ],
   "homepage": "https://github.com/erishen/nsgm#readme",
   "dependencies": {
