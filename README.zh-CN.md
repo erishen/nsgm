@@ -445,6 +445,27 @@ DATABASE_URL=mysql://...
 pnpm run generate-password yourPassword
 ```
 
+## 🤝 贡献
+
+欢迎贡献！请先开一个 issue 说明你想改什么——本仓暂无 `CONTRIBUTING.md`，所以下面的开发流程（安装、测试、构建）就是可评审补丁的约定。
+
+### 开发环境
+
+```bash
+# 克隆仓库
+git clone https://github.com/erishen/nsgm.git
+cd nsgm
+
+# 安装依赖
+pnpm install
+
+# 运行测试
+pnpm test
+
+# 构建 CLI
+pnpm run tsbuild
+```
+
 ## 📖 文档
 
 - [安全说明](SECURITY.md)：安全相关的注意事项与最佳实践

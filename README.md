@@ -416,10 +416,10 @@ NSGM CLI 完全支持 Vercel 部署，包括自动化 CI/CD 流程。
 1. 推送项目到 GitHub
 2. 访问 [Vercel Dashboard](https://vercel.com/dashboard)
 3. 导入 GitHub 仓库
-4. 配置环境变量（参考 `.env.vercel.example`）
+4. 配置环境变量（以仓库内的 `.env.example` 为模板逐键填入）
 5. 点击 "Deploy"
 
-**详细指南：** 查看 [VERCEL_DEPLOYMENT.md](VERCEL_DEPLOYMENT.md)
+**详细指南：** 查看 [docs/VERCEL_DEPLOYMENT.md](docs/VERCEL_DEPLOYMENT.md)
 
 **特性：**
 
@@ -447,7 +447,7 @@ pnpm run generate-password yourPassword
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+We welcome contributions! Open an issue first to propose what you would like to change — this repo has no `CONTRIBUTING.md` yet, so the workflow below (install, test, build) is the contract for a reviewable patch.
 
 ### Development Setup
 
@@ -469,10 +469,11 @@ pnpm run tsbuild
 ## 📖 Documentation
 
 - [Security Guide](SECURITY.md) - Security best practices
+- [Development Guide](DEVELOP.md) - Commands and workflow for hacking on this repo
 - [Config-Based Generation Guide](docs/CONFIG-CMD-IMPLEMENTATION.md) - Batch module creation from config files
-- [API Reference](docs/api.md) - Complete API documentation
-- [Migration Guide](docs/migration.md) - Upgrade instructions
-- [Troubleshooting](docs/troubleshooting.md) - Common issues and solutions
+- [Using Config-Driven Generation](docs/CREATE-FROM-CONFIG.md) - `create-config` / `delete-config` usage
+- [Vercel Deployment Guide](docs/VERCEL_DEPLOYMENT.md) - Automated CI/CD and preview environments
+- [Prisma Migration Guide](docs/prisma-migration-guide.md) - Database migration notes
 
 ## 📋 Configuration File-Based Generation
 
