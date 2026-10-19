@@ -21,6 +21,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
+      # setup-node 的 `cache: 'pnpm'` 要先在 PATH 上找到 pnpm 才能给锁文件算哈希，
+      # 而 pnpm 是后面「Enable Corepack」那一步才装出来的 —— 这个先后顺序就是 CI 一直
+      # 红的原因（日志：##[error]Unable to locate executable file: pnpm）。
+      # pnpm/action-setup 会按 package.json 的 packageManager 字段（pnpm@12.11.2）
+      # 装一个独立的 pnpm，并且在 setup-node 切换 Node 版本之后仍然在 PATH 上，
+      # 所以它必须排在 setup-node 之前。
+      - uses: pnpm/action-setup@v4
+      
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
