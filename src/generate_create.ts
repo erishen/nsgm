@@ -164,8 +164,7 @@ const performBasicReplacements = (
   ]);
 
   // 仅保留属于当前激活分组的路径
-  const active = (p: string): boolean =>
-    (fePaths.has(p) && isFrontend) || (bePaths.has(p) && isBackend);
+  const active = (p: string): boolean => (fePaths.has(p) && isFrontend) || (bePaths.has(p) && isBackend);
 
   const replacements: ReplaceRule[] = [
     {
@@ -249,7 +248,7 @@ const performAdvancedReplacements = (
             action
           }'\n      }\n    ]\n    // ${controller}_${action}_end\n  },\n  /*{\n    key: (++key).toString(),`,
         files: [paths.destClientUtilsMenuPath],
-      },
+      }
     );
   }
 
@@ -265,7 +264,7 @@ const performAdvancedReplacements = (
         from: /template\)\s*\n/,
         to: `template)\nrouter.use('/${controller}', ${controller})\n`,
         files: [paths.destServerRestPath],
-      },
+      }
     );
   }
 
@@ -355,7 +354,7 @@ const copyAndCustomizeTemplateFiles = (
       [paths.sourceClientReduxActions, paths.destClientReduxActions],
       [paths.sourceClientReduxReducers, paths.destClientReduxReducers],
       [paths.sourceClientReduxTypes, paths.destClientReduxTypes],
-      [paths.sourceClientStyledAction, paths.destClientStyledAction],
+      [paths.sourceClientStyledAction, paths.destClientStyledAction]
     );
   }
   if (isBackend) {
@@ -398,7 +397,13 @@ const setupDynamicDatabase = (
  * @param dictionary 目标目录路径（可选，默认为当前目录）
  * @param fields 字段定义数组（可选）
  */
-export const createFiles = (controller: string, action: string, dictionary?: string, fields?: FieldDefinition[], type: string = "all") => {
+export const createFiles = (
+  controller: string,
+  action: string,
+  dictionary?: string,
+  fields?: FieldDefinition[],
+  type: string = "all"
+) => {
   console.log("createFiles", sourceFolder, destFolder, isLocal, controller, action, dictionary);
 
   try {
